@@ -1,0 +1,2 @@
+# declapi
+Declarative API generation.
