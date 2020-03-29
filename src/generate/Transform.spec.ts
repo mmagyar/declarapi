@@ -1,8 +1,8 @@
-import { generator } from './Generator'
+import { transform } from './Transform'
 
 describe('Generator', () => {
   it('generates basic example without error', async () => {
-    const result = await generator('./example.json')
+    const result = await transform('./example.json')
     expect(result).toHaveProperty('type', 'result')
   })
 
@@ -15,7 +15,7 @@ describe('Generator', () => {
       returns: {}
     }
 
-    const result: any = await generator(input)
+    const result: any = await transform(input)
     expect(result.errors).toBeUndefined()
     expect(result).toStrictEqual({
       type: 'result',
@@ -44,7 +44,7 @@ describe('Generator', () => {
       dataType: { id: 'string', myNumber: 'number' }
     }
 
-    const result: any = await generator(input)
+    const result: any = await transform(input)
 
     expect(result.errors).toBeUndefined()
     expect(result).toHaveProperty('type', 'result')
@@ -60,10 +60,20 @@ describe('Generator', () => {
       returns: {}
     }
 
-    const result: any = await generator(input)
-    expect(result.errors).toEqual(
-      'Unsupported schema for declaration: ./random.json'
-    )
+    const result: any = await transform(input)
+    expect(result.errors).toEqual('Unsupported schema for declaration: ./random.json')
+  })
+
+  it('rejects missing $schema', async () => {
+    const input = {
+      name: 'test',
+      authentication: false,
+      arguments: { myNumber: 'number' },
+      returns: {}
+    }
+
+    const result: any = await transform(input)
+    expect(result.errors).toEqual("Schema files must contain $schema that point to it's type")
   })
 
   it('rejects invalid type', async () => {
@@ -75,7 +85,7 @@ describe('Generator', () => {
       returns: {}
     }
 
-    const result: any = await generator(input)
+    const result: any = await transform(input)
     expect(result.errors).toHaveLength(12)
     expect(result.errors[0]).toEqual({
       dataPath: ".arguments['invalidProp']",
