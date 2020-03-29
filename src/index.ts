@@ -1,1 +1,1 @@
-export * from 'generate/Generator'
+export * from 'generate/Transform'

@@ -1,13 +1,13 @@
 import { ValueType, ObjectType } from 'yaschva'
 import { map } from 'microtil'
-import { validate, isValidationError } from './jsonSchema'
+import { validate, isValidationError } from './JsonSchema'
 import {
   CrudContract,
   HttpMethods,
   SearchTypes,
   CrudAuthAll,
   CrudAuthSome, OutputSuccess, Output
-} from './GenerateTypes'
+} from './Types'
 const baseSchemaLocation = `${__dirname}/../../src/schema/`
 
 const contractOptions = (input: ValueType | ValueType[]): ValueType[] => {
@@ -33,6 +33,7 @@ const searchToType =
 
     return search
   }
+
 const isCrudAuth = (tbd: any): tbd is CrudAuthAll => tbd.post !== undefined
 const isCrudAuthSome = (tbd: any): tbd is CrudAuthSome => tbd.modify !== undefined
 

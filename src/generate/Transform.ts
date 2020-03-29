@@ -1,8 +1,8 @@
-import { validate, isValidationError } from './jsonSchema'
-import { Contract, Output } from './GenerateTypes'
+import { validate, isValidationError } from './JsonSchema'
+import { Contract, Output } from './Types'
 import { generate } from './Crud'
 
-export const generator = async (contract: string | object): Promise<Output> => {
+export const transform = async (contract: string | object): Promise<Output> => {
   const baseSchemaLocation = `${__dirname}/../../src/schema/`
 
   const data: any = typeof contract === 'string' ? require(contract) : contract

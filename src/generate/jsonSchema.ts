@@ -1,16 +1,11 @@
 import Ajv, { ErrorObject } from 'ajv'
-import fetch from 'node-fetch'
 export const jsonValidatorInit = () => {
   const baseSchemaLocation = `${__dirname}/../../src/schema/`
   return new Ajv({
-    loadSchema: async (uri: any) => {
-      if (typeof uri === 'string' && uri.startsWith('node_modules')) {
-        return require(uri.replace('node_modules/', ''))
-      }
-      return typeof uri === 'string' && uri.startsWith('http')
-        ? fetch(uri).then(x => x.json())
-        : new Promise<Record<string, any>>(resolve => resolve(require(baseSchemaLocation + uri)))
-    }
+    loadSchema: async (uri: any) => typeof uri === 'string' && uri.startsWith('node_modules')
+      ? require(uri.replace('node_modules/', ''))
+      : new Promise<Record<string, any>>(resolve => resolve(require(baseSchemaLocation + uri)))
+
   })
 }
 
