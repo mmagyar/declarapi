@@ -1,3 +1,4 @@
+import Ajv from 'ajv'
 import { ObjectType } from 'yaschva'
 
 export type HttpMethods = 'get' | 'post' | 'put' | 'patch' | 'delete';
@@ -33,3 +34,18 @@ export type CrudContract = {
   description?: string;
   preferredImplementation?: {type: 'elasticsearch'; index: string};
 };
+
+export type OutputSuccess = {
+  name: string;
+  authentication: boolean | string[];
+  idFieldName: string;
+  method: HttpMethods;
+  arguments: ObjectType;
+  returns: ObjectType;
+  preferredImplementation?: {type: 'elasticsearch'; index: string;};
+  search?: SearchTypes;
+};
+
+export type Output =
+  | {type: 'result'; key: string; results: OutputSuccess[]; errors?: void;}
+  | {type: 'error'; key?: void; errors: Ajv.ErrorObject[] | string; results?: void;};
