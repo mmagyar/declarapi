@@ -16,7 +16,6 @@ describe('Generator', () => {
     }
 
     const result: any = await generator(input)
-    console.log(JSON.stringify(result, undefined, 2))
     expect(result.errors).toBeUndefined()
     expect(result).toStrictEqual({
       type: 'result',
