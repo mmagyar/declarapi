@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": {
+      "description": "name of the method",
+      "type": "string"
+    },
+    "methods": {
+      "type": "object",
+      "description": "Specify which methods to generate, all methods are generated unless explicitly turned off",
+      "properties": {
+        "get": { "type": "boolean" },
+        "post": { "type": "boolean" },
+        "put": { "type": "boolean" },
+        "patch": { "type": "boolean" },
+        "delete": { "type": "boolean" }
+      }
+    },
+    "authentication": {
+      "description": "If the request needs any kind of authentication. False means that it is public, true means that any logged in user can use it, or the needed roles can be listed in an array",
+      "oneOf": [
+        { "type": "boolean" },
+        { "type": ["array"], "items": { "type": "string" } },
+        {
+          "type": "object",
+          "description": "put and patch will have the same permission",
+          "properties": {
+            "get": {
+              "type": ["boolean", "array"],
+              "items": { "type": "string" }
+            },
+            "post": {
+              "type": ["boolean", "array"],
+              "items": { "type": "string" }
+            },
+            "put": {
+              "type": ["boolean", "array"],
+              "items": { "type": "string" }
+            },
+            "delete": {
+              "type": ["boolean", "array"],
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false,
+          "required": ["get", "post", "put", "delete"]
+        },
+        {
+          "type": "object",
+          "description": "delete is optional, will fall back to `modify` if omitted",
+          "properties": {
+            "get": {
+              "type": ["boolean", "array"],
+              "items": { "type": "string" }
+            },
+            "modify": {
+              "type": ["boolean", "array"],
+              "items": { "type": "string" }
+            },
+            "delete": {
+              "type": ["boolean", "array"],
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false,
+          "required": ["get", "modify"]
+        }
+      ]
+    },
+    "dataType": {
+      "description": "type definition of the arguments",
+      "$ref": "../../node_modules/yaschva/typeSchema.json"
+
+    },
+    "idFieldName":{"type":"string"},
+    "search": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["textSearch", "full", "idOnly"],
+          "description": "textSearch means that a whole text search is provided, along with filtering by id, full means that every field can be optionally passed in, idOnly means that only the id parameter can be provided. If no value is provided, the default is `textSearch`"
+        },
+        {
+          "$ref": "../../node_modules/yaschva/typeSchema.json",
+          "description": "custom search schema can be given here"
+        }
+      ]
+    },
+    "description": { "type": "string" },
+    "preferredImplementation": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "type": { "type": "string", "enum": ["restApi"] },
+            "url": { "type": "string" },
+            "method": {
+              "type": "string",
+              "enum": ["post", "put", "patch", "get", "delete"]
+            }
+          },
+          "required": ["type", "url", "method"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": { "type": "string", "enum": ["database"] },
+            "table": { "type": "string" },
+            "method": {
+              "type": "string",
+              "enum": ["get", "insert", "update", "upsert", "delete"]
+            }
+          },
+          "required": ["type", "table", "method"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": { "type": "string", "enum": ["elasticsearch"] },
+            "index": { "type": "string" }
+          },
+          "required": ["type", "index"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": ["name", "authentication", "dataType"],
+  "additionalProperties": false
+}

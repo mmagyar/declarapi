@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": {
+      "description": "name of the method",
+      "type": "string"
+    },
+    "authentication": {
+      "describe": "If the request needs any kind of authentication. False means that it is public, true means that any logged in user can use it, or the needed roles can be listed in an array",
+      "type": ["boolean", "array"],
+      "items": { "type": "string" }
+    },
+    "idFieldName":{
+      "description": "name of the id field",
+      "type":"string"
+    },
+    "arguments": {
+      "description": "type definition of the arguments",
+      "$ref": "../../node_modules/yaschva/typeSchema.json"
+    },
+    "returns": {
+      "description": "type definition of the returned value",
+      "$ref": "../../node_modules/yaschva/typeSchema.json"
+    },
+    "type": {
+      "description": "Optional, defaults to get",
+      "type": "string",
+      "enum": ["get", "post", "put", "patch", "delete"]
+    },
+    "description": { "type": "string" },
+    "fromDataSource": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "type": { "type": "string" },
+            "arguments": { "type": "string", "enum": ["pass", "transform"] },
+            "result": { "type": "string", "enum": ["pass", "transform"] }
+          },
+          "required": ["type", "arguments", "result"]
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "type": { "type": "string", "enum": ["restApi"] },
+                "url": { "type": "string" },
+                "method": { "type": "string", "enum": ["post", "put", "patch", "get", "delete"] }
+              },
+              "required": ["type", "url", "method"],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "type": { "type": "string", "enum": ["database"] },
+                "table": { "type": "string" },
+                "method": {
+                  "type": "string",
+                  "enum": ["get", "insert", "update", "upsert", "delete"]
+                }
+              },
+              "required": ["type", "table", "method"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "required": ["name", "authentication", "arguments", "returns"],
+  "additionalProperties": false
+}
