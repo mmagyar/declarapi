@@ -1,0 +1,367 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform crud generates a custom arguments parameters for get  1`] = `
+Object {
+  "key": "test",
+  "results": Array [
+    Object {
+      "arguments": Object {
+        "customSearchField": "string",
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "get",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "$array": Object {
+          "id": "string",
+          "myNumber": "number",
+          "myString": "string",
+        },
+      },
+      "search": Object {
+        "customSearchField": "string",
+      },
+    },
+    Object {
+      "arguments": Object {
+        "id": Array [
+          "string",
+          "?",
+        ],
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "post",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "search": Object {
+        "customSearchField": "string",
+      },
+    },
+    Object {
+      "arguments": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "put",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "search": Object {
+        "customSearchField": "string",
+      },
+    },
+    Object {
+      "arguments": Object {
+        "id": "string",
+        "myNumber": Array [
+          "number",
+          "?",
+        ],
+        "myString": Array [
+          "string",
+          "?",
+        ],
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "patch",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "search": Object {
+        "customSearchField": "string",
+      },
+    },
+    Object {
+      "arguments": Object {
+        "id": Array [
+          "string",
+          Object {
+            "$array": "string",
+          },
+        ],
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "delete",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "$array": Object {
+          "id": "string",
+          "myNumber": "number",
+          "myString": "string",
+        },
+      },
+      "search": Object {
+        "customSearchField": "string",
+      },
+    },
+  ],
+  "type": "result",
+}
+`;
+
+exports[`transform crud generates a full search option 1`] = `
+Object {
+  "key": "test",
+  "results": Array [
+    Object {
+      "arguments": Object {
+        "id": Array [
+          "string",
+          "?",
+        ],
+        "myNumber": Array [
+          "number",
+          "?",
+        ],
+        "myString": Array [
+          "string",
+          "?",
+        ],
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "get",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "$array": Object {
+          "id": "string",
+          "myNumber": "number",
+          "myString": "string",
+        },
+      },
+      "search": "full",
+    },
+    Object {
+      "arguments": Object {
+        "id": Array [
+          "string",
+          "?",
+        ],
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "post",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "search": "full",
+    },
+    Object {
+      "arguments": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "put",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "search": "full",
+    },
+    Object {
+      "arguments": Object {
+        "id": "string",
+        "myNumber": Array [
+          "number",
+          "?",
+        ],
+        "myString": Array [
+          "string",
+          "?",
+        ],
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "patch",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "search": "full",
+    },
+    Object {
+      "arguments": Object {
+        "id": Array [
+          "string",
+          Object {
+            "$array": "string",
+          },
+        ],
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "delete",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "$array": Object {
+          "id": "string",
+          "myNumber": "number",
+          "myString": "string",
+        },
+      },
+      "search": "full",
+    },
+  ],
+  "type": "result",
+}
+`;
+
+exports[`transform crud generates an id only get 1`] = `
+Object {
+  "key": "test",
+  "results": Array [
+    Object {
+      "arguments": Object {
+        "id": Array [
+          "string",
+          Object {
+            "$array": "string",
+          },
+          "?",
+        ],
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "get",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "$array": Object {
+          "id": "string",
+          "myNumber": "number",
+          "myString": "string",
+        },
+      },
+      "search": "idOnly",
+    },
+    Object {
+      "arguments": Object {
+        "id": Array [
+          "string",
+          "?",
+        ],
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "post",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "search": "idOnly",
+    },
+    Object {
+      "arguments": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "put",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "search": "idOnly",
+    },
+    Object {
+      "arguments": Object {
+        "id": "string",
+        "myNumber": Array [
+          "number",
+          "?",
+        ],
+        "myString": Array [
+          "string",
+          "?",
+        ],
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "patch",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "id": "string",
+        "myNumber": "number",
+        "myString": "string",
+      },
+      "search": "idOnly",
+    },
+    Object {
+      "arguments": Object {
+        "id": Array [
+          "string",
+          Object {
+            "$array": "string",
+          },
+        ],
+      },
+      "authentication": false,
+      "idFieldName": "id",
+      "method": "delete",
+      "name": "test",
+      "preferredImplementation": undefined,
+      "returns": Object {
+        "$array": Object {
+          "id": "string",
+          "myNumber": "number",
+          "myString": "string",
+        },
+      },
+      "search": "idOnly",
+    },
+  ],
+  "type": "result",
+}
+`;

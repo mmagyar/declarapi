@@ -47,5 +47,7 @@ export type OutputSuccess = {
 };
 
 export type Output =
-  | {type: 'result'; key: string; results: OutputSuccess[]; errors?: void;}
-  | {type: 'error'; key?: void; errors: Ajv.ErrorObject[] | string; results?: void;};
+  | {type: 'result'; key: string; results: OutputSuccess[]; errors?: undefined;}
+  | {type: 'error'; key?: undefined; errors: Ajv.ErrorObject[] | string; results?: undefined;};
+
+export const baseSchemaLocation = `${__dirname}/../../src/schema/`
