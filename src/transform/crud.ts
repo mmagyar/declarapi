@@ -1,14 +1,13 @@
 import { ValueType, ObjectType } from 'yaschva'
 import { map } from 'microtil'
-import { validate, isValidationError } from './JsonSchema'
+import { validate, isValidationError } from './jsonSchema'
 import {
   CrudContract,
   HttpMethods,
   SearchTypes,
   CrudAuthAll,
-  CrudAuthSome, OutputSuccess, Output
-} from './Types'
-const baseSchemaLocation = `${__dirname}/../../src/schema/`
+  CrudAuthSome, OutputSuccess, Output, baseSchemaLocation
+} from './types'
 
 const contractOptions = (input: ValueType | ValueType[]): ValueType[] => {
   if (Array.isArray(input)) {
@@ -37,13 +36,14 @@ const searchToType =
 const isCrudAuth = (tbd: any): tbd is CrudAuthAll => tbd.post !== undefined
 const isCrudAuthSome = (tbd: any): tbd is CrudAuthSome => tbd.modify !== undefined
 
-export const generate = async (data:any): Promise<Output> => {
+export const transform = async (data:CrudContract | any): Promise<Output> => {
   const valid = await validate(require(`${baseSchemaLocation}crudContractSchema.json`), data)
   if (isValidationError(valid)) return valid
 
   const contractData: CrudContract = data
 
   const au = contractData.authentication
+
   const auth = {
     get: isCrudAuth(au) ? au.get : isCrudAuthSome(au) ? au.get : au,
     post: isCrudAuth(au) ? au.post : isCrudAuthSome(au) ? au.modify : au,
@@ -66,11 +66,13 @@ export const generate = async (data:any): Promise<Output> => {
   const idName = contractData.idFieldName || 'id'
 
   if (contractData.dataType[idName] === undefined) {
-    throw new Error(`Field with the name set for idFieldName:
-      ${idName} does not exist in the data declaration`)
+    return {
+      type: 'error',
+      errors: 'Field with the name set for idFieldName: ' + `${idName} does not exist in the data declaration`
+    }
   }
 
-  if (contractData.dataType[idName] !== 'string') { throw new Error('Type of id field must be string') }
+  if (contractData.dataType[idName] !== 'string') { return { type: 'error', errors: 'Type of id field must be string' } }
 
   const search = contractData.search || 'textSearch'
   const returnArray = { $array: contractData.dataType }

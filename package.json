@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.2.2",
+  "version": "0.2.5",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -24,7 +24,7 @@
     "standard:fix": "standardx --fix src/**/*.ts",
     "test:coverage": "npm run standard && jest --coverage",
     "test:watch": "jest --watch",
-    "test:dev": "npm run standard:fix && npm run test:coverage"
+    "test:dev": "npm run standard:fix && jest --coverage"
   },
   "standardx": {
     "env": [
@@ -44,15 +44,18 @@
   "author": "mmagyar.com",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^25.1.4",
-    "@typescript-eslint/eslint-plugin": "^2.25.0",
-    "@typescript-eslint/parser": "^2.25.0",
-    "jest": "^25.2.4",
+    "@types/jest": "^25.2.1",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
+    "jest": "^25.2.7",
     "standardx": "^5.0.0",
-    "ts-jest": "^25.2.1",
-    "ts-node": "^8.8.1",
+    "ts-jest": "^25.3.1",
+    "ts-node": "^8.8.2",
     "typescript": "^3.8.3",
-    "@types/node": "^13.9.5"
+    "@types/node": "^13.11.0"
+  },
+  "peerDependencies": {
+    "yaschva": "^1.2.7"
   },
   "dependencies": {
     "ajv": "^6.12.0",
