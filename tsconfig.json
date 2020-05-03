@@ -15,11 +15,9 @@
     "noEmitOnError": true,
     "noErrorTruncation": true,
     "resolveJsonModule": true,
-    "baseUrl": "./src",
     "rootDirs": [
       "./src"
     ],
-    "paths": {},
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [

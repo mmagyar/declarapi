@@ -93,3 +93,5 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
   ]
   return { type: 'result', key: contractData.name, results: output }
 }
+
+export default transform;

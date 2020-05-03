@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -17,14 +17,17 @@
     "type": "git",
     "url": "https://github.com/mmagyar/declarapi.git"
   },
+  "bin": "./dist/bin/generate.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && chmod +x ./dist/bin/generate.js",
     "test": "npm run standard && jest",
     "standard": "standardx src/**/*.ts",
     "standard:fix": "standardx --fix src/**/*.ts",
     "test:coverage": "npm run standard && jest --coverage",
     "test:watch": "jest --watch",
-    "test:dev": "npm run standard:fix && jest --coverage"
+    "test:dev": "npm run standard:fix && jest --coverage",
+    "declarapi": "./dist/bin/generate.js",
+    "generate": "npm run declarapi"
   },
   "standardx": {
     "env": [
@@ -58,7 +61,9 @@
     "yaschva": "^1.2.7"
   },
   "dependencies": {
+    "@types/commander": "^2.12.2",
     "ajv": "^6.12.0",
+    "commander": "^5.1.0",
     "microtil": "^1.1.3",
     "yaschva": "^1.2.7"
   }

@@ -13,3 +13,5 @@ export const transform = async (contract: CrudContract | Contract|string | objec
   }
   return { type: 'error', errors: `Unsupported schema for declaration: ${data.$schema}` }
 }
+
+export default transform
