@@ -21,4 +21,4 @@ export const transform = async (data:Contract | any): Promise<Output> => {
   }
 }
 
-export default transform;
+export default transform

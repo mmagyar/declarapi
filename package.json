@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -20,14 +20,14 @@
   "bin": "./dist/bin/generate.js",
   "scripts": {
     "build": "tsc && chmod +x ./dist/bin/generate.js",
+    "watch": "tsc --watch",
     "test": "npm run standard && jest",
     "standard": "standardx src/**/*.ts",
     "standard:fix": "standardx --fix src/**/*.ts",
     "test:coverage": "npm run standard && jest --coverage",
     "test:watch": "jest --watch",
     "test:dev": "npm run standard:fix && jest --coverage",
-    "declarapi": "./dist/bin/generate.js",
-    "generate": "npm run declarapi"
+    "generate": "node ./dist/bin/generate.js"
   },
   "standardx": {
     "env": [
