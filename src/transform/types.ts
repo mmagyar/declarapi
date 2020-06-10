@@ -1,7 +1,8 @@
 import Ajv from 'ajv'
 import { ObjectType } from 'yaschva'
+import { Elastic } from '../DataDriverTypes'
+import { HttpMethods, SearchTypes } from '../globalTypes'
 
-export type HttpMethods = 'get' | 'post' | 'put' | 'patch' | 'delete';
 export type Contract = {
   name: string;
   idFieldName?: string;
@@ -12,7 +13,6 @@ export type Contract = {
   description?: string;
 };
 
-export type SearchTypes = 'textSearch' | 'full' | 'idOnly' | ObjectType;
 export type CrudAuthAll = {
   get: string[] | boolean;
   put: string[] | boolean;
@@ -42,7 +42,7 @@ export type OutputSuccess = {
   method: HttpMethods;
   arguments: ObjectType;
   returns: ObjectType;
-  preferredImplementation?: {type: 'elasticsearch'; index: string;};
+  preferredImplementation?: Elastic;
   search?: SearchTypes;
 };
 
