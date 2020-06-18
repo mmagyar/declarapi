@@ -1,13 +1,6 @@
 import { OutputSuccess } from '../transform/types'
-import { validationToType } from 'yaschva'
 import elastic, { ElasticInputType } from './elastic'
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-const name = (x: OutputSuccess): string => `${x.name}${capitalize(x.method)}`
-const typeDef = (contracts: OutputSuccess[]): string =>
-  contracts.map(x =>
-    `/** ${x.name} types for ${x.method} method **/
-export type ${name(x)}Argument = ${validationToType(x.arguments)}
-export type ${name(x)}Returns = ${validationToType(x.returns)}\n`).join('\n')
+import { name, typeDef } from './common'
 const contractType = `
 import { Validation } from "yaschva"
 
