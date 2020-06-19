@@ -26,9 +26,10 @@
     "standard": "standardx src/**/*.ts",
     "standard:fix": "standardx --fix src/**/*.ts",
     "standard:fix2": "standardx --fix src/**/example-server.ts",
-    "test:coverage": "npm run standard && jest --coverage=true",
+    "test:coverage": "npm run standard && jest --coverage=true  --no-cache",
     "test:watch": "jest --watch",
     "test:dev": "npm run standard:fix && jest --coverage",
+    "test:clearCache": "jest --clearCache",
     "generate": "node ./dist/bin/generate.js",
     "generate:dev": "npm run build && npm run generate"
   },
