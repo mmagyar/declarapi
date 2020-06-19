@@ -2,8 +2,8 @@ import { Output, CrudContract, Contract } from './types'
 import { transform as crudTransform } from './crud'
 import { transform as singleTransform } from './single'
 
-export const transform = async (contract: CrudContract | Contract|string | object): Promise<Output> => {
-  const data: any = typeof contract === 'string' ? require(contract) : contract
+export const transform = async (contract: CrudContract | Contract | object): Promise<Output> => {
+  const data: any = contract
   if (!data.$schema) { return { type: 'error', errors: "Schema files must contain $schema that point to it's type" } }
 
   if (data.$schema.endsWith('singleContractSchema.json')) {
