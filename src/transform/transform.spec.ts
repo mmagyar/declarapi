@@ -2,7 +2,7 @@ import { transform } from './transform'
 
 describe('Generator', () => {
   it('generates basic example without error', async () => {
-    const result = await transform('./example.json')
+    const result = await transform(require('./example.json'))
     expect(result.errors).toBeUndefined()
     expect(result).toHaveProperty('type', 'result')
   })

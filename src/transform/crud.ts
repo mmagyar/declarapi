@@ -3,11 +3,14 @@ import { map } from 'microtil'
 import { validate, isValidationError } from './jsonSchema'
 import {
   CrudContract,
-  HttpMethods,
-  SearchTypes,
+
   CrudAuthAll,
   CrudAuthSome, OutputSuccess, Output, baseSchemaLocation
 } from './types'
+import {
+  HttpMethods,
+  SearchTypes
+} from '../globalTypes'
 
 const contractOptions = (input: ValueType | ValueType[]): ValueType[] => {
   if (Array.isArray(input)) {
