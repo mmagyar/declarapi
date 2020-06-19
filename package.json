@@ -22,6 +22,7 @@
     "build": "tsc && chmod +x ./dist/bin/generate.js",
     "watch": "tsc --watch",
     "test": "npm run standard && jest",
+    "jest" : "jest",
     "standard": "standardx src/**/*.ts",
     "standard:fix": "standardx --fix src/**/*.ts",
     "standard:fix2": "standardx --fix src/**/example-server.ts",

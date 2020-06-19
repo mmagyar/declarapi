@@ -29,48 +29,17 @@ export const server = (contracts: OutputSuccess[]): string => {
   const valueDef = contracts.map(x => {
     let handle = 'undefined'
     if (x.preferredImplementation && x.preferredImplementation.type === 'elasticsearch') {
-      let elin:ElasticInputType
-      if (x.method === 'get') {
-        elin = {
-          idField: x.idFieldName,
-          method: x.method,
-          search: x.search || 'full'
-        }
-      } else {
-        elin = {
-          idField: x.idFieldName,
-          method: x.method
-        }
-      }
+      const elin:ElasticInputType = x.method === 'get'
+        ? { idField: x.idFieldName, method: x.method, search: x.search || 'idOnly' }
+        : { idField: x.idFieldName, method: x.method }
 
-      elastic(x.preferredImplementation, elin)
-      const { index } = x.preferredImplementation
-      const idField = x.idFieldName
-      switch (x.method) {
-        case 'get': {
-          if (x.search === 'textSearch') { handle = `input => get("${index}", input && input.${idField}, input && input.search)` } else if (x.search === 'idOnly') { handle = `input => get("${index}", input && input.${idField})` } else if (x.search === 'full') { throw new Error('Parametric get not implemented yet') } else if (x.search) { throw new Error('Custom search is not supported with automatic elasticsearch methods') }
-          break
-        }
-        case 'post':
-          handle = `input => post("${index}", input, "${idField}")`
-          break
-        case 'patch':
-          handle = `input => patch("${index}", input, input.${idField})`
-          break
-        case 'put':
-          handle = `input => patch("${index}", input, input.${idField})`
-          break
-        case 'delete':
-          handle = `input => del("${index}", input.${idField})`
-          break
-        default: // noop
-      }
+      handle = elastic(x.preferredImplementation, elin)
     }
 
     return `${name(x)}: {
           name: "${x.name}",
           authentication: ${JSON.stringify(x.authentication, undefined, 2)},
-          type: "${x.method || 'get'}",
+          type: "${x.method}",
           handle: ${handle},
           arguments: ${JSON.stringify(x.arguments)} ,
           returns: ${JSON.stringify(x.returns)}}`

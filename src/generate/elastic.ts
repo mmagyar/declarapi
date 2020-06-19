@@ -20,13 +20,12 @@ export const elastic = (driver: Elastic, input: ElasticInputType):string => {
       } else if (input.search === 'full') {
         throw new Error('Parametric get not implemented yet')
       }
-      throw new Error(`unsupported automatic elasticsearch methods: ${input.search}`)
+      throw new Error(`Unsupported automatic elasticsearch methods: ${JSON.stringify(input.search)}`)
     }
     case 'post': return `input => post("${index}", input, "${idField}")`
     case 'patch': return `input => patch("${index}", input, input.${idField})`
     case 'put': return `input => patch("${index}", input, input.${idField})`
     case 'delete': return `input => del("${index}", input.${idField})`
-    default: throw new Error(`unsupported method: ${input}`)
   }
 }
 
