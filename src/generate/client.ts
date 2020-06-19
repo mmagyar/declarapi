@@ -2,7 +2,7 @@ import { OutputSuccess } from '../transform/types'
 import { typeDef, name } from './common'
 import { Validation } from 'yaschva'
 
-const getTokenDefaultPath = "../getToken"
+const getTokenDefaultPath = '../getToken'
 const containsOptional = (input: Validation) =>
   (Array.isArray(input) && input.some(y => y === '?')) ||
    input === '?'
@@ -10,7 +10,7 @@ const containsOptional = (input: Validation) =>
 const allOptional = (input: Validation) =>
   Object.values(input).every(containsOptional)
 
-export const client = (input: OutputSuccess[] , getTokenPath?:string): string => {
+export const client = (input: OutputSuccess[], getTokenPath?:string): string => {
   const functions = input.map(x => {
     const url =
       x.method === 'get' ? `\`/api/${x.name}?\${serialize(input || {})}\`` : `"/api/${x.name}"`
@@ -37,7 +37,7 @@ export const client = (input: OutputSuccess[] , getTokenPath?:string): string =>
   const contractDescription = input.map(x => `${name(x)}: {
     name: "${x.name}",
     authentication: ${JSON.stringify(x.authentication, undefined, 2)},
-    type: "${x.method || 'get'}",
+    type: "${x.method}",
     arguments: ${JSON.stringify(x.arguments)},
     returns: ${JSON.stringify(x.returns)}}`).join(',')
 

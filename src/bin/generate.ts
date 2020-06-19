@@ -24,14 +24,11 @@ const cliProgram = async (input:string, output:string, tokenPath?: string) => {
 
   const result = server(out.results)
   const serverOutPath = path.join(outPath, `${outBasename}-server.ts`)
-  console.log(serverOutPath)
   const serverWrite = fs.promises.writeFile(serverOutPath, result, { encoding: 'utf8' })
-console.log(tokenPath)
   const clientResult = client(out.results, tokenPath)
   const clientOutPath = path.join(outPath, `${outBasename}-client.ts`)
   const clientWrite = fs.promises.writeFile(clientOutPath, clientResult, { encoding: 'utf8' })
   await Promise.all([serverWrite, clientWrite])
-  //console.log(result)
 }
 
 const program = new Command()
