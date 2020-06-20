@@ -1,0 +1,7 @@
+{
+  "extensions": [
+		"orta.vscode-jest",
+		"eg2.vscode-npm-script",
+		"chenxsan.vscode-standardjs"
+	]
+}

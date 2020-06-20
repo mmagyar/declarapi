@@ -1,5 +1,7 @@
 {
   "cSpell.words": [
     "declarapi"
-  ]
+  ],
+  "standard.engine": "standardx",
+  "standard.usePackageJson": true
 }
