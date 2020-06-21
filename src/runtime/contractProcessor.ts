@@ -1,7 +1,6 @@
-
 import { validate, ValidationResult } from 'yaschva'
 import { map } from 'microtil'
-import { ContractType } from '../globalTypes'
+import { ContractType, HttpMethods } from '../globalTypes'
 export type ContractResultError = {
   errorType: string; data: any; code: number; errors: ValidationResult|string[];};
 export type ContractResultSuccess = {result: object}
@@ -12,14 +11,16 @@ export type ProcessedContracts = {
   [key: string]: {
     name: string;
     handle: (input: any) => Promise<ContractResult>;
-    method: 'get' | 'post' | 'put' | 'patch' | 'delete';
+    method: HttpMethods;
     authentication: boolean | string[];
   };
 };
 
-export const processContracts = (contracts: ContractType<any, any>[]): ProcessedContracts => {
-  const validateOutput = true
-  return map(contracts.reduce((p, c) => ({ ...p, ...c }), {}), (value: ContractType<any, any>) => {
+export const processContracts = (
+  contracts: { [key:string]: ContractType<any, any>},
+  validateOutput:boolean = true
+): ProcessedContracts => {
+  return map(contracts, (value: ContractType<any, any>) => {
     let authentication: any = false
     if (typeof value.authentication === 'boolean' || Array.isArray(value.authentication)) {
       authentication = value.authentication
