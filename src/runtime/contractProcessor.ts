@@ -1,12 +1,17 @@
 import { validate, ValidationResult } from 'yaschva'
 import { map } from 'microtil'
 import { ContractType, HttpMethods } from '../globalTypes'
+
 export type ContractResultError = {
-  errorType: string; data: any; code: number; errors: ValidationResult|string[];};
+  errorType: string; data: any; code: number; errors: ValidationResult|string[];
+};
+
 export type ContractResultSuccess = {result: object}
 export type ContractResult = ContractResultError | ContractResultSuccess;
+
 export const isContractInError = (tbd: any): tbd is ContractResultError =>
   Boolean(tbd.errors)
+
 export type ProcessedContracts = {
   [key: string]: {
     name: string;

@@ -1,9 +1,7 @@
-import {
-  ContractResult, ProcessedContracts, isContractInError, processContracts
-} from './contractProcessor'
+import { ContractResult, ProcessedContracts, isContractInError } from './contractProcessor'
 import { ValidationResult } from 'yaschva'
 import { map } from 'microtil'
-import { ContractType, HttpMethods } from '../globalTypes'
+import { HttpMethods } from '../globalTypes'
 
 export type ErrorResponse ={
   errorType: string; data: any; code: number; errors: ValidationResult| string[];}
@@ -29,9 +27,8 @@ export type Expressable = {
   method: HttpMethods;
   handler: (req:reqType, res: resType)=> void;
 }
-export default (input: {[key:string]: ContractType<any, any>}):Expressable[] => {
-  const c: ProcessedContracts = processContracts(input)
-  return Object.values(c).map(x => {
+export default (input:ProcessedContracts):Expressable[] =>
+  Object.values(input).map(x => {
     return {
       route: `/api/${x.name}/:id?`,
       method: x.method,
@@ -104,4 +101,3 @@ export default (input: {[key:string]: ContractType<any, any>}):Expressable[] => 
       }
     }
   })
-}
