@@ -1,1 +1,2 @@
 
+export { ContractType } from './globalTypes'
