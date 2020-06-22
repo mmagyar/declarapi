@@ -28,7 +28,7 @@ export const server = (contracts: OutputSuccess[]): string => {
 
   const elasticMethods = [
     ...new Set(contracts.map(x => {
-      if (x?.preferredImplementation?.type !== 'elasticsearch') return undefined
+      if (x.preferredImplementation?.type !== 'elasticsearch') return undefined
       if (x.method === 'put') return 'patch'
       if (x.method === 'delete') return 'del'
       return x.method

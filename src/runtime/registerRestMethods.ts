@@ -1,17 +1,18 @@
-import { ContractResult, ProcessedContracts, isContractInError } from './contractProcessor'
+import { ContractResult, ContractWithValidatedHandler, isContractInError } from './contractValidation'
 import { ValidationResult } from 'yaschva'
 import { map } from 'microtil'
 import { HttpMethods } from '../globalTypes'
 
 export type ErrorResponse ={
   errorType: string; data: any; code: number; errors: ValidationResult| string[];}
-const shouldReturnSingle = (req: any): boolean => req && req.params && req.params.id
+
+const shouldReturnSingle = (req: any): boolean => req.params?.id || req.query?.id
 
 export type reqType = {
   /** Must contain the parameters for get request */
-  query: object & {id?:string},
+  query: { [key: string]: any} & {id?:string},
   /** Must contain the parameters for any other type of request */
-  body: object & {id?:string},
+  body: { [key: string]: any} & {id?:string},
   /** Route parameters */
   params: {id?:string},
   /** User must be populated based on authenticatin, JWT is recommended */
@@ -27,16 +28,16 @@ export type Expressable = {
   method: HttpMethods;
   handler: (req:reqType, res: resType)=> void;
 }
-export default (input:ProcessedContracts):Expressable[] =>
+export const registerRestMethods = (input:ContractWithValidatedHandler):Expressable[] =>
   Object.values(input).map(x => {
     return {
       route: `/api/${x.name}/:id?`,
       method: x.method,
       handler: async (req:reqType, res:resType) => {
         const { authentication } = x
-        console.log(req.user)
+
         if (authentication && Array.isArray(authentication)) {
-          const perm: string[] = req?.user?.permissions || []
+          const perm: string[] = req.user?.permissions || []
 
           const hasPerm = perm.some(y => authentication.some(z => z === y))
           if (!hasPerm) {
@@ -87,17 +88,17 @@ export default (input:ProcessedContracts):Expressable[] =>
           }
           return resultSend(statusCode, result.result)
         } catch (e) {
-          const eType = typeof e
-          const data =
-          Array.isArray(e) || eType === 'string' || eType === 'number' ? e : map(e, y => y)
-          const code = (e && e.meta && e.meta.statusCode) || e.code || 500
+          const data = e && map(e, y => y)
+          const code = e?.code || 500
           return error(code >= 400 && code < 600 ? code : 500, {
             errorType: 'exception',
             code,
             data,
-            errors: [e.message]
+            errors: [e?.message]
           })
         }
       }
     }
   })
+
+export default registerRestMethods
