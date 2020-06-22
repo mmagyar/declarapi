@@ -5,3 +5,15 @@
 
 # declarapi
 Declarative API generation.
+
+
+## Features
+- Generate full CRUD REST API based on a single schema definition
+- Automatically validate all requests
+- Automatically generate code to communicate with the database
+- - Elasticsearch (in-progress)
+- - Redis (TODO)
+- - SQL (TODO)
+- Generate helper functions and type definitions for the client
+- TODO: Generate automatic unit tests for the APIs
+- TODO: Example applications

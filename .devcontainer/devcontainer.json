@@ -1,7 +1,8 @@
 {
   "extensions": [
-		"orta.vscode-jest",
-		"eg2.vscode-npm-script",
-		"chenxsan.vscode-standardjs"
-	]
+    "orta.vscode-jest",
+    "eg2.vscode-npm-script",
+    "chenxsan.vscode-standardjs",
+    "tabnine.tabnine-vscode"
+  ]
 }

@@ -3,5 +3,7 @@
     "declarapi"
   ],
   "standard.engine": "standardx",
-  "standard.usePackageJson": true
+  "standard.usePackageJson": true,
+  "jest.showCoverageOnLoad": false,
+  "standard.autoFixOnSave": true
 }
