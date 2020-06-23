@@ -30,7 +30,7 @@ export const init = () => {
 export const info = () => client().info()
 
 export const defaultSize = 1000
-export const get = async <T extends object>(
+export const elasticGet = async <T extends object>(
   indexName: string, id?: string | string[] | null, search?: string | null
 ): Promise<T[]> => {
   const index = indexName.toLocaleLowerCase()
@@ -47,7 +47,7 @@ export const get = async <T extends object>(
   const all = await client().search({ index, size: defaultSize })
   return new Array(all.body.hits.hits).flatMap((y: any) => y.map((x: any) => x._source))
 }
-export const post = async <T extends {[key: string]: any}>(index: string, body: T, idFieldName: string):
+export const elasticPost = async <T extends {[key: string]: any}>(index: string, body: T, idFieldName: string):
 Promise<T & any> => {
   const id = (body)[idFieldName] || uuid()
   const newBody: any = { ...body }
@@ -62,15 +62,15 @@ Promise<T & any> => {
   return newBody
 }
 
-export const del = async (index: string, id: string|string[]): Promise<any> => {
-  if (Array.isArray(id)) return Promise.all(id.map(x => del(index, x)))
-  const result = await get(index, id)
+export const elasticDel = async (index: string, id: string|string[]): Promise<any> => {
+  if (Array.isArray(id)) return Promise.all(id.map(x => elasticDel(index, x)))
+  const result = await elasticGet(index, id)
   await client().delete(
     { index: index.toLocaleLowerCase(), id, refresh: 'wait_for' })
   return result
 }
 
-export const patch = async <T extends object, K extends object>(index: string, body: T, id: string
+export const elasticPatch = async <T extends object, K extends object>(index: string, body: T, id: string
 ): Promise<K> => {
   await client().update(
     {
