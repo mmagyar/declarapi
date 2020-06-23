@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -88,10 +88,13 @@
     "yaschva": "^1.2.12"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^7.8.0",
     "@types/commander": "^2.12.2",
+    "@types/uuid": "^8.0.0",
     "ajv": "^6.12.2",
     "commander": "^5.1.0",
     "microtil": "^1.1.4",
+    "uuid": "^8.1.0",
     "yaschva": "^1.2.12"
   }
 }
