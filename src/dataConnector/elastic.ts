@@ -7,7 +7,7 @@ export const destroyClient = () => {
   clientInstance = undefined
 }
 export const init = () => {
-  const node = process.env.ELASTIC_ADDRESS
+  const node = process.env.ELASTIC_HOST
   const username = process.env.ELASTIC_USER_NAME
   const password = process.env.ELASTIC_PASSWORD
   const apiKey = process.env.ELASTIC_API_KEY
