@@ -27,6 +27,7 @@ export type CrudAuthSome = {
 };
 export type CrudContract = {
   name: string;
+  methods?: { get?:boolean, post?:boolean, put?: boolean, patch?:boolean, delete?:boolean},
   authentication: string[] | boolean | CrudAuthAll | CrudAuthSome;
   idFieldName?: string;
   dataType: ObjectType;
