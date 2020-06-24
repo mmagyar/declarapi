@@ -77,23 +77,38 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
 
   if (contractData.dataType[idName] !== 'string') { return { type: 'error', errors: 'Type of id field must be string' } }
 
-  const search = contractData.search || 'textSearch'
   const returnArray = { $array: contractData.dataType }
-  const post = { ...contractData.dataType }
-  post[idName] = ['string', '?']
-  const patch: {[s: string]: ValueType | ValueType[];} =
-      { ...map(contractData.dataType, contractOptions) }
-  patch[idName] = 'string'
-  const deleteIds: {[s: string]: ValueType[];} = {}
-  deleteIds[idName] = ['string', { $array: 'string' }]
-  const output: OutputSuccess[] = [
-    createOutput('get',
-      searchToType(idName, search, contractData.dataType), returnArray),
-    createOutput('post', post),
-    createOutput('put'),
-    createOutput('patch', patch),
-    createOutput('delete', deleteIds, returnArray)
-  ]
+  const output: OutputSuccess[] = []
+
+  if (contractData.methods?.get !== false) {
+    const search = contractData.search || 'textSearch'
+    output.push(createOutput('get',
+      searchToType(idName, search, contractData.dataType), returnArray))
+  }
+
+  if (contractData.methods?.post !== false) {
+    const post = { ...contractData.dataType }
+    post[idName] = ['string', '?']
+    output.push(createOutput('post', post))
+  }
+
+  if (contractData.methods?.put !== false) {
+    output.push(createOutput('put'))
+  }
+
+  if (contractData.methods?.patch !== false) {
+    const patch: {[s: string]: ValueType | ValueType[];} =
+    { ...map(contractData.dataType, contractOptions) }
+    patch[idName] = 'string'
+    output.push(createOutput('patch', patch))
+  }
+
+  if (contractData.methods?.delete !== false) {
+    const deleteIds: {[s: string]: ValueType[];} = {}
+    deleteIds[idName] = ['string', { $array: 'string' }]
+    output.push(createOutput('delete', deleteIds, returnArray))
+  }
+
   return { type: 'result', key: contractData.name, results: output }
 }
 

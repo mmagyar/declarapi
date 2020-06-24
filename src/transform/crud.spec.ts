@@ -47,6 +47,31 @@ describe('transform crud', () => {
     expect(await transform(input)).toMatchSnapshot()
   })
 
+  it('does not generate methods that are disabled', async () => {
+    const input:CrudContract = {
+      name: 'test',
+      authentication: false,
+      methods: {
+        put: false,
+        patch: false
+      },
+      dataType: {
+        id: 'string',
+        myNumber: 'number',
+        myString: 'string'
+      },
+      search: 'idOnly'
+    }
+
+    const result = await transform(input)
+    expect(result.results).toHaveLength(3)
+    expect(result.results?.find(x => x.method === 'put')).toBeUndefined()
+    expect(result.results?.find(x => x.method === 'patch')).toBeUndefined()
+    expect(result.results?.find(x => x.method === 'get')).toBeTruthy()
+    expect(result.results?.find(x => x.method === 'post')).toBeTruthy()
+    expect(result.results?.find(x => x.method === 'delete')).toBeTruthy()
+  })
+
   it('generates a custom arguments parameters for get ', async () => {
     const input:CrudContract = {
       name: 'test',
