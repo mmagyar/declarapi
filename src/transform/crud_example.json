@@ -1,0 +1,14 @@
+{
+  "$schema": "../schema/crudContractSchema.json",
+  "name": "MyMethod",
+  "authentication": false,
+  "dataType": {
+    "id":"string",
+    "name": "string",
+    "multiType": ["string", { "orObjectWIthAString": "string" }],
+    "dogs": [{ "$enum": ["raining"] }, "number"],
+    "cats": { "$array": { "raining": "boolean" } },
+    "rain": { "$enum": ["cats", "dogs"] }
+  },
+  "description": "Validators for both the return data and the arguments should be generated from this json, along with typescript type definitions. the code that validates and checks for authentication should also be part of the generation."
+}

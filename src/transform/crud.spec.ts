@@ -47,7 +47,7 @@ describe('transform crud', () => {
     expect(await transform(input)).toMatchSnapshot()
   })
 
-  it('does not generate methods that are disabled', async () => {
+  it('does not generate methods that are disabled ver 1', async () => {
     const input:CrudContract = {
       name: 'test',
       authentication: false,
@@ -70,6 +70,32 @@ describe('transform crud', () => {
     expect(result.results?.find(x => x.method === 'get')).toBeTruthy()
     expect(result.results?.find(x => x.method === 'post')).toBeTruthy()
     expect(result.results?.find(x => x.method === 'delete')).toBeTruthy()
+  })
+
+  it('does not generate methods that are disabled ver 2', async () => {
+    const input:CrudContract = {
+      name: 'test',
+      authentication: false,
+      methods: {
+        get: false,
+        post: false,
+        delete: false
+      },
+      dataType: {
+        id: 'string',
+        myNumber: 'number',
+        myString: 'string'
+      },
+      search: 'idOnly'
+    }
+
+    const result = await transform(input)
+    expect(result.results).toHaveLength(2)
+    expect(result.results?.find(x => x.method === 'put')).toBeTruthy()
+    expect(result.results?.find(x => x.method === 'patch')).toBeTruthy()
+    expect(result.results?.find(x => x.method === 'get')).toBeUndefined()
+    expect(result.results?.find(x => x.method === 'post')).toBeUndefined()
+    expect(result.results?.find(x => x.method === 'delete')).toBeUndefined()
   })
 
   it('generates a custom arguments parameters for get ', async () => {
