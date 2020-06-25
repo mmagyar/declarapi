@@ -75,7 +75,13 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
     }
   }
 
-  if (contractData.dataType[idName] !== 'string') { return { type: 'error', errors: 'Type of id field must be string' } }
+  const idField: any = contractData.dataType?.[idName]
+  if (!(idField === 'string' || idField?.['$string'])) {
+    return {
+      type: 'error',
+      errors: 'Type of id field must be string'
+    }
+  }
 
   const returnArray = { $array: contractData.dataType }
   const output: OutputSuccess[] = []
@@ -88,7 +94,7 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
 
   if (contractData.methods?.post !== false) {
     const post = { ...contractData.dataType }
-    post[idName] = ['string', '?']
+    post[idName] = [idField, '?']
     output.push(createOutput('post', post))
   }
 

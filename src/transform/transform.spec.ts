@@ -2,14 +2,14 @@ import { transform } from './transform'
 
 describe('Generator', () => {
   it('generates basic example without error', async () => {
-    const result = await transform(require('./single_example.json'))
+    const result = await transform(require('../../example/single_example.json'))
     expect(result.errors).toBeUndefined()
     expect(result).toHaveProperty('type', 'result')
   })
 
   it('generates for object single contract input', async () => {
     const input = {
-      $schema: './schema/singleContractSchema.json',
+      $schema: '../../schema/singleContractSchema.json',
       name: 'test',
       authentication: false,
       arguments: { myNumber: 'number' },

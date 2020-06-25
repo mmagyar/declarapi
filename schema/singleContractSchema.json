@@ -18,11 +18,11 @@
     },
     "arguments": {
       "description": "type definition of the arguments",
-      "$ref": "../../node_modules/yaschva/typeSchema.json"
+      "$ref": "../node_modules/yaschva/typeSchema.json"
     },
     "returns": {
       "description": "type definition of the returned value",
-      "$ref": "../../node_modules/yaschva/typeSchema.json"
+      "$ref": "../node_modules/yaschva/typeSchema.json"
     },
     "type": {
       "description": "Optional, defaults to get",
