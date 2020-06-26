@@ -1,4 +1,4 @@
-import { ValueType, ObjectType } from 'yaschva'
+import { ValueType, ObjectType, Validation } from 'yaschva'
 import { map } from 'microtil'
 import { validate, isValidationError } from './jsonSchema'
 import {
@@ -22,16 +22,20 @@ const contractOptions = (input: ValueType | ValueType[]): ValueType[] => {
 }
 
 const searchToType =
-  (idFieldName: string, search: SearchTypes, dataType: ObjectType): ObjectType => {
+  (idFieldName: string, idType: Validation, dataType: ObjectType, search?: SearchTypes): ObjectType => {
     if (search === 'idOnly') {
       const ret: {[s: string]: any;} = {}
-      ret[idFieldName] = ['string', { $array: 'string' }, '?']
+      ret[idFieldName] = [idType, { $array: idType }, '?']
       return ret
     } else if (search === 'textSearch') {
-      const ret: {[s: string]: any;} = { search: ['string', '?'] }
-      ret[idFieldName] = ['string', { $array: 'string' }, '?']
+      const ret: {[s: string]: any;} = { search: [idType, '?'] }
+      ret[idFieldName] = [idType, { $array: idType }, '?']
       return ret
-    } else if (search === 'full') { return map(dataType, value => contractOptions(value)) }
+    } else if (search === 'full') {
+      return map(dataType, value => contractOptions(value))
+    } else if (!search) {
+      return {}
+    }
 
     return search
   }
@@ -75,8 +79,9 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
     }
   }
 
-  const idField: any = contractData.dataType?.[idName]
-  if (!(idField === 'string' || idField?.['$string'])) {
+  const idType: any = contractData.dataType[idName]
+
+  if (!(idType === 'string' || idType.$string)) {
     return {
       type: 'error',
       errors: 'Type of id field must be string'
@@ -87,14 +92,14 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
   const output: OutputSuccess[] = []
 
   if (contractData.methods?.get !== false) {
-    const search = contractData.search || 'textSearch'
+    const search = contractData.search
     output.push(createOutput('get',
-      searchToType(idName, search, contractData.dataType), returnArray))
+      searchToType(idName, idType, contractData.dataType, search), returnArray))
   }
 
   if (contractData.methods?.post !== false) {
     const post = { ...contractData.dataType }
-    post[idName] = [idField, '?']
+    post[idName] = [idType, '?']
     output.push(createOutput('post', post))
   }
 
@@ -105,13 +110,13 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
   if (contractData.methods?.patch !== false) {
     const patch: {[s: string]: ValueType | ValueType[];} =
     { ...map(contractData.dataType, contractOptions) }
-    patch[idName] = 'string'
+    patch[idName] = idType
     output.push(createOutput('patch', patch))
   }
 
   if (contractData.methods?.delete !== false) {
     const deleteIds: {[s: string]: ValueType[];} = {}
-    deleteIds[idName] = ['string', { $array: 'string' }]
+    deleteIds[idName] = [idType, { $array: idType }]
     output.push(createOutput('delete', deleteIds, returnArray))
   }
 

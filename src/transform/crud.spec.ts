@@ -18,7 +18,24 @@ describe('transform crud', () => {
     expect(result.results).toHaveLength(5)
   })
 
-  it('generates a full search option', async () => {
+  it('does not generate arguments for get is search is not set', async () => {
+    const input:CrudContract = {
+      name: 'test',
+      authentication: false,
+      dataType: {
+        id: 'string',
+        myNumber: 'number',
+        myString: 'string'
+      }
+    }
+
+    const output = await transform(input)
+    expect(output.results?.[0]?.arguments).toStrictEqual({})
+    expect(output.results?.[0]?.method).toBe('get')
+    expect(output).toMatchSnapshot()
+  })
+
+  it('generates full, parametric search option', async () => {
     const input:CrudContract = {
       name: 'test',
       authentication: false,
@@ -30,6 +47,27 @@ describe('transform crud', () => {
       search: 'full'
     }
     expect(await transform(input)).toMatchSnapshot()
+  })
+
+  it('generates a full text search search option', async () => {
+    const input:CrudContract = {
+      name: 'test',
+      authentication: false,
+      dataType: {
+        id: 'string',
+        myNumber: 'number',
+        myString: 'string'
+      },
+      search: 'textSearch'
+    }
+
+    const output = await transform(input)
+    expect(output.results?.[0]?.arguments).toStrictEqual({
+      id: ['string', { $array: 'string' }, '?'],
+      search: ['string', '?']
+    })
+    expect(output.results?.[0]?.method).toBe('get')
+    expect(output).toMatchSnapshot()
   })
 
   it('generates an id only get', async () => {
@@ -114,7 +152,31 @@ describe('transform crud', () => {
     expect(result).toMatchSnapshot()
   })
 
-  it('returns an object with an error message on invalid id name', async () => {
+  it('accpets regex validated id', async () => {
+    const input:CrudContract = {
+      name: 'test',
+      idFieldName: 'regexId',
+      authentication: false,
+      dataType: {
+        regexId: { $string: { regex: '[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}' } },
+        notAnId: 'boolean'
+      },
+      search: 'idOnly'
+    }
+    const output = await transform(input)
+    expect(output.results?.[0]?.arguments).toStrictEqual(
+      {
+        regexId: [
+          { $string: { regex: '[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}' } },
+          { $array: { $string: { regex: '[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}' } } },
+          '?'
+        ]
+      }
+    )
+    expect(output.results).toHaveLength(5)
+  })
+
+  it('returns an object with an error message on invalid id type', async () => {
     const input:CrudContract = {
       name: 'test',
       idFieldName: 'notAnId',
@@ -122,8 +184,7 @@ describe('transform crud', () => {
       dataType: {
         id: 'string',
         notAnId: 'boolean'
-      },
-      search: { customSearchField: 'string' }
+      }
     }
     const result = await transform(input)
     expect(result.errors).toEqual('Type of id field must be string')
