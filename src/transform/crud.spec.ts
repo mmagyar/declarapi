@@ -200,7 +200,8 @@ describe('transform crud', () => {
       }
     }
     const result = await transform(input)
-    expect(result.errors).toStrictEqual([{ dataPath: '', keyword: 'additionalProperties', message: 'should NOT have additional properties', params: { additionalProperty: 'authenticationz' }, schemaPath: '#/additionalProperties' }])
+    expect(result.errors).toHaveLength(2)
+    expect(result.errors?.[0]).toStrictEqual({ dataPath: '', keyword: 'additionalProperties', message: 'should NOT have additional properties', params: { additionalProperty: 'authenticationz' }, schemaPath: '#/additionalProperties' })
   })
 
   it('makes all parameters optional for patch', async () => {

@@ -87,7 +87,7 @@ describe('Generator', () => {
     }
 
     const result: any = await transform(input)
-    expect(result.errors).toHaveLength(12)
+    expect(result.errors).toHaveLength(13)
     expect(result.errors[0]).toEqual({
       dataPath: ".arguments['invalidProp']",
       keyword: 'type',

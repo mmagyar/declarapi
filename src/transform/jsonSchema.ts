@@ -5,8 +5,8 @@ export const jsonValidatorInit = () => {
   })
 }
 
-export type jsonValidationSuccess = {type:'success', errors? : ErrorObject[]};
-export type jsonValidationError = {type:'error', errors : ErrorObject[]};
+export type jsonValidationSuccess = {type:'success', errors? : (ErrorObject | string)[]};
+export type jsonValidationError = {type:'error', errors : (ErrorObject | string)[]};
 export type validateResult = jsonValidationSuccess | jsonValidationError;
 export const isValidationError = (input:validateResult) : input is jsonValidationError => input && input.type === 'error'
 export const validate = async (json: Object, data:any):
@@ -14,7 +14,8 @@ export const validate = async (json: Object, data:any):
   const validator = await jsonValidatorInit().compileAsync(json)
   const result = validator(data)
 
-  const errors = validator.errors || []
+  const errors: (ErrorObject | string)[] = validator.errors || []
+  errors.push(JSON.stringify(json, null, 2))
   if (!result) return { type: 'error', errors }
   return { type: 'success' }
 }
