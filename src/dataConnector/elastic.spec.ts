@@ -47,6 +47,9 @@ describe('elasticsearch data connector', () => {
 
   beforeEach(() => {
     process.env = { ...oldEnv }
+    delete process.env.ELASTIC_API_KEY
+    delete process.env.ELASTIC_USER_NAME
+    delete process.env.ELASTIC_PASSWORD
     console.warn = jest.fn()
   })
 

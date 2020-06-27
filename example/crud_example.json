@@ -6,7 +6,7 @@
     "id":"string",
     "name": "string",
     "multiType": ["string", { "orObjectWIthAString": "string" }],
-    "dogs": [{ "$enum": ["raining"] }, "number"],
+    "dogs": [{ "$enum": ["raining", "drizzling", "snowing"] }, "number"],
     "cats": { "$array": { "raining": "boolean" } },
     "rain": { "$enum": ["cats", "dogs"] }
   },

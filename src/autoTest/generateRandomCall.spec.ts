@@ -1,5 +1,6 @@
 import { generateRandomCall } from './generateRandomCall'
 import { ContractType } from '../globalTypes'
+import { validate } from 'yaschva'
 describe('generateRandomCall', () => {
   const input = ():ContractType<{}, {}> => ({
     name: 'test',
@@ -20,16 +21,21 @@ describe('generateRandomCall', () => {
   })
 
   it('calls handle with randomly generated, arguments that conform to the schema', async () => {
-    expect.assertions(5)
+    expect.assertions(7)
 
     const data:any = input()
+    let handlerData:any
     data.handle = jest.fn((input) => {
       expect(typeof input.myNumber).toBe('number')
       expect(typeof input.myString).toBe('string')
       expect(Object.keys(input)).toHaveLength(3)
+      handlerData = input
       return 'done'
     })
-    expect(await generateRandomCall(data)).toBe('done')
+    const result = await generateRandomCall(data)
+    expect(result.output).toBe('done')
+    expect(result.generatedInput).toStrictEqual(handlerData)
     expect(data.handle).toBeCalledTimes(1)
+    expect(validate(data.arguments, result.generatedInput)).toHaveProperty('result', 'pass')
   })
 })

@@ -71,7 +71,7 @@
     },
     "dataType": {
       "description": "type definition of the arguments",
-      "$ref": "../../node_modules/yaschva/typeSchema.json"
+      "$ref": "../node_modules/yaschva/typeSchema.json"
 
     },
     "idFieldName":{"type":"string"},
@@ -83,7 +83,7 @@
           "description": "textSearch means that a whole text search is provided, along with filtering by id, full means that every field can be optionally passed in, idOnly means that only the id parameter can be provided. If no value is provided, the default is `textSearch`"
         },
         {
-          "$ref": "../../node_modules/yaschva/typeSchema.json",
+          "$ref": "../node_modules/yaschva/typeSchema.json",
           "description": "custom search schema can be given here"
         }
       ]

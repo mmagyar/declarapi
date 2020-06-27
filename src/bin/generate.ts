@@ -7,36 +7,48 @@ import server from '../generate/server'
 import client from '../generate/client'
 const npmjson = fs.readFileSync(path.join(__dirname, '/../../package.json'), 'utf8')
 
-export const cliProgram = async (input:string, output:string, generate: 'all'| 'client'|'server' = 'all', tokenPath?: string) => {
-  const outPath = await fs.promises.realpath(output)
-  if (!(await fs.promises.lstat(outPath)).isDirectory()) {
-    throw new Error(`output_dir: "${output}" must be a directory`)
-  }
-
-  const realPath = await fs.promises.realpath(input)
-  const outBasename = path.parse(realPath).name
-  const file = JSON.parse(await fs.promises.readFile(realPath, 'utf8'))
-  const out = await transform(file)
+export const generate = async (parts: 'all' | 'client'|'server', schema:object, tokenPath?:string) => {
+  const out = await transform(schema)
   if (out.type === 'error') {
     console.error(JSON.stringify(out, null, 2))
     throw out.errors
   }
 
-  let serverWrite = {}
-  if (generate === 'all' || generate === 'server') {
-    const result = server(out.results)
-    const serverOutPath = path.join(outPath, `${outBasename}-server.ts`)
-    serverWrite = fs.promises.writeFile(serverOutPath, result, { encoding: 'utf8' })
+  return {
+    server: parts === 'all' || parts === 'server' ? server(out.results) : undefined,
+    client: parts === 'all' || parts === 'client' ? client(out.results, tokenPath) : undefined
+  }
+}
+const loadFile = async (input:string) => {
+  const realPath = await fs.promises.realpath(input)
+  const basename = path.parse(realPath).name
+  return { filename: basename, data: JSON.parse(await fs.promises.readFile(realPath, 'utf8')) }
+}
+
+export const writeFile = async (input: {
+  server: string | undefined;
+  client: string | undefined;
+}, outputFilename: string, outputDir: string) => {
+  const outPath = await fs.promises.realpath(outputDir)
+  if (!(await fs.promises.lstat(outPath)).isDirectory()) {
+    throw new Error(`output_dir: "${outputDir}" must be a directory`)
   }
 
-  let clientWrite = {}
-  if (generate === 'all' || generate === 'server') {
-    const clientResult = client(out.results, tokenPath)
-    const clientOutPath = path.join(outPath, `${outBasename}-client.ts`)
-    clientWrite = fs.promises.writeFile(clientOutPath, clientResult, { encoding: 'utf8' })
+  if (input.server) {
+    const serverOutPath = path.join(outPath, `${outputFilename}-server.ts`)
+    await fs.promises.writeFile(serverOutPath, input.server, { encoding: 'utf8' })
   }
 
-  await Promise.all([serverWrite, clientWrite])
+  if (input.client) {
+    const clientOutPath = path.join(outPath, `${outputFilename}-client.ts`)
+    await fs.promises.writeFile(clientOutPath, input.client, { encoding: 'utf8' })
+  }
+}
+export const cliProgram = async (input:string, output:string, parts: 'all'| 'client'|'server' = 'all', tokenPath?: string) => {
+  const loadFiles = await loadFile(input)
+  const out = await generate(parts, loadFiles.data, tokenPath)
+
+  await (writeFile(out, loadFiles.filename, output))
 }
 
 if (require.main === module) {

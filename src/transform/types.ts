@@ -49,6 +49,6 @@ export type OutputSuccess = {
 
 export type Output =
   | {type: 'result'; key: string; results: OutputSuccess[]; errors?: undefined;}
-  | {type: 'error'; key?: undefined; errors: Ajv.ErrorObject[] | string; results?: undefined;};
+  | {type: 'error'; key?: undefined; errors: (Ajv.ErrorObject | string)[] | string; results?: undefined;};
 
-export const baseSchemaLocation = `${__dirname}/../../src/schema/`
+export const baseSchemaLocation = `${__dirname}/../../schema/`

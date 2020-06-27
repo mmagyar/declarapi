@@ -1,8 +1,10 @@
 {
   "extensions": [
     "orta.vscode-jest",
+    "ryanluker.vscode-coverage-gutters",
     "eg2.vscode-npm-script",
     "chenxsan.vscode-standardjs",
-    "tabnine.tabnine-vscode"
+    "tabnine.tabnine-vscode",
+    "usernamehw.errorlens"
   ]
 }

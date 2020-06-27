@@ -1,0 +1,53 @@
+{
+  "$schema": "../schema/crudContractSchema.json",
+  "name": "elasticsearchSearchExample",
+  "authentication": false,
+  "dataType": {
+    "id": {
+      "$string": {
+        "regex": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+      }
+    },
+    "name": "string",
+    "dogs": {
+      "$array": {
+        "name": "string",
+        "color":"string",
+        "age":"number",
+        "breed": {
+          "$enum": [
+            "Labrador Retriever",
+            "German Shepherd Dog",
+            "Golden Retriever",
+            "French Bulldog",
+            "Bulldog"
+          ]
+        }
+      }
+    },
+    "cats": {
+      "$array": {
+        "name": "string",
+        "color":"string",
+        "age":"number",
+        "breed": {
+          "$enum": [
+            "Siamese",
+            "Persian",
+            "Maine Coon",
+            "Ragdoll",
+            "Bengal"
+          ]
+        }
+      }
+    },
+    "rain": {
+      "$enum": [
+        "cats",
+        "dogs"
+      ]
+    }
+  },
+  "search": "textSearch",
+  "description": "Validators for both the return data and the arguments should be generated from this json, along with typescript type definitions. the code that validates and checks for authentication should also be part of the generation."
+}
