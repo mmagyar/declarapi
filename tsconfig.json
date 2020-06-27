@@ -32,7 +32,7 @@
     ]
   },
   "include": [
-    "src/**/*", "integrationTests/dataConnectorTest.spec.ts", "integrationTests/elasticsearchDataConnector.spec.ts"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
