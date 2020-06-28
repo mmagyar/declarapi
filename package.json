@@ -32,8 +32,8 @@
     "test:watch": "jest --watch",
     "test:dev": "npm run standard:fix && jest --no-cache --coverage",
     "test:clearCache": "jest --clearCache",
-    "test:integration": "rm ./test/*.ts && jest --no-cache  --config jest.integration.json",
-    "test:integration-debug": "rm ./test/*.ts && jest --no-cache --runInBand --detectOpenHandles --config jest.integration.json",
+    "test:integration": "npm run prepare && rm -f ./test/*.ts && jest --no-cache  --config jest.integration.json",
+    "test:integration-debug": "npm run prepare && rm -f ./test/*.ts && jest --no-cache --runInBand --detectOpenHandles --config jest.integration.json",
     "generate": "node ./dist/bin/generate.js",
     "generate:dev": "npm run build && npm run generate"
   },
