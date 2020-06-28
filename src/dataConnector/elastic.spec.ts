@@ -1,4 +1,4 @@
-import { init, elasticPost, elasticDel, client, elasticPatch, elasticGet, defaultSize, destroyClient, info } from './elastic'
+import { init, post, del, client, patch, get, defaultSize, destroyClient, info } from './elastic'
 import { Client } from '@elastic/elasticsearch'
 jest.mock('@elastic/elasticsearch', () => {
   class ClientMock {
@@ -99,14 +99,14 @@ describe('elasticsearch data connector', () => {
 
   describe('get', () => {
     it('gets all when no id or search is provided', async () => {
-      expect(await elasticGet('test')).toStrictEqual([{ id: '3', value: 'searchResult' }, { id: '4', value: 'searchResultX' }])
+      expect(await get('test')).toStrictEqual([{ id: '3', value: 'searchResult' }, { id: '4', value: 'searchResultX' }])
       expect(client().search).toHaveBeenCalledTimes(1)
       expect(client().search).toBeCalledWith({ index: 'test', size: defaultSize })
       expect(client().get).toHaveBeenCalledTimes(0)
     })
 
     it('gets by query when no id, but search is provided', async () => {
-      expect(await elasticGet('test', undefined, 'searchResult'))
+      expect(await get('test', undefined, 'searchResult'))
         .toStrictEqual([{ id: '3', value: 'searchResult' }, { id: '4', value: 'searchResultX' }])
       expect(client().search).toHaveBeenCalledTimes(1)
       expect(client().search)
@@ -116,7 +116,7 @@ describe('elasticsearch data connector', () => {
     })
 
     it('gets by id when id is provided', async () => {
-      expect(await elasticGet('test', '2'))
+      expect(await get('test', '2'))
         .toStrictEqual([{ id: '2', value: 'getmock' }])
       expect(client().get).toBeCalledWith({ index: 'test', id: '2' })
       expect(client().get).toHaveBeenCalledTimes(1)
@@ -124,7 +124,7 @@ describe('elasticsearch data connector', () => {
     })
 
     it('gets by array of ids ', async () => {
-      expect(await elasticGet('test', ['4', '5']))
+      expect(await get('test', ['4', '5']))
         .toStrictEqual([{ id: '4', value: 'mget4' }, { id: '5', value: 'mget5' }])
       expect(client().mget).toBeCalledWith({ body: { ids: ['4', '5'], size: 1000 }, index: 'test' })
       expect(client().mget).toHaveBeenCalledTimes(1)
@@ -135,14 +135,14 @@ describe('elasticsearch data connector', () => {
 
   describe('post', () => {
     it('post returns the saved value', async () => {
-      expect(await elasticPost('test', { id: 1, value: 'abc' }, 'id'))
+      expect(await post('test', { id: 1, value: 'abc' }, 'id'))
         .toStrictEqual({ id: 1, value: 'abc' })
       expect(client().create).toHaveBeenCalledTimes(1)
       expect(client().update).toHaveBeenCalledTimes(0)
     })
 
     it('post generated uuid, if id not given', async () => {
-      const posted = await elasticPost('test', { value: 'abc' }, 'id')
+      const posted = await post('test', { value: 'abc' }, 'id')
       expect(posted.value).toBe('abc')
       expect(isValidUUID(posted.id)).toBeTruthy()
       expect(client().create).toHaveBeenCalledTimes(1)
@@ -151,14 +151,14 @@ describe('elasticsearch data connector', () => {
 
   describe('del', () => {
     it('returns the deleted value', async () => {
-      expect(await elasticDel('test', '2'))
+      expect(await del('test', '2'))
         .toStrictEqual([{ id: '2', value: 'getmock' }])
       expect(client().get).toHaveBeenCalledTimes(1)
       expect(client().delete).toHaveBeenCalledTimes(1)
     })
 
     it('returns the deleted values when multiple ids are deleted', async () => {
-      expect(await elasticDel('test', ['2', '3']))
+      expect(await del('test', ['2', '3']))
         .toStrictEqual([[{ id: '2', value: 'getmock' }], [{ id: '2', value: 'getmock' }]])
       expect(client().get).toHaveBeenCalledTimes(2)
       expect(client().delete).toHaveBeenCalledTimes(2)
@@ -166,7 +166,7 @@ describe('elasticsearch data connector', () => {
   })
 
   it('can update / patch existing items', async () => {
-    expect(await elasticPatch('test', { id: '1', value: 'testValue' }, '1'))
+    expect(await patch('test', { id: '1', value: 'testValue' }, '1'))
       .toStrictEqual({ id: '1', value: 'testValue' })
     expect(client().update).toHaveBeenCalledTimes(1)
     expect(client().create).toHaveBeenCalledTimes(0)

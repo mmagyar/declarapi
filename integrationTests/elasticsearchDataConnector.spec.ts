@@ -1,6 +1,6 @@
 import { canSaveAndLoad, generateContract, canTextSearchObjects } from './dataConnectorTest.spec'
 import path from 'path'
-import { client } from 'declarapi'
+import { elastic } from 'declarapi'
 
 describe('data connector test', () => {
   const schemaFilePath = path.join(__dirname, '../example/elasticsearch_text_search_example.json')
@@ -24,7 +24,7 @@ describe('data connector test', () => {
   })
 
   afterEach(async () => {
-    await client().indices.delete({ index: 'test*' })
+    await elastic.client().indices.delete({ index: 'test*' })
     return ''
   })
 
