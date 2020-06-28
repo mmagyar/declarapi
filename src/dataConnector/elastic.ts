@@ -35,7 +35,7 @@ export const get = async <T extends object>(
 ): Promise<T[]> => {
   const index = indexName.toLocaleLowerCase()
   if (Array.isArray(id)) {
-    const { body: { docs } } = await client().mget({ index, body: { size: defaultSize, ids: id } })
+    const { body: { docs } } = await client().mget({ index, body: { ids: id } })
     return docs.map((x: any) => x._source)
   } else if (id) {
     const { body: { _source } } = await client().get({ index, id })
