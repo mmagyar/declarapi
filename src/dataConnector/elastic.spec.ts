@@ -126,7 +126,7 @@ describe('elasticsearch data connector', () => {
     it('gets by array of ids ', async () => {
       expect(await get('test', ['4', '5']))
         .toStrictEqual([{ id: '4', value: 'mget4' }, { id: '5', value: 'mget5' }])
-      expect(client().mget).toBeCalledWith({ body: { ids: ['4', '5'], size: 1000 }, index: 'test' })
+      expect(client().mget).toBeCalledWith({ body: { ids: ['4', '5'] }, index: 'test' })
       expect(client().mget).toHaveBeenCalledTimes(1)
       expect(client().get).toHaveBeenCalledTimes(0)
       expect(client().search).toHaveBeenCalledTimes(0)
