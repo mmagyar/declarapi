@@ -6,14 +6,32 @@
 # declarapi
 Declarative API generation.
 
+#### Create your CRUD API without writing a single line of code.
+
 
 ## Features
 - Generate full CRUD REST API based on a single schema definition
 - Automatically validate all requests
 - Automatically generate code to communicate with the database
-- - Elasticsearch (in-progress)
-- - Redis (TODO)
-- - SQL (TODO)
-- Generate helper functions and type definitions for the client
-- TODO: Generate automatic unit tests for the APIs
-- TODO: Example applications
+- - Elasticsearch (basic usage, full text search is done, more advanced search in-progress)
+- Generate fetch functions and type definitions for the client
+- Permission based authentication / authorization support.
+
+## Example project
+
+[declarapi-example](https://github.com/mmagyar/declarapi-example)
+
+## Goals
+- Use user's credentials and authorize based on data field (such as userId, so a user can edit records created by them.)
+- Generate a describe method to let the client know the schema dynamically
+- Generate the source in a way that allows to create a summary file, so in case of multiple api methods / endpoints, the user only needs to import a single file.
+- Generate automatic functional tests for the APIs
+- Generate automatic load / performance tests for the APIs
+- Additional Data connectors
+- - Cloudflare Workers KV
+- - Redis
+- - SQL
+- - Other data storage solutions
+- Add opaque types to validation, to better encode schema in typescript type
+- Add option to automatically add optional ordering to get requests
+- Example for serverless deployment
