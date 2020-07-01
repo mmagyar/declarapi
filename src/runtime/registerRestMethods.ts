@@ -1,7 +1,7 @@
 import { ContractResult, ContractWithValidatedHandler, isContractInError } from './contractValidation'
 import { ValidationResult } from 'yaschva'
 import { map } from 'microtil'
-import { HttpMethods } from '../globalTypes'
+import { HttpMethods, Auth } from '../globalTypes'
 
 export type ErrorResponse ={
   errorType: string; data: any; code: number; errors: ValidationResult| string[];}
@@ -16,7 +16,7 @@ export type reqType = {
   /** Route parameters */
   params: {id?:string},
   /** User must be populated based on authenticatin, JWT is recommended */
-  user?: {permissions? : string []}
+  user?: Auth
 }
 
 export type resType = {
@@ -76,7 +76,7 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
         }
 
         try {
-          const result: ContractResult = await x.handle(query)
+          const result: ContractResult = await x.handle(query, req.user)
 
           if (isContractInError(result)) { return error(result.code, result) }
 

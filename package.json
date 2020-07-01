@@ -73,6 +73,7 @@
       "**/*.{js,jsx,ts,tsx}",
       "!**/node_modules/**",
       "!./src/bin/**",
+      "!./src/index.ts",
       "!**/vendor/**"
     ],
     "resetModules": true,

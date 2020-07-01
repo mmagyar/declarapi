@@ -1,5 +1,6 @@
 import registerRestMethods, { reqType } from './registerRestMethods'
 import { ContractWithValidatedHandler, ContractResult, ContractResultError, ContractResultSuccess } from './contractValidation'
+import { Auth } from '../globalTypes'
 describe('registerRestMethods', () => {
   const input = ():ContractWithValidatedHandler => ({
     test: {
@@ -21,7 +22,7 @@ describe('registerRestMethods', () => {
     query: {[key: string]: any} = {},
     body: {[key: string]: any} = {},
     id?: string,
-    user? : {permissions?: string[]}
+    user? :Auth
   ):reqType => ({ query, body, params: { id }, user })
 
   type ResultMockType = {
@@ -67,7 +68,7 @@ describe('registerRestMethods', () => {
       data.test.authentication = true
       const result = registerRestMethods(data)
       const res = resMock()
-      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: [] })
+      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: [], sub: 'abc' })
       await result[0].handler(req, res.chainedMock)
       expectResult(res, 200, { a: 'sadf' })
     })
@@ -77,7 +78,7 @@ describe('registerRestMethods', () => {
       data.test.authentication = ['admin']
       const result = registerRestMethods(data)
       const res = resMock()
-      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: ['admin'] })
+      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: ['admin'], sub: 'abc' })
       await result[0].handler(req, res.chainedMock)
       expectResult(res, 200, { a: 'sadf' })
     })
@@ -101,7 +102,7 @@ describe('registerRestMethods', () => {
       data.test.authentication = ['admin']
       const result = registerRestMethods(data)
       const res = resMock()
-      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: ['user', ' moderator'] })
+      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: ['user', ' moderator'], sub: 'abc' })
 
       await result[0].handler(req, res.chainedMock)
       expectResult(res, 401, {
