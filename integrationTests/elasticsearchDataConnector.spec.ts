@@ -11,16 +11,6 @@ describe('data connector test', () => {
       !process.env.ELASTIC_PASSWORD) {
       throw new Error('elasticsearch credentials need to be set in ENV variables for this test to work')
     }
-
-    await generateContract(schemaFilePath, 'test-elastic', (input) => {
-      input.preferredImplementation = {
-        type: 'elasticsearch',
-        index: 'test-' + Date.now()
-      }
-      return input
-    })
-    // @ts-ignore
-    contract = await import('../test/test-elastic-server')
   })
 
   afterEach(async () => {
@@ -28,41 +18,105 @@ describe('data connector test', () => {
     return ''
   })
 
-  it('can generate the contract', () => {
-    expect('OK').toBe('OK')
+  describe('without any authentication', () => {
+    beforeAll(async () => {
+      await generateContract(schemaFilePath, 'test-elastic', (input) => {
+        input.preferredImplementation = {
+          type: 'elasticsearch',
+          index: 'test-' + Date.now()
+        }
+        return input
+      })
+      // @ts-ignore
+      contract = await import('../test/test-elastic-server')
+    })
+
+    it('it can load contracts, use post and get all', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canPostAndGetAll(contract.contracts)
+    })
+
+    it('it can load contracts, use post and get multiple', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canPostAndGetSome(contract.contracts)
+    })
+
+    it('it can do fulltext search', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canTextSearchObjects(contract.contracts)
+    }, 15000)
+
+    it('it can patch items', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canPatchItems(contract.contracts)
+    }, 15000)
+
+    it('it can put items', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canPutItems(contract.contracts)
+    }, 15000)
+
+    it('it can delete single item', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canDeleteSingleItem(contract.contracts)
+    }, 15000)
+    it('it can delete items', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canDeleteItems(contract.contracts)
+    }, 15000)
   })
 
-  it('it can load contracts, use post and get all', async () => {
-    expect(Object.keys(contract.contracts)).toHaveLength(5)
-    await canPostAndGetAll(contract.contracts)
+  describe('with  authentication', () => {
+    beforeAll(async () => {
+      await generateContract(schemaFilePath, 'test-elastic', (input) => {
+        return {
+          ...input,
+          authentication: {
+            get: true,
+            modify: ['admin', { userId: 'ownerId' }]
+          },
+          preferredImplementation: {
+            type: 'elasticsearch',
+            index: 'test-' + Date.now()
+          }
+        }
+      })
+      // @ts-ignore
+      contract = await import('../test/test-elastic-server')
+    })
+
+    it('it can load contracts, use post and get all', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canPostAndGetAll(contract.contracts)
+    })
+
+    it('it can load contracts, use post and get multiple', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canPostAndGetSome(contract.contracts)
+    })
+
+    it('it can do fulltext search', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canTextSearchObjects(contract.contracts)
+    }, 15000)
+
+    it('it can patch items', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canPatchItems(contract.contracts)
+    }, 15000)
+
+    it('it can put items', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canPutItems(contract.contracts)
+    }, 15000)
+
+    it('it can delete single item', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canDeleteSingleItem(contract.contracts)
+    }, 15000)
+    it('it can delete items', async () => {
+      expect(Object.keys(contract.contracts)).toHaveLength(5)
+      await canDeleteItems(contract.contracts)
+    }, 15000)
   })
-
-  it('it can load contracts, use post and get multiple', async () => {
-    expect(Object.keys(contract.contracts)).toHaveLength(5)
-    await canPostAndGetSome(contract.contracts)
-  })
-
-  it('it can do fulltext search', async () => {
-    expect(Object.keys(contract.contracts)).toHaveLength(5)
-    await canTextSearchObjects(contract.contracts)
-  }, 15000)
-
-  it('it can patch items', async () => {
-    expect(Object.keys(contract.contracts)).toHaveLength(5)
-    await canPatchItems(contract.contracts)
-  }, 15000)
-
-  it('it can put items', async () => {
-    expect(Object.keys(contract.contracts)).toHaveLength(5)
-    await canPutItems(contract.contracts)
-  }, 15000)
-
-  it('it can delete single item', async () => {
-    expect(Object.keys(contract.contracts)).toHaveLength(5)
-    await canDeleteSingleItem(contract.contracts)
-  }, 15000)
-  it('it can delete items', async () => {
-    expect(Object.keys(contract.contracts)).toHaveLength(5)
-    await canDeleteItems(contract.contracts)
-  }, 15000)
 })

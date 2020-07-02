@@ -1,6 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "type": "object",
+  "definitions": {"auth":{
+    "type": ["boolean", "array"],
+    "items": {
+      "oneOf": [
+      {"type":  "string"} ,
+      {"type":"object", "properties":{"userId":{"type":"string"}}}
+    ]}}
+  },
   "properties": {
     "$schema": { "type": "string" },
     "name": {
@@ -27,22 +35,13 @@
           "type": "object",
           "description": "put and patch will have the same permission",
           "properties": {
-            "get": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            },
+            "get": { "$ref": "#/definitions/auth" },
             "post": {
               "type": ["boolean", "array"],
               "items": { "type": "string" }
             },
-            "put": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            },
-            "delete": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            }
+            "put": { "$ref": "#/definitions/auth" },
+            "delete":{ "$ref": "#/definitions/auth" }
           },
           "additionalProperties": false,
           "required": ["get", "post", "put", "delete"]
@@ -51,18 +50,9 @@
           "type": "object",
           "description": "delete is optional, will fall back to `modify` if omitted",
           "properties": {
-            "get": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            },
-            "modify": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            },
-            "delete": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            }
+            "get": { "$ref": "#/definitions/auth" },
+            "modify": { "$ref": "#/definitions/auth" },
+            "delete": { "$ref": "#/definitions/auth" }
           },
           "additionalProperties": false,
           "required": ["get", "modify"]

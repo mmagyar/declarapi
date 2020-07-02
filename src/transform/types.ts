@@ -3,32 +3,33 @@ import { ObjectType } from 'yaschva'
 import { Elastic } from '../DataDriverTypes'
 import { HttpMethods, SearchTypes } from '../globalTypes'
 
+export type AuthType = (string | {userId:string})[] | boolean
+
 export type Contract = {
   name: string;
   idFieldName?: string;
   type?: HttpMethods;
-  authentication: string[] | boolean;
+  authentication: AuthType;
   arguments: ObjectType;
   returns: ObjectType;
   description?: string;
 };
-
 export type CrudAuthAll = {
-  get: string[] | boolean;
-  put: string[] | boolean;
+  get: AuthType;
+  put: AuthType;
   post: string[] | boolean;
-  delete: string[] | boolean;
+  delete: AuthType;
 };
 
 export type CrudAuthSome = {
-  get: string[] | boolean;
-  modify: string[] | boolean;
-  delete?: string[] | boolean;
+  get: AuthType;
+  modify: AuthType;
+  delete?: AuthType;
 };
 export type CrudContract = {
   name: string;
   methods?: { get?:boolean, post?:boolean, put?: boolean, patch?:boolean, delete?:boolean},
-  authentication: string[] | boolean | CrudAuthAll | CrudAuthSome;
+  authentication: AuthType | CrudAuthAll | CrudAuthSome;
   idFieldName?: string;
   dataType: ObjectType;
   search?: SearchTypes;
@@ -38,7 +39,7 @@ export type CrudContract = {
 
 export type OutputSuccess = {
   name: string;
-  authentication: boolean | string[];
+  authentication: AuthType;
   idFieldName: string;
   method: HttpMethods;
   arguments: ObjectType;

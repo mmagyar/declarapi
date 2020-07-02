@@ -9,6 +9,7 @@
       }
     },
     "name": "string",
+    "ownerId":"string",
     "dogs": {
       "$array": {
         "name": "string",

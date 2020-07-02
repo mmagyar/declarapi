@@ -73,6 +73,8 @@ You can reference multiple fileds as well
 
 ### This is checked in the data connectors, if you implement handle manually, you need to take care of this.
 
+This feature is not availbale for `POST` method because it makes no sense there. We can't check the owner of an object that does not exist yet
+
 Non-goals
 =========
 
