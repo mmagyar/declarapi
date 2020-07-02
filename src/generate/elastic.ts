@@ -14,18 +14,18 @@ export const elasticCodeGen = (driver: Elastic, input: ElasticInputType):string 
   switch (input.method) {
     case 'get': {
       if (input.search === 'textSearch') {
-        return `input => elastic.get("${index}", input && input.${idField}, input && input.search)`
+        return `(input, auth) => elastic.get("${index}", auth, input && input.${idField}, input && input.search)`
       } else if (input.search === 'idOnly') {
-        return `input => elastic.get("${index}", input && input.${idField})`
+        return `(input, auth) => elastic.get("${index}", auth, input && input.${idField})`
       } else if (input.search === 'full') {
         throw new Error('Parametric get not implemented yet')
       }
       throw new Error(`Unsupported automatic elasticsearch methods: ${JSON.stringify(input.search)}`)
     }
-    case 'post': return `input => elastic.post("${index}", input, "${idField}")`
-    case 'patch': return `input => elastic.patch("${index}", input, input.${idField})`
-    case 'put': return `input => elastic.patch("${index}", input, input.${idField})`
-    case 'delete': return `input => elastic.del("${index}", input.${idField})`
+    case 'post': return `(input, auth) => elastic.post("${index}", auth, input, "${idField}")`
+    case 'patch': return `(input, auth) => elastic.patch("${index}", auth, input, input.${idField})`
+    case 'put': return `(input, auth) => elastic.patch("${index}", auth, input, input.${idField})`
+    case 'delete': return `(input, auth) => elastic.del("${index}", auth, input.${idField})`
   }
 }
 

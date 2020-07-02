@@ -139,35 +139,35 @@ testGet: {
           name: \\"test\\",
           authentication: false,
           type: \\"get\\",
-          handle: input => elastic.get(\\"test\\", input && input.id, input && input.search),
+          handle: (input, auth) => elastic.get(\\"test\\", auth, input && input.id, input && input.search),
           arguments: {\\"search\\":[\\"string\\",\\"?\\"],\\"id\\":[\\"string\\",{\\"$array\\":\\"string\\"},\\"?\\"]} ,
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}},
 testPost: {
           name: \\"test\\",
           authentication: false,
           type: \\"post\\",
-          handle: input => elastic.post(\\"test\\", input, \\"id\\"),
+          handle: (input, auth) => elastic.post(\\"test\\", auth, input, \\"id\\"),
           arguments: {\\"id\\":[\\"string\\",\\"?\\"],\\"myNumber\\":\\"number\\"} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPut: {
           name: \\"test\\",
           authentication: false,
           type: \\"put\\",
-          handle: input => elastic.patch(\\"test\\", input, input.id),
+          handle: (input, auth) => elastic.patch(\\"test\\", auth, input, input.id),
           arguments: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPatch: {
           name: \\"test\\",
           authentication: false,
           type: \\"patch\\",
-          handle: input => elastic.patch(\\"test\\", input, input.id),
+          handle: (input, auth) => elastic.patch(\\"test\\", auth, input, input.id),
           arguments: {\\"id\\":\\"string\\",\\"myNumber\\":[\\"number\\",\\"?\\"]} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testDelete: {
           name: \\"test\\",
           authentication: false,
           type: \\"delete\\",
-          handle: input => elastic.del(\\"test\\", input.id),
+          handle: (input, auth) => elastic.del(\\"test\\", auth, input.id),
           arguments: {\\"id\\":[\\"string\\",{\\"$array\\":\\"string\\"}]} ,
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}}
 }
@@ -193,7 +193,7 @@ testGet: {
           name: \\"test\\",
           authentication: false,
           type: \\"get\\",
-          handle: input => elastic.get(\\"test\\", input && input.id),
+          handle: (input, auth) => elastic.get(\\"test\\", auth, input && input.id),
           arguments: {\\"myNumber\\":\\"number\\"} ,
           returns: {}}
 }
