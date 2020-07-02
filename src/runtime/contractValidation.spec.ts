@@ -1,6 +1,7 @@
 import { addValidationToContract, isContractInError } from './contractValidation'
 import { ContractType } from '../globalTypes'
 describe('contractProcessor', () => {
+  const auth = { authentication: false }
   const input: ()=>{test: ContractType<{a:string}, {b:string}>} = () => ({
     test: {
       arguments: { a: 'string' },
@@ -22,7 +23,7 @@ describe('contractProcessor', () => {
   })
 
   it('runs the defined handler - happy path', async () => {
-    expect(await addValidationToContract(input()).test.handle({ a: 'foo' }))
+    expect(await addValidationToContract(input()).test.handle({ a: 'foo' }, auth))
       .toStrictEqual({ result: { b: 'foo' } })
   })
 
@@ -30,7 +31,7 @@ describe('contractProcessor', () => {
     const testData = input()
     const ogHandle = testData.test.handle = jest.fn(testData.test.handle)
     const handle = jest.fn(addValidationToContract(testData).test.handle)
-    expect(await handle({ x: 'foo' }))
+    expect(await handle({ x: 'foo' }, auth))
       .toStrictEqual({
         code: 400,
         data: { x: 'foo' },
@@ -50,7 +51,7 @@ describe('contractProcessor', () => {
   it('runs the defined handler - output validation error', async () => {
     const modifiedHandler = input()
     const ogHandle = modifiedHandler.test.handle = jest.fn((args:any):any => ({ z: args.a }))
-    expect(await addValidationToContract(modifiedHandler).test.handle({ a: 'foo' }))
+    expect(await addValidationToContract(modifiedHandler).test.handle({ a: 'foo' }, auth))
       .toStrictEqual({
         code: 500,
         data: { z: 'foo' },
@@ -69,7 +70,7 @@ describe('contractProcessor', () => {
   it('runs the defined handler - output validation can be turned off', async () => {
     const modifiedHandler = input()
     const ogHandle = modifiedHandler.test.handle = jest.fn((args:any):any => ({ z: args.a }))
-    expect(await addValidationToContract(modifiedHandler, false).test.handle({ a: 'foo' }))
+    expect(await addValidationToContract(modifiedHandler, false).test.handle({ a: 'foo' }, auth))
       .toStrictEqual({ result: { z: 'foo' } })
     expect(ogHandle).toBeCalled()
   })
@@ -77,7 +78,7 @@ describe('contractProcessor', () => {
   it('runs a fully formbed error when the handler is undefined', async () => {
     const modifiedHandler = input()
     modifiedHandler.test.handle = undefined
-    expect(await addValidationToContract(modifiedHandler).test.handle({ a: 'foo' }))
+    expect(await addValidationToContract(modifiedHandler).test.handle({ a: 'foo' }, auth))
       .toStrictEqual({
         code: 501,
         data: 'test',
@@ -89,7 +90,7 @@ describe('contractProcessor', () => {
   it('can identify if contract returned an error', async () => {
     const modifiedHandler = input()
     modifiedHandler.test.handle = undefined
-    const result = await addValidationToContract(modifiedHandler).test.handle({ a: 'foo' })
+    const result = await addValidationToContract(modifiedHandler).test.handle({ a: 'foo' }, auth)
     if (isContractInError(result)) {
       expect(result.code).toBe(501)
     } else { throw new Error('Test failed') }

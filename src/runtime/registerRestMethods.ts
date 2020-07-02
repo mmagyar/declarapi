@@ -1,7 +1,7 @@
 import { ContractResult, ContractWithValidatedHandler, isContractInError } from './contractValidation'
 import { ValidationResult } from 'yaschva'
 import { map } from 'microtil'
-import { HttpMethods, Auth } from '../globalTypes'
+import { HttpMethods, AuthInput } from '../globalTypes'
 
 export type ErrorResponse ={
   errorType: string; data: any; code: number; errors: ValidationResult| string[];}
@@ -15,8 +15,8 @@ export type reqType = {
   body: { [key: string]: any} & {id?:string},
   /** Route parameters */
   params: {id?:string},
-  /** User must be populated based on authenticatin, JWT is recommended */
-  user?: Auth
+  /** User must be populated based on authentication, JWT is recommended */
+  user?: AuthInput
 }
 
 export type resType = {
@@ -40,7 +40,8 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
           const perm: string[] = req.user?.permissions || []
 
           const hasPerm = perm.some(y => authentication.some(z => z === y))
-          if (!hasPerm) {
+          const canUserAccess = authentication.find((x:any) => x?.userId)
+          if (!hasPerm && !canUserAccess) {
             return res.status(401).json({
               code: 401,
               errorType: 'unauthorized',
@@ -76,7 +77,8 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
         }
 
         try {
-          const result: ContractResult = await x.handle(query, req.user)
+          const result: ContractResult =
+            await x.handle(query, { ...req.user, authentication: x.authentication })
 
           if (isContractInError(result)) { return error(result.code, result) }
 

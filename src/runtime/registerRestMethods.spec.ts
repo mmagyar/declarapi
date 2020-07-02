@@ -1,6 +1,6 @@
 import registerRestMethods, { reqType } from './registerRestMethods'
 import { ContractWithValidatedHandler, ContractResult, ContractResultError, ContractResultSuccess } from './contractValidation'
-import { Auth } from '../globalTypes'
+import { AuthInput } from '../globalTypes'
 describe('registerRestMethods', () => {
   const input = ():ContractWithValidatedHandler => ({
     test: {
@@ -22,7 +22,7 @@ describe('registerRestMethods', () => {
     query: {[key: string]: any} = {},
     body: {[key: string]: any} = {},
     id?: string,
-    user? :Auth
+    user? :AuthInput
   ):reqType => ({ query, body, params: { id }, user })
 
   type ResultMockType = {

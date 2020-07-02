@@ -44,7 +44,7 @@ The above example will let logged in users to modify records (through __post__, 
 Use permissions claims
 ----------------------
 The user object in req is checked for a permissions array.
-If the user has matching permissions, they will be allowed to use the endpont / method
+If the user has matching permissions, they will be allowed to use the endpont / method.
 ```json
 "authentication" : {
   "get": false,
@@ -52,6 +52,8 @@ If the user has matching permissions, they will be allowed to use the endpont / 
   "delete": ["admin"]
 }
 ```
+The array members are matched with an "OR" operator, so the user needs to be either a `content-manager` or an `admin` to modify in the example above.
+
 
 Use a field to check against userId
 -----------------------------------
@@ -66,9 +68,10 @@ The referred field can be either a single id or an array of ids.
 ```
 You can reference multiple fileds as well
 ```json
-"authentication" : {"userId" : ["writtenBy", "editedBy"]}
+"authentication" : [{"userId" : "writtenBy"}, {"userId": "editedBy"}]
 ```
 
+### This is checked in the data connectors, if you implement handle manually, you need to take care of this.
 
 Non-goals
 =========

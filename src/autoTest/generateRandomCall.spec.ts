@@ -2,6 +2,7 @@ import { generateRandomCall } from './generateRandomCall'
 import { ContractType } from '../globalTypes'
 import { validate } from 'yaschva'
 describe('generateRandomCall', () => {
+  const auth = { }
   const input = ():ContractType<{}, {}> => ({
     name: 'test',
     type: 'post',
@@ -15,7 +16,7 @@ describe('generateRandomCall', () => {
   })
   it('will fail if handle is missing', async () => {
     expect.assertions(1)
-    generateRandomCall(input()).catch(x => {
+    generateRandomCall(input(), auth).catch(x => {
       expect(x).toHaveProperty('message', 'handle must be defined to call it with randomly generated arguments')
     })
   })
@@ -32,7 +33,7 @@ describe('generateRandomCall', () => {
       handlerData = input
       return 'done'
     })
-    const result = await generateRandomCall(data)
+    const result = await generateRandomCall(data, auth)
     expect(result.output).toBe('done')
     expect(result.generatedInput).toStrictEqual(handlerData)
     expect(data.handle).toBeCalledTimes(1)
