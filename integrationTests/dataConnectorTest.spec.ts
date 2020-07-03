@@ -52,6 +52,9 @@ const getAllMethods = (contracts:InputType): ({
 }
 
 const checkMatchingGenerated = (generatorOut:any) => {
+  if (generatorOut.output.errors) {
+    throw new Error(generatorOut.output.errors)
+  }
   expect(generatorOut.output.id).toBeTruthy()
   if (generatorOut.generatedInput.id) expect(generatorOut.output.id).toBe(generatorOut.generatedInput.id)
 
@@ -63,7 +66,7 @@ const checkMatchingGenerated = (generatorOut:any) => {
 
 const checkedGenerate = async <Input, Output>(postContract: Expressable, authInput:AuthInput):
   Promise<{ output: Output; generatedInput: Input;}> => {
-  return checkMatchingGenerated(await generateRandomCall(postContract.contract, authInput))
+  return checkMatchingGenerated(await generateRandomCall(postContract, authInput))
 }
 export const canPost = async (contracts:InputType, authInput:AuthInput = {}, howMany:number = 20):Promise<any[]> => {
   const { post } = getPostAndGet(contracts)
@@ -82,6 +85,19 @@ export const canGetAll = async (contracts:InputType, authInput:AuthInput = {}, h
 
   const getSome = await get.handle({}, undefined, authInput)
   expect(getSome.json).toHaveLength(howManyToExpect)
+  return getSome.json
+}
+
+export const unauthorizedCanNotGetAll = async (contracts:InputType, authInput:AuthInput = {}):Promise<any[]> => {
+  const { get } = getPostAndGet(contracts)
+
+  const getSome = await get.handle({}, undefined, authInput)
+  expect(getSome.json).toStrictEqual({
+    code: 401,
+    data: { id: undefined },
+    errorType: 'unauthorized',
+    errors: ['Only logged in users can do this']
+  })
   return getSome.json
 }
 

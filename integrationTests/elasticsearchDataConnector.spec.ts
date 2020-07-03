@@ -1,4 +1,4 @@
-import { canPostAndGetAll, generateContract, canTextSearchObjects, canPatchItems, canPutItems, canDeleteItems, canDeleteSingleItem, canPostAndGetSome, canPost, canGetAll } from './dataConnectorTest.spec'
+import { canPostAndGetAll, generateContract, canTextSearchObjects, canPatchItems, canPutItems, canDeleteItems, canDeleteSingleItem, canPostAndGetSome, canPost, canGetAll, unauthorizedCanNotGetAll } from './dataConnectorTest.spec'
 import path from 'path'
 import { addValidationToContract, registerRestMethods, elastic } from 'declarapi'
 import { RequestHandlingError } from '../src/RequestHandlingError'
@@ -85,7 +85,9 @@ describe('data connector test', () => {
           ...input,
           authentication: {
             get: true,
-            modify: ['admin', { userId: 'ownerId' }]
+            post: true,
+            put: ['admin', { userId: 'ownerId' }],
+            delete: ['admin', { userId: 'ownerId' }]
           },
           preferredImplementation: {
             type: 'elasticsearch',
@@ -101,46 +103,40 @@ describe('data connector test', () => {
     it('it will throw an exception if you try to post without user object', async () => {
       expect(Object.keys(contract)).toHaveLength(5)
       await expect(canPost(contract))
-        .rejects.toThrow(new RequestHandlingError('User not authorized to POST', 403))
+        .rejects.toThrowError('Only logged in users can do this')
     })
 
-    it('it will return 0 if the user is not authorized', async () => {
-      expect(Object.keys(contract)).toHaveLength(5)
-      canGetAll(contract, {}, 0)
+    it('it return 403 if the user is not logged in', async () => {
+      unauthorizedCanNotGetAll(contract)
     })
 
-    it('it can load contracts, use post and get all', async () => {
-      expect(Object.keys(contract)).toHaveLength(5)
-      await canPostAndGetAll(contract)
+    it('logged in user can load contracts, use post and get all', async () => {
+      await canPostAndGetAll(contract, { sub: 'a123' })
     })
 
     it('it can load contracts, use post and get multiple', async () => {
-      expect(Object.keys(contract)).toHaveLength(5)
-      await canPostAndGetSome(contract)
+      await canPostAndGetSome(contract, { sub: 'a123' })
     })
 
-    it('it can do fulltext search', async () => {
-      expect(Object.keys(contract)).toHaveLength(5)
-      await canTextSearchObjects(contract)
+    it('can do fulltext search', async () => {
+      await canTextSearchObjects(contract, { sub: 'a123' })
     }, 15000)
 
-    it('it can patch items', async () => {
-      expect(Object.keys(contract)).toHaveLength(5)
-      await canPatchItems(contract)
+    it('allows admin to patch items', async () => {
+      await canPatchItems(contract, { sub: 'a123', permissions: ['admin'] })
     }, 15000)
 
-    it('it can put items', async () => {
-      expect(Object.keys(contract)).toHaveLength(5)
-      await canPutItems(contract)
+    it('allows admin to put items', async () => {
+      await canPutItems(contract, { sub: 'a123', permissions: ['admin'] })
     }, 15000)
 
-    it('it can delete single item', async () => {
+    it('allows admin to delete a single item', async () => {
       expect(Object.keys(contract)).toHaveLength(5)
-      await canDeleteSingleItem(contract)
+      await canDeleteSingleItem(contract, { sub: 'a123', permissions: ['admin'] })
     }, 15000)
-    it('it can delete items', async () => {
+    it('allows admin to delete items', async () => {
       expect(Object.keys(contract)).toHaveLength(5)
-      await canDeleteItems(contract)
+      await canDeleteItems(contract, { sub: 'a123', permissions: ['admin'] })
     }, 15000)
   })
 })

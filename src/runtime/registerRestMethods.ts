@@ -50,7 +50,7 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
             }
           }
         }
-      } else if (authentication && !user) {
+      } else if (authentication && !user?.sub) {
         return {
           code: 401,
           json: {
