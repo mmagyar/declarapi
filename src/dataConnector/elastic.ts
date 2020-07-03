@@ -1,6 +1,7 @@
 import { Client, ClientOptions } from '@elastic/elasticsearch'
 import { v4 as uuid } from 'uuid'
 import { HandlerAuth } from '../globalTypes'
+import { RequestHandlingError } from '../RequestHandlingError'
 
 let clientInstance: Client | undefined
 export const client = () => clientInstance || init()
@@ -86,7 +87,7 @@ export const get = async <T extends object>(
 }
 export const post = async <T extends {[key: string]: any}>(index: string, auth:HandlerAuth, body: T, idFieldName: string):
 Promise<T & any> => {
-  if (!authorizedByPermission(auth)) throw new Error('User not authorized to POST')
+  if (!authorizedByPermission(auth)) throw new RequestHandlingError('User not authorized to POST', 403)
   const id = (body)[idFieldName] || uuid()
   const newBody: any = { ...body }
   newBody[idFieldName] = id
@@ -105,7 +106,7 @@ export const del = async (index: string, auth:HandlerAuth, id: string|string[]):
   if (Array.isArray(id)) return Promise.all(id.map(x => del(index, auth, x)))
   const result = await get(index, auth, id)
   if (!result) {
-    throw new Error('User has no right to delete this')
+    throw new RequestHandlingError('User has no right to delete this', 403)
   }
   await client().delete(
     { index: index.toLocaleLowerCase(), id, refresh: 'wait_for' })
@@ -116,7 +117,7 @@ export const patch = async <T extends object, K extends object>(index: string, a
 ): Promise<K> => {
   const result = await get(index, auth, id)
   if (!result) {
-    throw new Error('User has no right to patch this')
+    throw new RequestHandlingError('User has no right to patch this', 403)
   }
   await client().update(
     {

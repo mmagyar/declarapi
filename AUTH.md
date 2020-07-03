@@ -8,7 +8,7 @@ The req object passed to the processed handler should be augmented with a `user`
 To give flexibility to users of this library, this is not implemented by declarapi.
 The recommended way handle authentication is to use JWT token authentication.
 
-If the object is falsy, the requirest is considered unauthenticated.
+If the object is falsy, the request is considered unauthenticated.
 If the user value is truthy it is considered authenticated.
 The user object may contain two properties:
 - `permissions` array of the permissions that the user has.
@@ -24,7 +24,7 @@ The user object may contain two properties:
 
 Basic usage
 -----------
-If your endpoing needs the user to be authentcated (logged in),
+If your endpoing needs the user to be authenticated (logged in),
 you simply need to set:
 ```json
 "authentication" : true
@@ -66,14 +66,16 @@ The referred field can be either a single id or an array of ids.
   "modify": ["admin", { "userId": "userIdFieldNameOnRecord" }]
 }
 ```
-You can reference multiple fileds as well
+In the example above, either the user who has their id in `userIdFieldNameOnRecord` OR they have `admin` permissions.
+
+You can reference multiple fields as well
 ```json
 "authentication" : [{"userId" : "writtenBy"}, {"userId": "editedBy"}]
 ```
 
 ### This is checked in the data connectors, if you implement handle manually, you need to take care of this.
 
-This feature is not availbale for `POST` method because it makes no sense there. We can't check the owner of an object that does not exist yet
+This feature is not available for `POST` method because it makes no sense there. We can't check the owner of an object that does not exist yet
 
 Non-goals
 =========

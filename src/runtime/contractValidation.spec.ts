@@ -15,9 +15,9 @@ describe('contractProcessor', () => {
 
   it('can add validation to a single contract', () => {
     const result = addValidationToContract(input())
-    expect(result.test.name).toEqual('test')
-    expect(result.test.method).toEqual('get')
-    expect(result.test.authentication).toEqual(false)
+    expect(result.test.contract.name).toEqual('test')
+    expect(result.test.contract.type).toEqual('get')
+    expect(result.test.contract.authentication).toEqual(false)
     expect(result.test.handle).not.toEqual(input().test.handle)
     expect(typeof result.test.handle).toBe('function')
   })

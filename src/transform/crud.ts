@@ -28,7 +28,7 @@ const searchToType =
       ret[idFieldName] = [idType, { $array: idType }, '?']
       return ret
     } else if (search === 'textSearch') {
-      const ret: {[s: string]: any;} = { search: [idType, '?'] }
+      const ret: {[s: string]: any;} = { search: ['string', '?'] }
       ret[idFieldName] = [idType, { $array: idType }, '?']
       return ret
     } else if (search === 'full') {

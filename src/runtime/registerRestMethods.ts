@@ -1,18 +1,16 @@
 import { ContractResult, ContractWithValidatedHandler, isContractInError } from './contractValidation'
 import { ValidationResult } from 'yaschva'
 import { map } from 'microtil'
-import { HttpMethods, AuthInput } from '../globalTypes'
+import { HttpMethods, AuthInput, ContractType } from '../globalTypes'
 
 export type ErrorResponse ={
   errorType: string; data: any; code: number; errors: ValidationResult| string[];}
 
-const shouldReturnSingle = (req: any): boolean => req.params?.id || req.query?.id
-
 export type reqType = {
   /** Must contain the parameters for get request */
-  query: { [key: string]: any} & {id?:string},
+  query: { [key: string]: any} & {id?:string|string[]},
   /** Must contain the parameters for any other type of request */
-  body: { [key: string]: any} & {id?:string},
+  body: { [key: string]: any} & {id?:string|string[]},
   /** Route parameters */
   params: {id?:string},
   /** User must be populated based on authentication, JWT is recommended */
@@ -23,82 +21,102 @@ export type resType = {
   status : (code:number) => {json: (input:any)=> void}
 }
 
+type HandleType = (body: { [key: string]: any} & {id?:string|string[]}, id?: string, user?: AuthInput) => Promise<{code:number, json:any}>
 export type Expressable = {
   route: string;
   method: HttpMethods;
-  handler: (req:reqType, res: resType)=> void;
+  handle: HandleType,
+  handler: (req:reqType, res: resType)=> Promise<void>;
+  contract: ContractType<any, any>
 }
 export const registerRestMethods = (input:ContractWithValidatedHandler):Expressable[] =>
   Object.values(input).map(x => {
-    return {
-      route: `/api/${x.name}/:id?`,
-      method: x.method,
-      handler: async (req:reqType, res:resType) => {
-        const { authentication } = x
+    const handle:HandleType = async (body, id?, user?) => {
+      const { authentication } = x.contract
 
-        if (authentication && Array.isArray(authentication)) {
-          const perm: string[] = req.user?.permissions || []
+      if (authentication && Array.isArray(authentication)) {
+        const perm: string[] = user?.permissions || []
 
-          const hasPerm = perm.some(y => authentication.some(z => z === y))
-          const canUserAccess = authentication.find((x:any) => x?.userId)
-          if (!hasPerm && !canUserAccess) {
-            return res.status(401).json({
-              code: 401,
+        const hasPerm = perm.some(y => authentication.some(z => z === y))
+        const canUserAccess = authentication.find((x:any) => x?.userId)
+        if (!hasPerm && !canUserAccess) {
+          return {
+            code: 403,
+            json: {
+              code: 403,
               errorType: 'unauthorized',
-              data: { params: req.params },
+              data: { id },
               errors: ["You don't have permission to do this"]
-            })
+            }
           }
-        } else if (authentication && !req.user) {
-          return res.status(401).json({
+        }
+      } else if (authentication && !user) {
+        return {
+          code: 401,
+          json: {
             code: 401,
             errorType: 'unauthorized',
-            data: { params: req.params },
+            data: { id },
             errors: ['Only logged in users can do this']
-          })
+          }
         }
+      }
 
-        const error = (code: number, value: ErrorResponse) => res.status(code).json(value)
-        const resultSend = (code: number, value: any) => res.status(code).json(value)
-        const query = x.method === 'get' ? req.query : req.body
-        if (req.params && req.params.id !== undefined) {
-          if (query && query.id !== undefined) {
-            if (req.params.id !== query.id) {
-              return error(400, {
+      if (id !== undefined) {
+        if (body && body.id !== undefined) {
+          if (id !== body.id) {
+            return {
+              code: 400,
+              json: {
                 code: 400,
                 errorType: 'id mismatch',
-                data: { query, params: req.params },
+                data: { query: body, id },
                 errors: ['Mismatch between the object Id in the body and the URL']
-              })
+              }
             }
-          } else {
-            query.id = req.params.id
           }
+        } else {
+          body.id = id
         }
+      }
 
-        try {
-          const result: ContractResult =
-            await x.handle(query, { ...req.user, authentication: x.authentication })
+      try {
+        const result: ContractResult =
+          await x.handle(body, { ...user, authentication })
+        if (isContractInError(result)) { return { code: result.code, json: result } }
 
-          if (isContractInError(result)) { return error(result.code, result) }
+        const statusCode = x.contract.type === 'post' ? 201 : 200
+        if (id && Array.isArray(result.result)) {
+          if (result.result.length > 1) { console.warn('Results contained more than one entry for single return by id') }
 
-          const statusCode = x.method === 'post' ? 201 : 200
-          if (shouldReturnSingle(req) && Array.isArray(result.result)) {
-            if (result.result.length > 1) { console.warn('Results contained more than one entry for single return by id') }
-
-            return resultSend(statusCode, result.result[0])
-          }
-          return resultSend(statusCode, result.result)
-        } catch (e) {
-          const data = e && map(e, y => y)
-          const code = e?.code || 500
-          return error(code >= 400 && code < 600 ? code : 500, {
+          return { code: statusCode, json: result.result[0] }
+        }
+        return { code: statusCode, json: result.result }
+      } catch (e) {
+        const data = e && map(e, y => y)
+        const code = e?.code || 500
+        return {
+          code: code >= 400 && code < 600 ? code : 500,
+          json: {
             errorType: 'exception',
             code,
             data,
             errors: [e?.message]
-          })
+          }
         }
+      }
+    }
+
+    return {
+      route: `/api/${x.contract.name}/:id?`,
+      method: x.contract.type,
+      contract: x.contract,
+      handle,
+      handler: async (req:reqType, res:resType) => {
+        const body = x.contract.type === 'get' ? req.query : req.body
+
+        const result = await handle(body, req.params?.id, req.user)
+        res.status(result.code).json(result.json)
       }
     }
   })
