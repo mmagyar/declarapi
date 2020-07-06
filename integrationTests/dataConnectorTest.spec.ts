@@ -7,6 +7,7 @@ import { CrudContract } from '../src/transform/types'
 
 import { AuthInput } from '../src/globalTypes'
 import { Expressable } from '../src/runtime/registerRestMethods'
+import { checkedGenerate } from './common'
 
 export type InputType = (Expressable)[]
 
@@ -49,35 +50,6 @@ const getAllMethods = (contracts:InputType): ({
   if (!post || !get || !del || !patch || !put) throw new Error('All methods must exist')
 
   return { post, get, del, patch, put }
-}
-
-const checkMatchingGenerated = (generatorOut:any) => {
-  if (generatorOut.output.errors) {
-    throw new Error(generatorOut.output.errors)
-  }
-  expect(generatorOut.output.id).toBeTruthy()
-  if (generatorOut.generatedInput.id) expect(generatorOut.output.id).toBe(generatorOut.generatedInput.id)
-
-  const newOut = { ...generatorOut.output, id: undefined }
-  const newIn = { ...generatorOut.output, id: undefined }
-  expect(newOut).toStrictEqual(newIn)
-  return generatorOut
-}
-
-const checkedGenerate = async <Input, Output>(postContract: Expressable, authInput:AuthInput):
-  Promise<{ output: Output; generatedInput: Input;}> => {
-  return checkMatchingGenerated(await generateRandomCall(postContract, authInput))
-}
-export const canPost = async (contracts:InputType, authInput:AuthInput = {}, howMany:number = 20):Promise<any[]> => {
-  const { post } = getPostAndGet(contracts)
-  const posting = []
-  for (let i = 0; i < howMany; i++) {
-    posting.push(checkedGenerate(post, authInput))
-  }
-
-  const posted = (await Promise.all(posting)).map(x => x.output)
-  expect(posted).toHaveLength(howMany)
-  return posted
 }
 
 export const canGetAll = async (contracts:InputType, authInput:AuthInput = {}, howManyToExpect:number = 20):Promise<any[]> => {

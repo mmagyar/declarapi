@@ -1,13 +1,13 @@
-import { AuthInput } from '../globalTypes'
+import { AuthInput, ContractType } from '../globalTypes'
 import { generate } from 'yaschva'
-import { Expressable } from '../runtime/registerRestMethods'
+import { HandleType } from '../runtime/registerRestMethods'
 
 export const generateRandomCall =
- async <Input, Output>(input: Expressable, auth: AuthInput = {}):
+ async <Input, Output>(handle:HandleType, contract:ContractType<any, any>, auth: AuthInput = {}):
   Promise<{output: Output, generatedInput:Input}> => {
-   const generated = generate(input.contract.arguments)
+   const generated = generate(contract.arguments)
    return {
-     output: (await input.handle(generated, undefined, auth)).response,
+     output: (await handle(generated, undefined, auth)).response,
      generatedInput: generated
    }
  }

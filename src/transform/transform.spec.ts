@@ -24,7 +24,7 @@ describe('Generator', () => {
       results: [
         {
           name: 'test',
-              authentication: false,
+          authentication: false,
           method: 'get',
           arguments: {
             myNumber: 'number'

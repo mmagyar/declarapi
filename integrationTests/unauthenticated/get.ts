@@ -1,5 +1,6 @@
 import { HandleType, HandleResponse } from '../../src/runtime/registerRestMethods'
 import { mapToArray } from 'microtil'
+import { ArgumentVariations } from '../common'
 
 const expectEmptyResponse = (response:HandleResponse) => {
   expect(response).toHaveProperty('code', 200)
@@ -7,7 +8,8 @@ const expectEmptyResponse = (response:HandleResponse) => {
   expect(Array.isArray(response.response)).toBeTruthy()
   expect(response.response).toHaveLength(0)
 }
-export const argumentVariations = {
+
+export const argumentVariations:ArgumentVariations = {
   empty: [{}],
   singleIdInBody: [{ id: 'abc' }],
   singleIdInArrayInBody: [{ id: ['abc'] }],

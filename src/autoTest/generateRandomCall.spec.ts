@@ -23,7 +23,8 @@ describe('generateRandomCall', () => {
   })
   it('will fail if handle is missing', async () => {
     expect.assertions(1)
-    generateRandomCall(input(), auth).catch(x => {
+    const data = input()
+    generateRandomCall(data.handle, data.contract, auth).catch(x => {
       expect(x).toHaveProperty('message', 'handle must be defined to call it with randomly generated arguments')
     })
   })
@@ -40,7 +41,7 @@ describe('generateRandomCall', () => {
       handlerData = input
       return { json: 'done', code: 200 }
     })
-    const result = await generateRandomCall(data, auth)
+    const result = await generateRandomCall(data.handle, data.contract, auth)
     expect(result.output).toBe('done')
     expect(result.generatedInput).toStrictEqual(handlerData)
     expect(data.handle).toBeCalledTimes(1)
