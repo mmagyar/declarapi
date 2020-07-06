@@ -5,7 +5,7 @@ describe('transform crud', () => {
     const resultErr = await transform({ name: 'test', authentication: false, dataType: { notId: 'string' } })
     expect(resultErr).toStrictEqual({
       type: 'error',
-      errors: 'Field with the name set for idFieldName: id does not exist in the data declaration'
+      errors: 'id field does not exist in the data declaration'
     })
 
     const result = await transform({
@@ -155,10 +155,9 @@ describe('transform crud', () => {
   it('accpets regex validated id', async () => {
     const input:CrudContract = {
       name: 'test',
-      idFieldName: 'regexId',
       authentication: false,
       dataType: {
-        regexId: { $string: { regex: '[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}' } },
+        id: { $string: { regex: '[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}' } },
         notAnId: 'boolean'
       },
       search: 'idOnly'
@@ -166,7 +165,7 @@ describe('transform crud', () => {
     const output = await transform(input)
     expect(output.results?.[0]?.arguments).toStrictEqual(
       {
-        regexId: [
+        id: [
           { $string: { regex: '[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}' } },
           { $array: { $string: { regex: '[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}' } } },
           '?'
@@ -179,10 +178,9 @@ describe('transform crud', () => {
   it('returns an object with an error message on invalid id type', async () => {
     const input:CrudContract = {
       name: 'test',
-      idFieldName: 'notAnId',
       authentication: false,
       dataType: {
-        id: 'string',
+        id: 'number',
         notAnId: 'boolean'
       }
     }

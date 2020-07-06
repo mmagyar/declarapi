@@ -146,7 +146,7 @@ testPost: {
           name: \\"test\\",
           authentication: false,
           type: \\"post\\",
-          handle: (input, auth) => elastic.post(\\"test\\", auth, input, \\"id\\"),
+          handle: (input, auth) => elastic.post(\\"test\\", auth, input),
           arguments: {\\"id\\":[\\"string\\",\\"?\\"],\\"myNumber\\":\\"number\\"} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPut: {
@@ -167,7 +167,7 @@ testDelete: {
           name: \\"test\\",
           authentication: false,
           type: \\"delete\\",
-          handle: (input, auth) => elastic.del(\\"test\\", auth, input.id),
+          handle: (input, auth) => elastic.del(\\"test\\", auth, input.id1}),
           arguments: {\\"id\\":[\\"string\\",{\\"$array\\":\\"string\\"}]} ,
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}}
 }

@@ -4,7 +4,6 @@ describe('Generate typing and fetch function for client', () => {
   const singleExample = (): OutputSuccess[] => [
     {
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       method: 'get',
       arguments: { myNumber: 'number' },
@@ -16,7 +15,6 @@ describe('Generate typing and fetch function for client', () => {
     {
       method: 'get',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       arguments: { search: ['string', '?'], id: ['string', { $array: 'string' }, '?'] },
       returns: { $array: { id: 'string', myNumber: 'number' } }
@@ -24,7 +22,6 @@ describe('Generate typing and fetch function for client', () => {
     {
       method: 'post',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       arguments: { id: ['string', '?'], myNumber: 'number' },
       returns: { id: 'string', myNumber: 'number' }
@@ -32,7 +29,6 @@ describe('Generate typing and fetch function for client', () => {
     {
       method: 'put',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       arguments: { id: 'string', myNumber: 'number' },
       returns: { id: 'string', myNumber: 'number' }
@@ -40,7 +36,6 @@ describe('Generate typing and fetch function for client', () => {
     {
       method: 'patch',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       arguments: { id: 'string', myNumber: ['number', '?'] },
       returns: { id: 'string', myNumber: 'number' }
@@ -48,7 +43,6 @@ describe('Generate typing and fetch function for client', () => {
     {
       method: 'delete',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       arguments: { id: ['string', { $array: 'string' }] },
       returns: { $array: { id: 'string', myNumber: 'number' } }

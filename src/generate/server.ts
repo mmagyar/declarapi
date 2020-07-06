@@ -7,8 +7,8 @@ export const server = (contracts: OutputSuccess[]): string => {
     let handle = 'undefined'
     if (x.preferredImplementation && x.preferredImplementation.type === 'elasticsearch') {
       const elin:ElasticInputType = x.method === 'get'
-        ? { idField: x.idFieldName, method: x.method, search: x.search || 'idOnly' }
-        : { idField: x.idFieldName, method: x.method }
+        ? { method: x.method, search: x.search || 'idOnly' }
+        : { method: x.method }
 
       handle = elasticCodeGen(x.preferredImplementation, elin)
     }

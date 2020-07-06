@@ -7,7 +7,6 @@ export type AuthType = (string | {userId:string})[] | boolean
 
 export type Contract = {
   name: string;
-  idFieldName?: string;
   type?: HttpMethods;
   authentication: AuthType;
   arguments: ObjectType;
@@ -30,7 +29,6 @@ export type CrudContract = {
   name: string;
   methods?: { get?:boolean, post?:boolean, put?: boolean, patch?:boolean, delete?:boolean},
   authentication: AuthType | CrudAuthAll | CrudAuthSome;
-  idFieldName?: string;
   dataType: ObjectType;
   search?: SearchTypes;
   description?: string;
@@ -40,7 +38,6 @@ export type CrudContract = {
 export type OutputSuccess = {
   name: string;
   authentication: AuthType;
-  idFieldName: string;
   method: HttpMethods;
   arguments: ObjectType;
   returns: ObjectType;

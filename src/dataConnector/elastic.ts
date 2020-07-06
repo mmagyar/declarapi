@@ -85,12 +85,12 @@ export const get = async <T extends object>(
   const result = new Array(all.body.hits.hits).flatMap((y: any) => y.map((x: any) => x._source))
   return result
 }
-export const post = async <T extends {[key: string]: any}>(index: string, auth:HandlerAuth, body: T, idFieldName: string):
+export const post = async <T extends {[key: string]: any}>(index: string, auth:HandlerAuth, body: T):
 Promise<T & any> => {
   if (!authorizedByPermission(auth)) throw new RequestHandlingError('User not authorized to POST', 403)
-  const id = (body)[idFieldName] || uuid()
+  const id = body.id || uuid()
   const newBody: any = { ...body }
-  newBody[idFieldName] = id
+  newBody.id = id
   getUserIdFields(auth).forEach(x => { newBody[x] = auth.sub })
   await client().create({
     id,
@@ -116,7 +116,7 @@ export const del = async (index: string, auth:HandlerAuth, id: string|string[]):
 export const patch = async <T extends object, K extends object>(index: string, auth:HandlerAuth, body: T, id: string
 ): Promise<K> => {
   const result = await get(index, auth, id)
-  if (!result) {
+  if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to patch this', 403)
   }
   await client().update(
@@ -126,5 +126,5 @@ export const patch = async <T extends object, K extends object>(index: string, a
       id,
       body: { doc: body }
     })
-  return body as any
+  return (await get(index, auth, id) as any)[0]
 }

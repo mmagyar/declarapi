@@ -20,8 +20,8 @@ export type reqType = {
 export type resType = {
   status : (code:number) => {json: (input:any)=> void}
 }
-
-type HandleType = (body: { [key: string]: any} & {id?:string|string[]}, id?: string, user?: AuthInput) => Promise<{code:number, json:any}>
+export type HandleResponse = {code:number, response:any}
+export type HandleType = (body: { [key: string]: any} & {id?:string|string[]}, id?: string, user?: AuthInput) => Promise<HandleResponse>
 export type Expressable = {
   route: string;
   method: HttpMethods;
@@ -42,7 +42,7 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
         if (!hasPerm && !canUserAccess) {
           return {
             code: 403,
-            json: {
+            response: {
               code: 403,
               errorType: 'unauthorized',
               data: { id },
@@ -53,7 +53,7 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
       } else if (authentication && !user?.sub) {
         return {
           code: 401,
-          json: {
+          response: {
             code: 401,
             errorType: 'unauthorized',
             data: { id },
@@ -67,7 +67,7 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
           if (id !== body.id) {
             return {
               code: 400,
-              json: {
+              response: {
                 code: 400,
                 errorType: 'id mismatch',
                 data: { query: body, id },
@@ -83,21 +83,21 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
       try {
         const result: ContractResult =
           await x.handle(body, { ...user, authentication })
-        if (isContractInError(result)) { return { code: result.code, json: result } }
+        if (isContractInError(result)) { return { code: result.code, response: result } }
 
         const statusCode = x.contract.type === 'post' ? 201 : 200
         if (id && Array.isArray(result.result)) {
           if (result.result.length > 1) { console.warn('Results contained more than one entry for single return by id') }
 
-          return { code: statusCode, json: result.result[0] }
+          return { code: statusCode, response: result.result[0] }
         }
-        return { code: statusCode, json: result.result }
+        return { code: statusCode, response: result.result }
       } catch (e) {
         const data = e && map(e, y => y)
         const code = e?.code || 500
         return {
           code: code >= 400 && code < 600 ? code : 500,
-          json: {
+          response: {
             errorType: 'exception',
             code,
             data,
@@ -116,7 +116,7 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
         const body = x.contract.type === 'get' ? req.query : req.body
 
         const result = await handle(body, req.params?.id, req.user)
-        res.status(result.code).json(result.json)
+        res.status(result.code).json(result.response)
       }
     }
   })

@@ -7,7 +7,7 @@ export const generateRandomCall =
   Promise<{output: Output, generatedInput:Input}> => {
    const generated = generate(input.contract.arguments)
    return {
-     output: (await input.handle(generated, undefined, auth)).json,
+     output: (await input.handle(generated, undefined, auth)).response,
      generatedInput: generated
    }
  }

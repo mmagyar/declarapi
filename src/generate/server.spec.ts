@@ -4,7 +4,6 @@ describe('Generate typing and fetch function for server', () => {
   const singleExample = (): OutputSuccess[] => [
     {
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       method: 'get',
       arguments: {
@@ -18,7 +17,6 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'get',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       arguments: { search: ['string', '?'], id: ['string', { $array: 'string' }, '?'] },
       returns: { $array: { id: 'string', myNumber: 'number' } }
@@ -26,7 +24,6 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'post',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       arguments: { id: ['string', '?'], myNumber: 'number' },
       returns: { id: 'string', myNumber: 'number' }
@@ -34,7 +31,6 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'put',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       arguments: { id: 'string', myNumber: 'number' },
       returns: { id: 'string', myNumber: 'number' }
@@ -42,7 +38,6 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'patch',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       arguments: { id: 'string', myNumber: ['number', '?'] },
       returns: { id: 'string', myNumber: 'number' }
@@ -50,7 +45,6 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'delete',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       arguments: { id: ['string', { $array: 'string' }] },
       returns: { $array: { id: 'string', myNumber: 'number' } }
@@ -70,7 +64,6 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'get',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       search: 'textSearch',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
@@ -83,7 +76,6 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'post',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       search: 'textSearch',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
@@ -93,7 +85,6 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'put',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       search: 'textSearch',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
@@ -103,7 +94,6 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'patch',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       search: 'textSearch',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
@@ -113,7 +103,6 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'delete',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       search: 'textSearch',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
@@ -130,7 +119,6 @@ describe('Generate typing and fetch function for server', () => {
   const singleElasticExample = (): OutputSuccess[] => [
     {
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
       method: 'get',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },

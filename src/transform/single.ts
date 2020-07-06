@@ -11,7 +11,6 @@ export const transform = async (data:Contract | any): Promise<Output> => {
     results: [
       {
         name: contractData.name,
-        idFieldName: contractData.idFieldName || 'id',
         authentication: contractData.authentication,
         method: contractData.type || 'get',
         arguments: data.arguments,

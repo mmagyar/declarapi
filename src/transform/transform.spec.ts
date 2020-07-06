@@ -24,8 +24,7 @@ describe('Generator', () => {
       results: [
         {
           name: 'test',
-          idFieldName: 'id',
-          authentication: false,
+              authentication: false,
           method: 'get',
           arguments: {
             myNumber: 'number'
@@ -39,7 +38,6 @@ describe('Generator', () => {
   it('generates for object crud contract input', async () => {
     const input = {
       $schema: './schema/crudContractSchema.json',
-      idFieldName: 'id',
       name: 'test',
       authentication: false,
       dataType: { id: 'string', myNumber: 'number' }
