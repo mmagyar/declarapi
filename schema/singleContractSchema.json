@@ -12,10 +12,6 @@
       "type": ["boolean", "array"],
       "items": { "type": "string" }
     },
-    "idFieldName":{
-      "description": "name of the id field",
-      "type":"string"
-    },
     "arguments": {
       "description": "type definition of the arguments",
       "$ref": "../node_modules/yaschva/typeSchema.json"

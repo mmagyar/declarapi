@@ -64,7 +64,6 @@
       "$ref": "../node_modules/yaschva/typeSchema.json"
 
     },
-    "idFieldName":{"type":"string"},
     "search": {
       "oneOf": [
         {
