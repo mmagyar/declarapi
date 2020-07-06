@@ -58,6 +58,7 @@ The array members are matched with an "OR" operator, so the user needs to be eit
 Use a field to check against userId
 -----------------------------------
 This allows users to modify their own records.
+This is a relaxation on the security rules.
 This will use the `sub` field on the `user` object
 The referred field can be either a single id or an array of ids.
 ```json

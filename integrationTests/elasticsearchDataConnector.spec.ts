@@ -1,7 +1,6 @@
-import { canPostAndGetAll, generateContract, canTextSearchObjects, canPatchItems, canPutItems, canDeleteItems, canDeleteSingleItem, canPostAndGetSome, canPost, canGetAll, unauthorizedCanNotGetAll } from './dataConnectorTest.spec'
+import { canPostAndGetAll, generateContract, canTextSearchObjects, canPatchOwnItems, canPutItems, canDeleteItems, canDeleteSingleItem, canPostAndGetSome, canPost, unauthorizedCanNotGetAll } from './dataConnectorTest.spec'
 import path from 'path'
 import { addValidationToContract, registerRestMethods, elastic } from 'declarapi'
-import { RequestHandlingError } from '../src/RequestHandlingError'
 describe('data connector test', () => {
   const schemaFilePath = path.join(__dirname, '../example/elasticsearch_text_search_example.json')
   let indexName:string
@@ -60,7 +59,7 @@ describe('data connector test', () => {
 
     it('it can patch items', async () => {
       expect(Object.keys(contract)).toHaveLength(5)
-      await canPatchItems(contract)
+      await canPatchOwnItems(contract)
     }, 15000)
 
     it('it can put items', async () => {
@@ -123,7 +122,15 @@ describe('data connector test', () => {
     }, 15000)
 
     it('allows admin to patch items', async () => {
-      await canPatchItems(contract, { sub: 'a123', permissions: ['admin'] })
+      await canPatchOwnItems(contract, { sub: 'a123', permissions: ['admin'] })
+    }, 15000)
+
+    it('non-admin can patch own items', async () => {
+      await canPatchOwnItems(contract, { sub: 'a123' })
+    }, 15000)
+
+    it.only('deny non-admin patching other users items', async () => {
+      await canPatchOwnItems(contract, { sub: 'a123' }, { sub: 'b223' })
     }, 15000)
 
     it('allows admin to put items', async () => {

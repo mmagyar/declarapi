@@ -141,7 +141,7 @@ export const seedStandardDataset = async (post: Expressable, authInput:AuthInput
   { name: 'ZILLANILLA', cats: [], dogs: [], rain: 'dogs' },
   { name: 'MOTHS', cats: [], dogs: [], rain: 'cats' }
   ]
-  const all = await Promise.all(dataSets.map(x => post.handle({ ...x, ownerId: Math.random() + 'abc' }, undefined, authInput)))
+  const all = await Promise.all(dataSets.map(x => post.handle({ ...x, ownerId: authInput.sub || Math.random() + 'abc' }, undefined, authInput)))
 
   return all.map(x => {
     if (x.code > 299) throw new Error(JSON.stringify(x, null, 2))
@@ -162,7 +162,7 @@ export const canTextSearchObjects = async (contracts:InputType, authInput:AuthIn
   expect((await get.handle({ search: 'red' }, undefined, authInput)).json).toHaveLength(2)
 }
 
-export const canPatchItems = async (contracts:InputType, authInput:AuthInput = {}) => {
+export const canPatchOwnItems = async (contracts:InputType, authInput:AuthInput = {}, authPatch? :AuthInput) => {
   const { post, get, patch } = getAllMethods(contracts)
 
   const dataSet = await seedStandardDataset(post, authInput)
@@ -171,10 +171,11 @@ export const canPatchItems = async (contracts:InputType, authInput:AuthInput = {
   const byIdResult = (await get.handle({ id }, undefined, authInput)).json
   expect(byIdResult).toHaveLength(1)
   expect(byIdResult[0].cats).toHaveLength(0)
-  const patchCat = { name: 'Cirmi', breed: 'Maine Coon', color: 'grey', age: 3 }
-  await patch.handle?.({ id, cats: [patchCat] }, undefined, authInput)
-
+  const patchCat = { name: 'Cirmi2', breed: 'Maine Coon', color: 'grey', age: 3 }
+  const patchRes = await patch.handle({ id, cats: [patchCat] }, undefined, authPatch || authInput)
+  expect(patchRes.json).not.toHaveProperty('errors')
   const byIdResultAfterPatch = (await get.handle({ id }, undefined, authInput)).json
+
   expect(byIdResultAfterPatch).toHaveLength(1)
 
   expect(byIdResultAfterPatch[0].cats).toHaveLength(1)
