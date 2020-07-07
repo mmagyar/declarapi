@@ -1,5 +1,5 @@
 {"setupFiles": [
-  "dotenv/config"
+  "./jest.integration.js"
 ],
 "roots": [
   "<rootDir>/integrationTests"
@@ -23,4 +23,5 @@
   "!**/vendor/**"
 ],
 "resetModules": true,
-"clearMocks": true}
+"clearMocks": true,
+"testTimeout":30000}

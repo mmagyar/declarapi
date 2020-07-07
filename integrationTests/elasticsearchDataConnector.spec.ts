@@ -1,6 +1,7 @@
-import { canPostAndGetAll, generateContract, canTextSearchObjects, canPatchOwnItems, canPutItems, canDeleteItems, canDeleteSingleItem, canPostAndGetSome, canPost, unauthorizedCanNotGetAll } from './dataConnectorTest.spec'
+import { canPostAndGetAll, generateContract, canTextSearchObjects, canPatchOwnItems, canPutItems, canDeleteItems, canDeleteSingleItem, canPostAndGetSome, unauthorizedCanNotGetAll } from './dataConnectorTest.spec'
 import path from 'path'
 import { addValidationToContract, registerRestMethods, elastic } from 'declarapi'
+import { postRecords } from './unauthenticated/post'
 describe('data connector test', () => {
   const schemaFilePath = path.join(__dirname, '../example/elasticsearch_text_search_example.json')
   let indexName:string
@@ -9,8 +10,9 @@ describe('data connector test', () => {
     indexName = 'test-' + Date.now()
 
     if (!process.env.ELASTIC_HOST ||
-      !process.env.ELASTIC_USER_NAME ||
-      !process.env.ELASTIC_PASSWORD) {
+      ((!process.env.ELASTIC_USER_NAME ||
+      !process.env.ELASTIC_PASSWORD) &&
+      !process.env.ELASTIC_UNAUTHENTICATED)) {
       throw new Error('elasticsearch credentials need to be set in ENV variables for this test to work')
     }
   })
@@ -101,7 +103,7 @@ describe('data connector test', () => {
 
     it('it will throw an exception if you try to post without user object', async () => {
       expect(Object.keys(contract)).toHaveLength(5)
-      await expect(canPost(contract))
+      await expect(postRecords((contract.find((x:any) => x.method === 'post')as any), {}, 20))
         .rejects.toThrowError('Only logged in users can do this')
     })
 

@@ -1,5 +1,4 @@
 // @TODO run the input and output throught the validation decorator and the registerRestMethod functions to get full integration coverage
-import { generateRandomCall } from 'declarapi'
 import { generate, writeFile } from '../src/bin/generate'
 import path from 'path'
 import { promises as fs } from 'fs'
@@ -8,6 +7,7 @@ import { CrudContract } from '../src/transform/types'
 import { AuthInput } from '../src/globalTypes'
 import { Expressable } from '../src/runtime/registerRestMethods'
 import { checkedGenerate } from './common'
+import { postRecords } from './unauthenticated/post'
 
 export type InputType = (Expressable)[]
 
@@ -56,25 +56,25 @@ export const canGetAll = async (contracts:InputType, authInput:AuthInput = {}, h
   const { get } = getPostAndGet(contracts)
 
   const getSome = await get.handle({}, undefined, authInput)
-  expect(getSome.json).toHaveLength(howManyToExpect)
-  return getSome.json
+  expect(getSome.response).toHaveLength(howManyToExpect)
+  return getSome.response
 }
 
 export const unauthorizedCanNotGetAll = async (contracts:InputType, authInput:AuthInput = {}):Promise<any[]> => {
   const { get } = getPostAndGet(contracts)
 
   const getSome = await get.handle({}, undefined, authInput)
-  expect(getSome.json).toStrictEqual({
+  expect(getSome.response).toStrictEqual({
     code: 401,
     data: { id: undefined },
     errorType: 'unauthorized',
     errors: ['Only logged in users can do this']
   })
-  return getSome.json
+  return getSome.response
 }
 
 export const canPostAndGetAll = async (contracts:InputType, authInput:AuthInput = {}, howMany :number = 20) => {
-  const posted = await canPost(contracts, authInput, howMany)
+  const posted = await postRecords((contracts.find((x:any) => x.method === 'post')as any), authInput, howMany)
   expect(new Set(await canGetAll(contracts, authInput, howMany)))
     .toStrictEqual(new Set(posted))
 }
@@ -93,12 +93,12 @@ export const canPostAndGetSome = async (contracts:InputType, authInput:AuthInput
   const toGet:any = posted.slice(0, halfLength)
   const toGetIds :any = toGet.map((x:any) => x.id)
   const getResult = await get.handle?.({}, undefined, authInput)
-  expect(getResult.json).toHaveLength(howMany)
-  expect(new Set(getResult.json)).toStrictEqual(new Set(posted))
+  expect(getResult.response).toHaveLength(howMany)
+  expect(new Set(getResult.response)).toStrictEqual(new Set(posted))
 
   const getSome = await get.handle?.({ id: toGetIds }, undefined, authInput)
-  expect(getSome.json).toHaveLength(halfLength)
-  expect(new Set(getSome.json)).toStrictEqual(new Set(toGet))
+  expect(getSome.response).toHaveLength(halfLength)
+  expect(new Set(getSome.response)).toStrictEqual(new Set(toGet))
 }
 
 export const seedStandardDataset = async (post: Expressable, authInput:AuthInput = {}) => {
@@ -117,21 +117,21 @@ export const seedStandardDataset = async (post: Expressable, authInput:AuthInput
 
   return all.map(x => {
     if (x.code > 299) throw new Error(JSON.stringify(x, null, 2))
-    return x.json
+    return x.response
   })
 }
 export const canTextSearchObjects = async (contracts:InputType, authInput:AuthInput = {}) => {
   const { post, get } = getPostAndGet(contracts)
   await seedStandardDataset(post, authInput)
   const getResult = await get.handle({ search: 'dogs' }, undefined, authInput)
-  const dogResult = (getResult).json
+  const dogResult = (getResult).response
   expect(dogResult).toHaveLength(3)
 
-  const catResult = (await get.handle({ search: 'cats' }, undefined, authInput)).json
+  const catResult = (await get.handle({ search: 'cats' }, undefined, authInput)).response
 
   expect(catResult).toHaveLength(2)
 
-  expect((await get.handle({ search: 'red' }, undefined, authInput)).json).toHaveLength(2)
+  expect((await get.handle({ search: 'red' }, undefined, authInput)).response).toHaveLength(2)
 }
 
 export const canPatchOwnItems = async (contracts:InputType, authInput:AuthInput = {}, authPatch? :AuthInput) => {
@@ -140,13 +140,13 @@ export const canPatchOwnItems = async (contracts:InputType, authInput:AuthInput 
   const dataSet = await seedStandardDataset(post, authInput)
 
   const id = dataSet[0].id
-  const byIdResult = (await get.handle({ id }, undefined, authInput)).json
+  const byIdResult = (await get.handle({ id }, undefined, authInput)).response
   expect(byIdResult).toHaveLength(1)
   expect(byIdResult[0].cats).toHaveLength(0)
   const patchCat = { name: 'Cirmi2', breed: 'Maine Coon', color: 'grey', age: 3 }
   const patchRes = await patch.handle({ id, cats: [patchCat] }, undefined, authPatch || authInput)
-  expect(patchRes.json).not.toHaveProperty('errors')
-  const byIdResultAfterPatch = (await get.handle({ id }, undefined, authInput)).json
+  expect(patchRes.response).not.toHaveProperty('errors')
+  const byIdResultAfterPatch = (await get.handle({ id }, undefined, authInput)).response
 
   expect(byIdResultAfterPatch).toHaveLength(1)
 
@@ -161,19 +161,19 @@ export const canPutItems = async (contracts:InputType, authInput:AuthInput = {})
 
   const id = dataSet[0].id
   const secondId = dataSet[1].id
-  const byIdResult = (await get.handle({ id }, undefined, authInput)).json
+  const byIdResult = (await get.handle({ id }, undefined, authInput)).response
   expect(byIdResult).toHaveLength(1)
   expect(byIdResult[0].cats).toHaveLength(0)
   const putData:any = { ...dataSet[1], id }
   await put.handle?.(putData, undefined, authInput)
 
-  const byIdResultAfterPut = (await get.handle?.({ id }, undefined, authInput)).json
+  const byIdResultAfterPut = (await get.handle?.({ id }, undefined, authInput)).response
   expect(byIdResultAfterPut).toHaveLength(1)
 
   expect(byIdResultAfterPut[0]).toStrictEqual(putData)
   expect(byIdResultAfterPut[0]).not.toStrictEqual(dataSet[0])
 
-  const copiedObject = (await get.handle?.({ id: secondId }, undefined, authInput)).json
+  const copiedObject = (await get.handle?.({ id: secondId }, undefined, authInput)).response
   expect(copiedObject).toHaveLength(1)
   expect(copiedObject[0]).toStrictEqual(dataSet[1])
 }
@@ -183,9 +183,9 @@ export const canDeleteSingleItem = async (contracts:InputType, authInput:AuthInp
   const dataSet = await seedStandardDataset(post, authInput)
   const fullResult = await get.handle?.({}, undefined, authInput)
   // Compare sets, we don't care about order
-  expect(new Set(fullResult.json)).toStrictEqual(new Set(dataSet))
+  expect(new Set(fullResult.response)).toStrictEqual(new Set(dataSet))
   // Sets remove duplicate so check lenghth as well
-  expect(fullResult.json).toHaveLength(5)
+  expect(fullResult.response).toHaveLength(5)
 
   const removeFirst = [...dataSet]
   const first = removeFirst.shift()
@@ -193,16 +193,16 @@ export const canDeleteSingleItem = async (contracts:InputType, authInput:AuthInp
 
   const minusOne = await get.handle?.({}, undefined, authInput)
 
-  expect(minusOne.json).toHaveLength(4)
-  expect(new Set(minusOne.json)).toStrictEqual(new Set(removeFirst))
+  expect(minusOne.response).toHaveLength(4)
+  expect(new Set(minusOne.response)).toStrictEqual(new Set(removeFirst))
 }
 
 export const canDeleteItems = async (contracts:InputType, authInput: AuthInput = {}) => {
   const { post, get, del } = getAllMethods(contracts)
   const dataSet = await seedStandardDataset(post, authInput)
   const fullResult = await get.handle?.({}, undefined, authInput)
-  expect(fullResult.json).toHaveLength(5)
-  expect(new Set(fullResult.json)).toStrictEqual(new Set(dataSet))
+  expect(fullResult.response).toHaveLength(5)
+  expect(new Set(fullResult.response)).toStrictEqual(new Set(dataSet))
 
   const remove123 = [...dataSet]
   const first = remove123.shift()
@@ -211,8 +211,8 @@ export const canDeleteItems = async (contracts:InputType, authInput: AuthInput =
   await del.handle?.({ id: [first.id, second.id, third.id] }, undefined, authInput)
 
   const minus3 = await get.handle?.({}, undefined, authInput)
-  expect(minus3.json).toHaveLength(2)
-  expect(new Set(minus3.json)).toStrictEqual(new Set(remove123))
+  expect(minus3.response).toHaveLength(2)
+  expect(new Set(minus3.response)).toStrictEqual(new Set(remove123))
 }
 
 describe('This is just a placeholder for these test function', () => {

@@ -14,6 +14,7 @@ export const init = () => {
   const password = process.env.ELASTIC_PASSWORD
   const apiKey = process.env.ELASTIC_API_KEY
   const apiId = process.env.ELASTIC_API_ID
+  const unauthenticated = process.env.ELASTIC_UNAUTHENTICATED
 
   const setup: ClientOptions = { node }
 
@@ -21,7 +22,7 @@ export const init = () => {
     setup.auth = { username, password }
   } else if (apiKey) {
     setup.auth = apiId ? { apiKey: { id: apiId, api_key: apiKey } } : { apiKey }
-  } else {
+  } else if (!unauthenticated) {
     console.warn('Elasticsearch api credentials are not set')
   }
 

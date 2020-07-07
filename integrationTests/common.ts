@@ -1,6 +1,6 @@
 import { AuthInput } from '../src/globalTypes'
 import { generateRandomCall } from '../src/index'
-import { HandleType, Expressable } from '../src/runtime/registerRestMethods'
+import { Expressable } from '../src/runtime/registerRestMethods'
 
 export type CallArgument =[{ [key: string]: any}, string?, AuthInput?]
 export type ArgumentVariations= { [key:string] :CallArgument}
