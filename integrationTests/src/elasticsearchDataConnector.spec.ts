@@ -1,7 +1,7 @@
 import path from 'path'
 import { addValidationToContract, registerRestMethods, elastic } from 'declarapi'
 import { expectEmpty, expectNotFound, expectEmptyWithTextSearch } from './unauthenticated/get'
-import { postRecords } from './unauthenticated/post'
+import { postRecords, postAndGetRecordsByIdParam, postAndGetRecordsByIdArray, postAndGetSomeRecordsByIdArray } from './unauthenticated/post'
 import { Expressable } from '../../src/runtime/registerRestMethods'
 import { generateContract } from './common'
 describe('elasticsearch data connector test', () => {
@@ -68,6 +68,22 @@ describe('elasticsearch data connector test', () => {
     describe('post', () => {
       it('can post items', async () => {
         await postRecords(post, {})
+      })
+
+      it('can get all posted items by id, one by one', async () => {
+        await postAndGetRecordsByIdParam(post, get.handle, {})
+      })
+
+      it('can get all posted items by id array', async () => {
+        await postAndGetRecordsByIdArray(post, get.handle, {})
+      })
+
+      it('can get some of the posted items by id array', async () => {
+        await postAndGetSomeRecordsByIdArray(post, get.handle, {})
+      })
+
+      it('Text search for the first generated, and it should be the first result returned', async () => {
+        // So this should look for a string field that is not the id
       })
     })
   })

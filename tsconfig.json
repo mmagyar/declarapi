@@ -18,6 +18,10 @@
     "rootDirs": [
       "./src"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "declarapi": ["./src"]
+    },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [
