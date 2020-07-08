@@ -94,7 +94,7 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
         return { code: statusCode, response: result.result }
       } catch (e) {
         const data = e && map(e, y => y)
-        const code = e?.code || 500
+        const code = e?.code || e?.statusCode || 500
         return {
           code: code >= 400 && code < 600 ? code : 500,
           response: {

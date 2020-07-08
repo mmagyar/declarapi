@@ -1,9 +1,7 @@
-// @TODO run the input and output throught the validation decorator and the registerRestMethod functions to get full integration coverage
 import { generate, writeFile } from '../../src/bin/generate'
 import path from 'path'
 import { promises as fs } from 'fs'
 import { CrudContract } from '../../src/transform/types'
-
 import { AuthInput } from '../../src/globalTypes'
 import { Expressable } from '../../src/runtime/registerRestMethods'
 import { checkedGenerate } from './common'
@@ -11,14 +9,6 @@ import { postRecords } from './unauthenticated/post'
 
 export type InputType = (Expressable)[]
 
-export const generateContract = async (schemaFilePath:string, outputName:string, decorator : (input: CrudContract) => CrudContract = x => x) => {
-  const json = await fs.readFile(schemaFilePath, { encoding: 'utf8' })
-  const parsed = decorator(JSON.parse(json))
-  const generated = await generate('server', parsed)
-  const outPath = path.join(__dirname, '../temp')
-  await writeFile(generated, outputName, outPath)
-  return path.join(outPath, outputName)
-}
 const getPostAndGet = (contracts:InputType): {post:Expressable, get:Expressable} => {
   const post = contracts.find(x => x.method === 'post')
   const get = contracts.find(x => x.method === 'get')

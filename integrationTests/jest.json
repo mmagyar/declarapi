@@ -1,5 +1,5 @@
 {"setupFiles": [
-  "./jest.integration.js"
+  "./env.js"
 ],
 "globalSetup":"./setup.js",
 "globalTeardown":"./teardown.js",
@@ -26,4 +26,4 @@
 ],
 "resetModules": true,
 "clearMocks": true,
-"testTimeout":30000}
+"testTimeout":300000}

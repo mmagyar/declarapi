@@ -33,7 +33,7 @@
     "test:watch": "jest --watch",
     "test:dev": "npm run standard:fix && jest --no-cache --coverage",
     "test:clearCache": "jest --clearCache",
-    "jest:integration": "jest --no-cache  --config integrationTests/jest.integration.json",
+    "jest:integration": "jest --no-cache  --config integrationTests/jest.json --colors",
     "test:integration": "npm run prepare && npm run jest:integration",
     "generate": "node ./dist/bin/generate.js",
     "generate:dev": "npm run build && npm run generate"

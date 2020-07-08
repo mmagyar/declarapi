@@ -2,11 +2,14 @@ The aim of these tests is work with any schema, so it can test all API endpoints
 
 Unauthenticated:
 
- GET: 
-- Get empty set, without parameters
-- Get empty set, non existent id
-- Get empty set, empty set of ids
-- Get empty set, with text search
+ GET:
+- without parameters, returns empty set
+- non existent id in the body returns 404
+- non existent id in the params returns 404
+- with array of non existent ids it returns an empty set
+- empty set of ids returns empty set
+- text search returns empty set
+<!-- - invalid regex returns validation error -->
 
 POST
 - Post random records
@@ -54,7 +57,7 @@ PATCH
 - Unauthenticated user gets 401, make sure records are not modified
 
 DELETE
-- Authorized user can delete any record by id, check that only that one is removed, to this with both single id and array of ids 
+- Authorized user can delete any record by id, check that only that one is removed, to this with both single id and array of ids
 - Authenticated but not authorized user gets 403, make sure no records where deleted
 - Unauthenticated user gets 401, make sure no records where deleted
 
@@ -82,7 +85,7 @@ DELETE
  - Same as plain authentication
  - Authenticated user, without permissions, can delete own items
  - Authenticated user, without permissions, can't delete other users items
- 
+
 
 
 Schema types to test

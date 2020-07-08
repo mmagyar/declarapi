@@ -36,14 +36,14 @@ elasticsearchSearchExampleGet: {
           name: "elasticsearchSearchExample",
           authentication: true,
           type: "get",
-          handle: (input, auth) => elastic.get("test-1594205156705", auth, input && input.id, input && input.search),
+          handle: (input, auth) => elastic.get("test-1594206575787", auth, input && input.id, input && input.search),
           arguments: {"search":["string","?"],"id":[{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}},{"$array":{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}}},"?"]} ,
           returns: {"$array":{"id":{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}},"name":"string","ownerId":"string","dogs":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Labrador Retriever","German Shepherd Dog","Golden Retriever","French Bulldog","Bulldog"]}}},"cats":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Siamese","Persian","Maine Coon","Ragdoll","Bengal"]}}},"rain":{"$enum":["cats","dogs"]}}}},
 elasticsearchSearchExamplePost: {
           name: "elasticsearchSearchExample",
           authentication: true,
           type: "post",
-          handle: (input, auth) => elastic.post("test-1594205156705", auth, input),
+          handle: (input, auth) => elastic.post("test-1594206575787", auth, input),
           arguments: {"id":[{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}},"?"],"name":"string","ownerId":"string","dogs":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Labrador Retriever","German Shepherd Dog","Golden Retriever","French Bulldog","Bulldog"]}}},"cats":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Siamese","Persian","Maine Coon","Ragdoll","Bengal"]}}},"rain":{"$enum":["cats","dogs"]}} ,
           returns: {"id":{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}},"name":"string","ownerId":"string","dogs":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Labrador Retriever","German Shepherd Dog","Golden Retriever","French Bulldog","Bulldog"]}}},"cats":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Siamese","Persian","Maine Coon","Ragdoll","Bengal"]}}},"rain":{"$enum":["cats","dogs"]}}},
 elasticsearchSearchExamplePut: {
@@ -55,7 +55,7 @@ elasticsearchSearchExamplePut: {
   }
 ],
           type: "put",
-          handle: (input, auth) => elastic.patch("test-1594205156705", auth, input, input.id),
+          handle: (input, auth) => elastic.patch("test-1594206575787", auth, input, input.id),
           arguments: {"id":{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}},"name":"string","ownerId":"string","dogs":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Labrador Retriever","German Shepherd Dog","Golden Retriever","French Bulldog","Bulldog"]}}},"cats":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Siamese","Persian","Maine Coon","Ragdoll","Bengal"]}}},"rain":{"$enum":["cats","dogs"]}} ,
           returns: {"id":{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}},"name":"string","ownerId":"string","dogs":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Labrador Retriever","German Shepherd Dog","Golden Retriever","French Bulldog","Bulldog"]}}},"cats":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Siamese","Persian","Maine Coon","Ragdoll","Bengal"]}}},"rain":{"$enum":["cats","dogs"]}}},
 elasticsearchSearchExamplePatch: {
@@ -67,7 +67,7 @@ elasticsearchSearchExamplePatch: {
   }
 ],
           type: "patch",
-          handle: (input, auth) => elastic.patch("test-1594205156705", auth, input, input.id),
+          handle: (input, auth) => elastic.patch("test-1594206575787", auth, input, input.id),
           arguments: {"id":{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}},"name":["string","?"],"ownerId":["string","?"],"dogs":[{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Labrador Retriever","German Shepherd Dog","Golden Retriever","French Bulldog","Bulldog"]}}},"?"],"cats":[{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Siamese","Persian","Maine Coon","Ragdoll","Bengal"]}}},"?"],"rain":[{"$enum":["cats","dogs"]},"?"]} ,
           returns: {"id":{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}},"name":"string","ownerId":"string","dogs":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Labrador Retriever","German Shepherd Dog","Golden Retriever","French Bulldog","Bulldog"]}}},"cats":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Siamese","Persian","Maine Coon","Ragdoll","Bengal"]}}},"rain":{"$enum":["cats","dogs"]}}},
 elasticsearchSearchExampleDelete: {
@@ -79,7 +79,7 @@ elasticsearchSearchExampleDelete: {
   }
 ],
           type: "delete",
-          handle: (input, auth) => elastic.del("test-1594205156705", auth, input.id),
+          handle: (input, auth) => elastic.del("test-1594206575787", auth, input.id),
           arguments: {"id":[{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}},{"$array":{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}}}]} ,
           returns: {"$array":{"id":{"$string":{"regex":"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"}},"name":"string","ownerId":"string","dogs":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Labrador Retriever","German Shepherd Dog","Golden Retriever","French Bulldog","Bulldog"]}}},"cats":{"$array":{"name":"string","color":"string","age":"number","breed":{"$enum":["Siamese","Persian","Maine Coon","Ragdoll","Bengal"]}}},"rain":{"$enum":["cats","dogs"]}}}}
 }

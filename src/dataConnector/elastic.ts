@@ -2,6 +2,7 @@ import { Client, ClientOptions } from '@elastic/elasticsearch'
 import { v4 as uuid } from 'uuid'
 import { HandlerAuth } from '../globalTypes'
 import { RequestHandlingError } from '../RequestHandlingError'
+import { mapFilter } from 'microtil'
 
 let clientInstance: Client | undefined
 export const client = () => clientInstance || init()
@@ -16,7 +17,7 @@ export const init = () => {
   const apiId = process.env.ELASTIC_API_ID
   const unauthenticated = process.env.ELASTIC_UNAUTHENTICATED
 
-  const setup: ClientOptions = { node }
+  const setup: ClientOptions = { node, requestTimeout: 90000 }
 
   if (username && password) {
     setup.auth = { username, password }
@@ -61,11 +62,12 @@ export const get = async <T extends object>(
   }
 
   if (Array.isArray(id)) {
+    if (id.length === 0) return []
     const { body: { docs } } = await client().mget({ index, body: { ids: id } })
-    return filterToAccess(docs.map((x: any) => x._source), auth)
+    return filterToAccess(mapFilter(docs, (x: any) => x._source), auth)
   } else if (id) {
-    const { body: { _source } } = await client().get({ index, id })
-    return filterToAccess([_source], auth)
+    const { body } = await client().get({ index, id })
+    return filterToAccess([body._source], auth)
   } else if (search) {
     const queryString = {
       query: {
