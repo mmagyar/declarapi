@@ -11,7 +11,7 @@ if [ ! "$(docker ps -q -f name=elastic_test)" ]; then
   docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" --name "elastic_test" docker.elastic.co/elasticsearch/elasticsearch:7.8.0
 fi
 
-echo -e "Waiting for elasticsearch to be responsive\c"
+echo "\nWaiting for elasticsearch to be responsive\c"
 timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:9200)" != "200" ]]; do sleep 1; echo -e ".\c"; done' || false
-echo -e "\nElasticsearch is up!"
+echo "\nElasticsearch is up!"
 
