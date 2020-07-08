@@ -31,10 +31,10 @@
     "standard:fix2": "standardx --fix src/**/example-server.ts",
     "test:coverage": "npm run standard && jest --coverage=true  --no-cache",
     "test:watch": "jest --watch",
-    "test:dev": "npm run standard:fix && jest --no-cache --coverage",
+    "test:dev": "npm run standard:fix && jest --no-cache --coverage --detectOpenHandles --runInBand",
     "test:clearCache": "jest --clearCache",
     "jest:integration": "jest --no-cache  --config integrationTests/jest.json --colors",
-    "test:integration": "npm run prepare && npm run jest:integration",
+    "test:integration": "npm run jest:integration",
     "generate": "node ./dist/bin/generate.js",
     "generate:dev": "npm run build && npm run generate"
   },

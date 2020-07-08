@@ -1,5 +1,8 @@
 node_modules
 # dependencies
+integrationTests/dist
+integrationTests/temp/*.ts
+
 /node_modules
 /.pnp
 .pnp.js

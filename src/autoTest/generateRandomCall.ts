@@ -7,14 +7,14 @@ export const generateRandomCall =
   Promise<{output: Output, generatedInput:Input}> => {
    const generated = generate(contract.arguments)
    const handled = await handle(generated, undefined, auth)
-   if (handled.code > 299) {
+   if (!handled || handled?.code > 299) {
      const error:any = new Error('Random data generation returned with error')
-     error.code = handled.code
-     error.response = handled.response
+     error.code = handled?.code
+     error.response = handled?.response
      throw error
    }
    return {
-     output: handled.response,
+     output: handled?.response,
      generatedInput: generated
    }
  }

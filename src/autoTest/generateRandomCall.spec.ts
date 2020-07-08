@@ -24,8 +24,8 @@ describe('generateRandomCall', () => {
   it('will fail if handle is missing', async () => {
     expect.assertions(1)
     const data = input()
-    generateRandomCall(data.handle, data.contract, auth).catch(x => {
-      expect(x).toHaveProperty('message', 'handle must be defined to call it with randomly generated arguments')
+    await generateRandomCall(data.handle, data.contract, auth).catch(x => {
+      expect(x).toHaveProperty('message', 'Random data generation returned with error')
     })
   })
 

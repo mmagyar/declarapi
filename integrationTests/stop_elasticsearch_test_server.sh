@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
-echo "Stopping and removing docker container named \"elastic_test\""
-docker ps -q --filter "name=elastic_test" | grep -q . && docker stop "elastic_test" && docker rm -fv "elastic_test"
+
+if [ "$(docker ps -q -f name=elastic_test)" ]; then
+    if [ $ELASTIC_KEEP ]; then
+        echo "ELASTIC_KEEP option is set, not stopping elasticsearch"
+        exit 0
+    fi
+
+
+    echo "Stopping and removing docker container named \"elastic_test\""
+    docker stop "elastic_test" && docker rm -fv "elastic_test"
+fi
+
 
 exit 0

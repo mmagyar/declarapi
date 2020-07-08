@@ -1,6 +1,7 @@
 import path from 'path'
 import { addValidationToContract, registerRestMethods, elastic } from 'declarapi'
 import { expectEmpty, expectNotFound, expectEmptyWithTextSearch } from './unauthenticated/get'
+import { postRecords } from './unauthenticated/post'
 import { Expressable } from '../../src/runtime/registerRestMethods'
 import { generateContract } from './common'
 describe('elasticsearch data connector test', () => {
@@ -8,6 +9,7 @@ describe('elasticsearch data connector test', () => {
   let indexName:string
   let contract:any
   let get:Expressable
+  let post:Expressable
   beforeAll(async () => {
     indexName = 'test-' + Date.now()
 
@@ -46,18 +48,27 @@ describe('elasticsearch data connector test', () => {
       const inputs = await import('../temp/test-elastic-server')
       contract = registerRestMethods(addValidationToContract(inputs.contracts))
       get = contract.find((x:Expressable) => x.method === 'get')
+      post = contract.find((x:Expressable) => x.method === 'post')
     })
 
-    it('will return 404 when the element is requested by id', async () => {
-      await expectNotFound(get.handle)
+    describe('get empty', () => {
+      it('will return 404 when the element is requested by id', async () => {
+        await expectNotFound(get.handle)
+      })
+
+      it('will get empty sets when there are no params or multiple ids requested', async () => {
+        await expectEmpty(get.handle)
+      })
+
+      it('will get empty sets when searching for text', async () => {
+        await expectEmptyWithTextSearch(get.handle)
+      })
     })
 
-    it('will get empty sets when there are no params or multiple ids requested', async () => {
-      await expectEmpty(get.handle)
-    })
-
-    it('will get empty sets when searching for text', async () => {
-      await expectEmptyWithTextSearch(get.handle)
+    describe('post', () => {
+      it('can post items', async () => {
+        await postRecords(post, {})
+      })
     })
   })
 })
