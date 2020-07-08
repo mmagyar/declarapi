@@ -3,7 +3,7 @@ import path from 'path'
 import { addValidationToContract, registerRestMethods, elastic } from 'declarapi'
 import { postRecords } from './unauthenticated/post'
 describe('data connector test', () => {
-  const schemaFilePath = path.join(__dirname, '../example/elasticsearch_text_search_example.json')
+  const schemaFilePath = path.join(__dirname, '../../example/elasticsearch_text_search_example.json')
   let indexName:string
   let contract:any
   beforeAll(async () => {
@@ -40,7 +40,7 @@ describe('data connector test', () => {
         return input
       })
       // @ts-ignore
-      const inputs = await import('../test/test-elastic-server')
+      const inputs = await import('../temp/test-elastic-server')
       contract = registerRestMethods(addValidationToContract(inputs.contracts))
     })
 
@@ -97,7 +97,7 @@ describe('data connector test', () => {
         }
       })
       // @ts-ignore
-      const inputs = await import('../test/test-elastic2-server')
+      const inputs = await import('../temp/test-elastic2-server')
       contract = registerRestMethods(addValidationToContract(inputs.contracts))
     })
 

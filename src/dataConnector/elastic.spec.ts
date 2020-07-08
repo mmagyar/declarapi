@@ -139,14 +139,14 @@ describe('elasticsearch data connector', () => {
 
   describe('post', () => {
     it('post returns the saved value', async () => {
-      expect(await post('test', { authentication: false }, { id: 1, value: 'abc' }, 'id'))
+      expect(await post('test', { authentication: false }, { id: 1, value: 'abc' }))
         .toStrictEqual({ id: 1, value: 'abc' })
       expect(client().create).toHaveBeenCalledTimes(1)
       expect(client().update).toHaveBeenCalledTimes(0)
     })
 
     it('post generated uuid, if id not given', async () => {
-      const posted = await post('test', { authentication: false }, { value: 'abc' }, 'id')
+      const posted = await post('test', { authentication: false }, { value: 'abc' })
       expect(posted.value).toBe('abc')
       expect(isValidUUID(posted.id)).toBeTruthy()
       expect(client().create).toHaveBeenCalledTimes(1)
@@ -169,9 +169,9 @@ describe('elasticsearch data connector', () => {
     })
   })
 
-  it('can update / patch existing items', async () => {
+  it('can update / patch existing items, returns value read by get', async () => {
     expect(await patch('test', { authentication: false }, { id: '1', value: 'testValue' }, '1'))
-      .toStrictEqual({ id: '1', value: 'testValue' })
+      .toStrictEqual({ id: '2', value: 'getmock' })
     expect(client().update).toHaveBeenCalledTimes(1)
     expect(client().create).toHaveBeenCalledTimes(0)
   })

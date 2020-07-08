@@ -167,7 +167,7 @@ testDelete: {
           name: \\"test\\",
           authentication: false,
           type: \\"delete\\",
-          handle: (input, auth) => elastic.del(\\"test\\", auth, input.id1}),
+          handle: (input, auth) => elastic.del(\\"test\\", auth, input.id),
           arguments: {\\"id\\":[\\"string\\",{\\"$array\\":\\"string\\"}]} ,
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}}
 }

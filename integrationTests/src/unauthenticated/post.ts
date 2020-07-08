@@ -1,5 +1,5 @@
-import { HandleType, Expressable } from '../../src/runtime/registerRestMethods'
-import { AuthInput } from '../../src/globalTypes'
+import { Expressable } from '../../../src/runtime/registerRestMethods'
+import { AuthInput } from 'declarapi'
 import { checkedGenerate } from '../common'
 
 export const postRecords = async (post:Expressable, authInput:AuthInput, howMany:number) => {

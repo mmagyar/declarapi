@@ -21,6 +21,7 @@
   "scripts": {
     "build": "tsc && chmod +x ./dist/bin/generate.js",
     "watch": "tsc --watch",
+    "clean": "rm -rf ./dist && rm -rf ./test/*.ts",
     "test": "npm run standard && jest",
     "jest": "jest",
     "prepare": "npm run build && require-self",
@@ -32,8 +33,8 @@
     "test:watch": "jest --watch",
     "test:dev": "npm run standard:fix && jest --no-cache --coverage",
     "test:clearCache": "jest --clearCache",
-    "test:integration": "npm run prepare && rm -f ./test/*.ts && sh start_elasticsearch_test_server.sh && jest --no-cache  --config jest.integration.json; docker stop elastic_test; docker rm elastic_test",
-    "test:integration-debug": "npm run prepare && rm -f ./test/*.ts && jest --no-cache --runInBand --detectOpenHandles --config jest.integration.json",
+    "jest:integration": "jest --no-cache  --config integrationTests/jest.integration.json",
+    "test:integration": "npm run prepare && npm run jest:integration",
     "generate": "node ./dist/bin/generate.js",
     "generate:dev": "npm run build && npm run generate"
   },

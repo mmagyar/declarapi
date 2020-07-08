@@ -1,8 +1,10 @@
 {"setupFiles": [
   "./jest.integration.js"
 ],
+"globalSetup":"./setup.js",
+"globalTeardown":"./teardown.js",
 "roots": [
-  "<rootDir>/integrationTests"
+  "<rootDir>/src"
 ],
 "transform": {
   "^.+\\.tsx?$": "ts-jest"

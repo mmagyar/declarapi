@@ -39,7 +39,7 @@ describe('generateRandomCall', () => {
       expect(typeof input.myString).toBe('string')
       expect(Object.keys(input)).toHaveLength(3)
       handlerData = input
-      return { json: 'done', code: 200 }
+      return { response: 'done', code: 200 }
     })
     const result = await generateRandomCall(data.handle, data.contract, auth)
     expect(result.output).toBe('done')
