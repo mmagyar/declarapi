@@ -1,6 +1,7 @@
 import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
 import { AuthInput } from 'declarapi'
-import { checkedGenerate } from '../common'
+import { checkedGenerate, getFirstStringFieldName } from '../common'
+import { generate } from 'yaschva'
 
 export const postRecords = async (post:Expressable, authInput:AuthInput, howMany:number = 20) => {
   const posted = (await Promise.all(
@@ -66,9 +67,7 @@ export const postAndGetAvailableIdsIgnoringWrong = async (post:Expressable, get:
 export const postAndGetByTextSearch = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)
   const first:any = posted[0]
-  const entity = Object.entries(post.contract.returns).find(x => x[1] === 'string' && x[1] !== 'id')
-  if (!entity) throw new Error('This schema does not have a string field to test search with')
-  const textToSearch = first[entity[0]]
+  const textToSearch = first[getFirstStringFieldName(post.contract.returns)]
 
   const result = await get({ search: textToSearch })
   expect(result.code).toBe(200)
@@ -78,6 +77,23 @@ export const postAndGetByTextSearch = async (post:Expressable, get: HandleType, 
 export const postAndRejectRePost = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postAndGetRecordsByEmptyGet(post, get, authInput)
   const handled:any = await post.handle(posted[0], undefined, authInput)
+  expect(handled).toHaveProperty('code', 409)
+  expect(handled.response).toHaveProperty('code', 409)
+  expect(handled.response).toHaveProperty('data')
+
+  const result = await get({ }, undefined, {})
+
+  expect(result.code).toBe(200)
+  // Use set because the order does not matter.
+  expect(result.response).toHaveLength(posted.length)
+  expect(new Set(result.response)).toStrictEqual(new Set(posted))
+}
+
+export const postAndRejectPostWithSameId = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
+  const posted = await postAndGetRecordsByEmptyGet(post, get, authInput)
+  const newPost = generate(post.contract.arguments)
+  newPost.id = posted[0].id
+  const handled:any = await post.handle(newPost, undefined, authInput)
   expect(handled).toHaveProperty('code', 409)
   expect(handled.response).toHaveProperty('code', 409)
   expect(handled.response).toHaveProperty('data')

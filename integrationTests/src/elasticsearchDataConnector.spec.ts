@@ -1,15 +1,20 @@
 import path from 'path'
-import { addValidationToContract, registerRestMethods, elastic } from 'declarapi'
+import { addValidationToContract, registerRestMethods, elastic } from '../../src'
 import { expectEmptyForNonMatchingInput, expectNotFound, expectEmptyWithTextSearch, expectEmptyWhenNoRecordsPresent } from './unauthenticated/get'
-import { postRecords, postAndGetRecordsByIdParam, postAndGetRecordsByIdArray, postAndGetSomeRecordsByIdArray, postAndGetRecordsByEmptyGet, postAndGetByTextSearch, postAndRejectRePost, postAndGetAvailableIdsIgnoringWrong } from './unauthenticated/post'
+import { postRecords, postAndGetRecordsByIdParam, postAndGetRecordsByIdArray, postAndGetSomeRecordsByIdArray, postAndGetRecordsByEmptyGet, postAndGetByTextSearch, postAndRejectRePost, postAndGetAvailableIdsIgnoringWrong, postAndRejectPostWithSameId } from './unauthenticated/post'
 import { Expressable } from '../../src/runtime/registerRestMethods'
 import { generateContract } from './common'
+import { canPatch, cantPatchNonExistent, cantChangeId } from './unauthenticated/put'
+
 describe('elasticsearch data connector test', () => {
   const schemaFilePath = path.join(__dirname, '../../example/elasticsearch_text_search_example.json')
   let indexName:string
   let contract:any
   let get:Expressable
   let post:Expressable
+  let patch:Expressable
+  let put:Expressable
+
   beforeAll(async () => {
     indexName = 'test-' + Date.now()
 
@@ -49,6 +54,8 @@ describe('elasticsearch data connector test', () => {
       contract = registerRestMethods(addValidationToContract(inputs.contracts))
       get = contract.find((x:Expressable) => x.method === 'get')
       post = contract.find((x:Expressable) => x.method === 'post')
+      patch = contract.find((x:Expressable) => x.method === 'patch')
+      put = contract.find((x:Expressable) => x.method === 'put')
     })
 
     describe('get empty', () => {
@@ -106,6 +113,24 @@ describe('elasticsearch data connector test', () => {
 
       it('rejects re-post', async () => {
         await postAndRejectRePost(post, get.handle, {})
+      })
+
+      it('rejects post with same id', async () => {
+        await postAndRejectPostWithSameId(post, get.handle, {})
+      })
+    })
+
+    describe('put', () => {
+      it('can patch item and verify only that one record changed', async () => {
+        await canPatch(post, patch, get.handle, {})
+      })
+
+      it('can not patch non existing record', async () => {
+        await cantPatchNonExistent(post, patch, get.handle, {})
+      })
+
+      it('can not change id', async () => {
+        await cantChangeId(post, patch, get.handle, {})
       })
     })
   })

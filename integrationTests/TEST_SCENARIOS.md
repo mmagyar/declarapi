@@ -1,17 +1,21 @@
 The aim of these tests is work with any schema, so it can test all API endpoints, creating a full integration test for the finished app.
 
-Unauthenticated:
+This is done with property based tests, with randomized data.
 
- GET:
+# Tests
+
+## Unauthenticated:
+
+### GET:
 - *DONE* without parameters, returns empty set
 - *DONE* non existent id in the body returns 404
 - *DONE* non existent id in the params returns 404
 - *DONE* with array of non existent ids it returns an empty set
 - *DONE* empty set of ids returns empty set
 - *DONE* text search returns empty set
-<!-- - invalid regex returns validation error -->
+<!-- - invalid regex returns validation error, if regex -->
 
-POST
+### POST
 - *DONE* Post random records and get all with empty arguments
 - *DONE* Get all random posted, by id, one by one
 - *DONE* Get all random posted, by id, with an array of IDs
@@ -19,20 +23,21 @@ POST
 - *DONE* Gets available records, ignores non existent ones when an array of ids is supplied
 - *DONE* Text search for the first generated, in a text field, and it should be the first result returned
 - *DONE* Perform the basic get test set, with records already posted, to make sure it does not return stuff it should not.
+- *DONE* Can't re-post an existing record with post, throws error (409, conflict)
 - *DONE* Can't override an existing record with post, throws error (409, conflict)
 
-PATCH
-- Can patch previously posted set. get before and after patching, and compare.
-- Get the full posted set to make sure only the patched record is different
-- Can't patch item that does not exist yet
-- Can't change record id
+### PATCH
+- *DONE* Can patch previously posted set. get before and after patching, and compare.
+- *DONE* Get the full posted set to make sure only the patched record is different
+- *DONE* Can't patch item that does not exist yet
+- *DONE* Can't change record id
 
-PUT
+### PUT
 - Putting all fields can completely replace a records data
 - Can't put item that does not exist
 - Can't change record id
 
-DELETE
+### DELETE
 - Delete one by id, make sure only that one is removed
 - Delete many by id, make sure only the listed ones are removed
 - Delete all by id, make sure that no records remain
@@ -40,34 +45,34 @@ DELETE
 
 With Authentication (just permissions, no userID field)
 
-GET
+### GET
 - Unauthenticated user can't access the get endpoint, error 401
 - User without necessary permission gets 403
 - Authenticated, Authorized users get an empty array returned
 
-POST
+### POST
 - Unauthenticated gets 401, unauthorized gets 403
 - Authenticated, Authorized user can POST records
 - Authorized user can get all records, run full GET test suit with authorized user
 - Run full GET test suit with unauthorized user to make sure no records leak
 - Run full GET test suit with unauthenticated user to make sure no records leak
 
-PATCH
+### PATCH
 - Authorized user can patch any record, check that only the desired record is changed
 - Authenticated but not authorized user gets 403, make sure records are not modified
 - Unauthenticated user gets 401, make sure records are not modified
 
-DELETE
+### DELETE
 - Authorized user can delete any record by id, check that only that one is removed, to this with both single id and array of ids
 - Authenticated but not authorized user gets 403, make sure no records where deleted
 - Unauthenticated user gets 401, make sure no records where deleted
 
-With Authentication (userID field is present on all but POST)
+## With Authentication (userID field is present on all but POST)
 
-GET
+### GET
 - Same as Authentication without userID
 
-POST
+### POST
 - Post does not have userID options, same as above should work
 - Authenticated user, without permissions can get it's own posted items by id
 - Authenticated user, without permissions can get it's own posted items by id array
@@ -76,21 +81,26 @@ POST
 - Authorized user with permission can get all records posted by other users
 
 
-PATCH and PUT
+### PATCH and PUT
  - Same with plain authentication
  - Authenticated user, without permissions, can patch own items
  - Authenticated user, without permissions, can't patch other users items
  - Can't change userID
 
-DELETE
+### DELETE
  - Same as plain authentication
  - Authenticated user, without permissions, can delete own items
  - Authenticated user, without permissions, can't delete other users items
 
 
 
-Schema types to test
+## Schema types to test
  - Without authentication
  - With permission based authentication
  - With userId based permission
  - With multiple userId based permission
+
+## TODO:
+ - Patch with objects
+ - Better testing for textSearch
+ - Test parametric search when it's implemented

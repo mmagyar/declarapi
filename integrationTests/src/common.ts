@@ -5,6 +5,7 @@ import { CrudContract } from '../../src/transform/types'
 import { promises as fs } from 'fs'
 import { generate, writeFile } from '../../src/bin/generate'
 import path from 'path'
+import { Validation } from 'yaschva'
 
 export type CallArgument =[{ [key: string]: any}, string?, AuthInput?]
 export type ArgumentVariations= { [key:string] :CallArgument}
@@ -41,4 +42,11 @@ export const checkMatchingGenerated = (generatorOut:{output: any, generatedInput
 export const checkedGenerate = async <Input, Output>(postContract: Expressable, authInput:AuthInput):
   Promise<{ output: Output; generatedInput: Input;}> => {
   return checkMatchingGenerated(await generateRandomCall(postContract.handle, postContract.contract, authInput))
+}
+
+export const getFirstStringFieldName = (validation:Validation) :string => {
+  // Maybe check for userId field, make sure we don't touch that
+  const entity = Object.entries(validation).find(x => x[0] !== 'id' && x[1] === 'string')
+  if (!entity) throw new Error('This schema does not have a string field')
+  return entity[0]
 }
