@@ -1,7 +1,7 @@
 import path from 'path'
 import { addValidationToContract, registerRestMethods, elastic } from 'declarapi'
-import { expectEmpty, expectNotFound, expectEmptyWithTextSearch } from './unauthenticated/get'
-import { postRecords, postAndGetRecordsByIdParam, postAndGetRecordsByIdArray, postAndGetSomeRecordsByIdArray } from './unauthenticated/post'
+import { expectEmptyForNonMatchingInput, expectNotFound, expectEmptyWithTextSearch, expectEmptyWhenNoRecordsPresent } from './unauthenticated/get'
+import { postRecords, postAndGetRecordsByIdParam, postAndGetRecordsByIdArray, postAndGetSomeRecordsByIdArray, postAndGetRecordsByEmptyGet, postAndGetByTextSearch, postAndRejectRePost, postAndGetAvailableIdsIgnoringWrong } from './unauthenticated/post'
 import { Expressable } from '../../src/runtime/registerRestMethods'
 import { generateContract } from './common'
 describe('elasticsearch data connector test', () => {
@@ -57,7 +57,8 @@ describe('elasticsearch data connector test', () => {
       })
 
       it('will get empty sets when there are no params or multiple ids requested', async () => {
-        await expectEmpty(get.handle)
+        await expectEmptyForNonMatchingInput(get.handle)
+        await expectEmptyWhenNoRecordsPresent(get.handle)
       })
 
       it('will get empty sets when searching for text', async () => {
@@ -66,8 +67,8 @@ describe('elasticsearch data connector test', () => {
     })
 
     describe('post', () => {
-      it('can post items', async () => {
-        await postRecords(post, {})
+      it('can post items and get all with empty arguments', async () => {
+        await postAndGetRecordsByEmptyGet(post, get.handle, {})
       })
 
       it('can get all posted items by id, one by one', async () => {
@@ -84,6 +85,27 @@ describe('elasticsearch data connector test', () => {
 
       it('Text search for the first generated, and it should be the first result returned', async () => {
         // So this should look for a string field that is not the id
+      })
+
+      it('will return 404 when the element is requested by id', async () => {
+        await postRecords(post, {})
+        await expectNotFound(get.handle)
+      })
+
+      it('will get empty sets when there are no params or multiple ids requested', async () => {
+        await postRecords(post, {})
+        await expectEmptyForNonMatchingInput(get.handle)
+      })
+
+      it('Gets available records, ignores non existent ones when an array of ids is supplied', async () => {
+        await postAndGetAvailableIdsIgnoringWrong(post, get.handle, {})
+      })
+      it('can perform text search', async () => {
+        await postAndGetByTextSearch(post, get.handle, {})
+      })
+
+      it('rejects re-post', async () => {
+        await postAndRejectRePost(post, get.handle, {})
       })
     })
   })

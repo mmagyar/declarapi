@@ -1,7 +1,7 @@
 import path from 'path'
 import { addValidationToContract, registerRestMethods, elastic } from 'declarapi'
 import { postRecords } from './unauthenticated/post'
-import { expectEmpty } from './unauthenticated/get'
+import { expectEmptyForNonMatchingInput } from './unauthenticated/get'
 import { Expressable } from '../../src/runtime/registerRestMethods'
 import { generateContract } from './common'
 describe('elasticsearch data connector test', () => {
@@ -49,7 +49,7 @@ describe('elasticsearch data connector test', () => {
     })
 
     it('can get empty sets from server when no data is posted', async () => {
-      await expectEmpty(get.handle)
+      await expectEmptyForNonMatchingInput(get.handle)
     })
 
     // it('it can do fulltext search', async () => {

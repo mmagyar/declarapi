@@ -29,9 +29,10 @@ export const expectNotFound = async (get: HandleType) => {
   expect404(await get.apply(undefined, argumentFor404.singleIdInBody))
   expect404(await get.apply(undefined, argumentFor404.idInParam))
 }
-
-export const expectEmpty = async (get: HandleType) => {
+export const expectEmptyWhenNoRecordsPresent = async (get: HandleType) => {
   expectEmptyResponse(await get.apply(undefined, argumentForEmpty.empty))
+}
+export const expectEmptyForNonMatchingInput = async (get: HandleType) => {
   expectEmptyResponse(await get.apply(undefined, argumentForEmpty.singleIdInArrayInBody))
   expectEmptyResponse(await get.apply(undefined, argumentForEmpty.arrayOfTwoIdsInBody))
   expectEmptyResponse(await get.apply(undefined, argumentForEmpty.arrayOfFiveIdsInBody))

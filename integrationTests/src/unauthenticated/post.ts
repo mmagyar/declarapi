@@ -10,10 +10,23 @@ export const postRecords = async (post:Expressable, authInput:AuthInput, howMany
   return posted
 }
 
+export const postAndGetRecordsByEmptyGet = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
+  const posted = await postRecords(post, authInput)
+  const result = await get({ }, undefined, {})
+
+  expect(result.code).toBe(200)
+  // Use set because the order does not matter.
+  expect(result.response).toHaveLength(posted.length)
+  expect(new Set(result.response)).toStrictEqual(new Set(posted))
+
+  return result.response
+}
+
 export const postAndGetRecordsByIdParam = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)
   const result = await (Promise.all(posted.map((x:any) => get({}, x.id, authInput))))
   expect(result.find(x => x.code !== 200)).toBeFalsy()
+  // Use strict equal because the order also needs to match
   expect(result.map(x => x.response)).toStrictEqual(posted)
 }
 
@@ -35,4 +48,44 @@ export const postAndGetSomeRecordsByIdArray = async (post:Expressable, get: Hand
   expect(result.code).toBe(200)
   expect(result.response).toHaveLength(half)
   result.response.forEach((x:any) => expect(x).toStrictEqual(posted.find((y:any) => x.id === y.id)))
+}
+export const postAndGetAvailableIdsIgnoringWrong = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
+  const posted = await postRecords(post, authInput)
+  const getBack = posted.filter((_, i) => i % 2 === 0)
+  const id = getBack.map((x:any) => x.id).concat(['invalidId1', 'invalidId2', 'invalidId3'])
+  const result = await get({ id }, undefined, {})
+
+  expect(result.code).toBe(200)
+  // Use set because the order does not matter.
+  expect(result.response).toHaveLength(getBack.length)
+  expect(new Set(result.response)).toStrictEqual(new Set(getBack))
+
+  return result.response
+}
+
+export const postAndGetByTextSearch = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
+  const posted = await postRecords(post, authInput)
+  const first:any = posted[0]
+  const entity = Object.entries(post.contract.returns).find(x => x[1] === 'string' && x[1] !== 'id')
+  if (!entity) throw new Error('This schema does not have a string field to test search with')
+  const textToSearch = first[entity[0]]
+
+  const result = await get({ search: textToSearch })
+  expect(result.code).toBe(200)
+  expect(result.response[0]).toStrictEqual(first)
+}
+
+export const postAndRejectRePost = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
+  const posted = await postAndGetRecordsByEmptyGet(post, get, authInput)
+  const handled:any = await post.handle(posted[0], undefined, authInput)
+  expect(handled).toHaveProperty('code', 409)
+  expect(handled.response).toHaveProperty('code', 409)
+  expect(handled.response).toHaveProperty('data')
+
+  const result = await get({ }, undefined, {})
+
+  expect(result.code).toBe(200)
+  // Use set because the order does not matter.
+  expect(result.response).toHaveLength(posted.length)
+  expect(new Set(result.response)).toStrictEqual(new Set(posted))
 }

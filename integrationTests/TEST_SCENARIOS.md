@@ -12,13 +12,14 @@ Unauthenticated:
 <!-- - invalid regex returns validation error -->
 
 POST
-- *DONE* Post random records
+- *DONE* Post random records and get all with empty arguments
 - *DONE* Get all random posted, by id, one by one
 - *DONE* Get all random posted, by id, with an array of IDs
 - *DONE* Get half of the random posted, by id, with an array of IDs
-- Text search for the first generated, and it should be the first result returned
-- Perform the basic get test set, with records already posted, to make sure it does not return stuff it should not.
-- Can't override an existing record with post, throws error (409, conflict)
+- *DONE* Gets available records, ignores non existent ones when an array of ids is supplied
+- *DONE* Text search for the first generated, in a text field, and it should be the first result returned
+- *DONE* Perform the basic get test set, with records already posted, to make sure it does not return stuff it should not.
+- *DONE* Can't override an existing record with post, throws error (409, conflict)
 
 PATCH
 - Can patch previously posted set. get before and after patching, and compare.
