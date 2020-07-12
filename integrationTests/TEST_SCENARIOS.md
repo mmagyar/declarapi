@@ -31,11 +31,14 @@ This is done with property based tests, with randomized data.
 - *DONE* Get the full posted set to make sure only the patched record is different
 - *DONE* Can't patch item that does not exist yet
 - *DONE* Can't change record id
+- Optional parameters can be removed with patch
 
 ### PUT
-- Putting all fields can completely replace a records data
-- Can't put item that does not exist
-- Can't change record id
+- *DONE* Putting all fields can completely replace a records data
+- *DONE* Rejects partial modification
+- *DONE* Can't put item that does not exist
+- *DONE* Can't change record id
+- Optional parameters can be removed with put
 
 ### DELETE
 - Delete one by id, make sure only that one is removed
@@ -104,3 +107,4 @@ With Authentication (just permissions, no userID field)
  - Patch with objects
  - Better testing for textSearch
  - Test parametric search when it's implemented
+ - Maybe define behavior for get when both and and search is specified

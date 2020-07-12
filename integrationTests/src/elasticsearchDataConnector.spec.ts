@@ -4,7 +4,7 @@ import { expectEmptyForNonMatchingInput, expectNotFound, expectEmptyWithTextSear
 import { postRecords, postAndGetRecordsByIdParam, postAndGetRecordsByIdArray, postAndGetSomeRecordsByIdArray, postAndGetRecordsByEmptyGet, postAndGetByTextSearch, postAndRejectRePost, postAndGetAvailableIdsIgnoringWrong, postAndRejectPostWithSameId } from './unauthenticated/post'
 import { Expressable } from '../../src/runtime/registerRestMethods'
 import { generateContract } from './common'
-import { canPatch, cantPatchNonExistent, cantChangeId } from './unauthenticated/put'
+import { canPatch, cantPatchNonExistent, patchCantChangeId, putRejectsPartialModification, putCantChangeId, cantPutNonExistent, canPut } from './unauthenticated/put'
 
 describe('elasticsearch data connector test', () => {
   const schemaFilePath = path.join(__dirname, '../../example/elasticsearch_text_search_example.json')
@@ -120,8 +120,8 @@ describe('elasticsearch data connector test', () => {
       })
     })
 
-    describe('put', () => {
-      it('can patch item and verify only that one record changed', async () => {
+    describe('patch', () => {
+      it('can patch item and verify that only that one record changed', async () => {
         await canPatch(post, patch, get.handle, {})
       })
 
@@ -130,7 +130,25 @@ describe('elasticsearch data connector test', () => {
       })
 
       it('can not change id', async () => {
-        await cantChangeId(post, patch, get.handle, {})
+        await patchCantChangeId(post, patch, get.handle, {})
+      })
+    })
+
+    describe('put', () => {
+      it('can put item and verify that only that one record changed', async () => {
+        await canPut(post, put, get.handle, {})
+      })
+
+      it('can not put non existing record', async () => {
+        await cantPutNonExistent(post, put, get.handle, {})
+      })
+
+      it('rejects put that is missing a non optional field', async () => {
+        await putRejectsPartialModification(post, put, get.handle, {})
+      })
+
+      it('can not change id', async () => {
+        await putCantChangeId(post, put, get.handle, {})
       })
     })
   })

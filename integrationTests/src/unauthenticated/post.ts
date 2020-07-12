@@ -2,6 +2,7 @@ import { Expressable, HandleType } from '../../../src/runtime/registerRestMethod
 import { AuthInput } from 'declarapi'
 import { checkedGenerate, getFirstStringFieldName } from '../common'
 import { generate } from 'yaschva'
+import { expectGetToReturnRecords } from './get'
 
 export const postRecords = async (post:Expressable, authInput:AuthInput, howMany:number = 20) => {
   const posted = (await Promise.all(
@@ -13,14 +14,7 @@ export const postRecords = async (post:Expressable, authInput:AuthInput, howMany
 
 export const postAndGetRecordsByEmptyGet = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)
-  const result = await get({ }, undefined, {})
-
-  expect(result.code).toBe(200)
-  // Use set because the order does not matter.
-  expect(result.response).toHaveLength(posted.length)
-  expect(new Set(result.response)).toStrictEqual(new Set(posted))
-
-  return result.response
+  return expectGetToReturnRecords(posted, {}, get, authInput)
 }
 
 export const postAndGetRecordsByIdParam = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
@@ -33,35 +27,23 @@ export const postAndGetRecordsByIdParam = async (post:Expressable, get: HandleTy
 
 export const postAndGetRecordsByIdArray = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)
-  const result = await get({ id: posted.map((x:any) => x.id) }, undefined, {})
-
-  expect(result.code).toBe(200)
-  expect(result.response).toStrictEqual(posted)
+  return expectGetToReturnRecords(posted, { id: posted.map((x:any) => x.id) }, get, authInput)
 }
 
 export const postAndGetSomeRecordsByIdArray = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)
-  const half = Math.ceil(posted.length / 2)
+  const half = posted.slice(0, Math.ceil(posted.length / 2))
 
-  const id = posted.map((x:any) => x.id).slice(0, half)
-  const result = await get({ id }, undefined, {})
-
-  expect(result.code).toBe(200)
-  expect(result.response).toHaveLength(half)
-  result.response.forEach((x:any) => expect(x).toStrictEqual(posted.find((y:any) => x.id === y.id)))
+  const id = half.map((x:any) => x.id)
+  return expectGetToReturnRecords(half, { id }, get, authInput)
 }
+
 export const postAndGetAvailableIdsIgnoringWrong = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)
   const getBack = posted.filter((_, i) => i % 2 === 0)
   const id = getBack.map((x:any) => x.id).concat(['invalidId1', 'invalidId2', 'invalidId3'])
-  const result = await get({ id }, undefined, {})
 
-  expect(result.code).toBe(200)
-  // Use set because the order does not matter.
-  expect(result.response).toHaveLength(getBack.length)
-  expect(new Set(result.response)).toStrictEqual(new Set(getBack))
-
-  return result.response
+  return expectGetToReturnRecords(getBack, { id }, get, authInput)
 }
 
 export const postAndGetByTextSearch = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
@@ -81,12 +63,7 @@ export const postAndRejectRePost = async (post:Expressable, get: HandleType, aut
   expect(handled.response).toHaveProperty('code', 409)
   expect(handled.response).toHaveProperty('data')
 
-  const result = await get({ }, undefined, {})
-
-  expect(result.code).toBe(200)
-  // Use set because the order does not matter.
-  expect(result.response).toHaveLength(posted.length)
-  expect(new Set(result.response)).toStrictEqual(new Set(posted))
+  return expectGetToReturnRecords(posted, {}, get, authInput)
 }
 
 export const postAndRejectPostWithSameId = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
@@ -98,10 +75,5 @@ export const postAndRejectPostWithSameId = async (post:Expressable, get: HandleT
   expect(handled.response).toHaveProperty('code', 409)
   expect(handled.response).toHaveProperty('data')
 
-  const result = await get({ }, undefined, {})
-
-  expect(result.code).toBe(200)
-  // Use set because the order does not matter.
-  expect(result.response).toHaveLength(posted.length)
-  expect(new Set(result.response)).toStrictEqual(new Set(posted))
+  return expectGetToReturnRecords(posted, {}, get, authInput)
 }

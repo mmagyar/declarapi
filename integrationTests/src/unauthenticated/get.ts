@@ -1,5 +1,6 @@
 import { HandleType, HandleResponse } from '../../../src/runtime/registerRestMethods'
 import { ArgumentVariations } from '../common'
+import { AuthInput } from '../../../src'
 
 const expectEmptyResponse = (response:HandleResponse) => {
   expect(response).toHaveProperty('code', 200)
@@ -43,4 +44,15 @@ export const expectEmptyWithTextSearch = async (get: HandleType) => {
   expectEmptyResponse(await get({ search: '' }))
   expectEmptyResponse(await get({ search: 'random' }))
   expectEmptyResponse(await get({ search: '*' }))
+}
+
+export const expectGetToReturnRecords = async (records:any[], getArguments: any = {}, get:HandleType, authInput:AuthInput = {}) => {
+  const getResult = await get(getArguments, undefined, authInput)
+  expect(getResult.code).toBe(200)
+
+  // Order does not matter, use set, and check lenght to make sure they are the same
+  expect(getResult.response).toHaveLength(records.length)
+  expect(new Set(getResult.response)).toStrictEqual(new Set(records))
+
+  return getResult.response
 }

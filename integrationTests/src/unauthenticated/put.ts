@@ -1,65 +1,75 @@
 import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
 import { postRecords } from './post'
 import { AuthInput } from '../../../src'
-import { getFirstStringFieldName } from '../common'
 import { generate } from 'yaschva'
-import { expectEmptyWhenNoRecordsPresent } from './get'
+import { expectEmptyWhenNoRecordsPresent, expectGetToReturnRecords } from './get'
 
-export const canPatch = async (post:Expressable, patch:Expressable, get: HandleType, authInput:AuthInput) => {
+export const canPut = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)
 
   const postFirst:any = posted[0]
-  const patching:any = {}
-  const stringFieldName = getFirstStringFieldName(post.contract.returns)
-  let generatedInput = postFirst[stringFieldName]
-
-  while (generatedInput === postFirst[stringFieldName]) {
-    generatedInput = generate('string')
-  }
-  patching[stringFieldName] = generatedInput
-  const res = await patch.handle(patching, postFirst.id, authInput)
-  expect(res.code).toBe(200)
-  const toExpectPatchReturn = { ...postFirst }
-  toExpectPatchReturn[stringFieldName] = generatedInput
-  expect(res.response).toStrictEqual(toExpectPatchReturn)
+  const putting:any = generate(post.contract.returns)
+  putting.id = postFirst.id
+  const patchResult = await put.handle(putting, postFirst.id, authInput)
+  expect(patchResult.code).toBe(200)
+  expect(patchResult.response).toStrictEqual(putting)
 
   const toExpectAll = [...posted]
-  toExpectAll[0] = toExpectPatchReturn
-  const getResult = await get({}, undefined, authInput)
-  expect(getResult.code).toBe(200)
-  expect(getResult.response).toHaveLength(toExpectAll.length)
-
-  expect(new Set(getResult.response)).toStrictEqual(new Set(toExpectAll))
+  toExpectAll[0] = putting
+  await expectGetToReturnRecords(toExpectAll, {}, get, authInput)
 }
 
-export const cantPatchNonExistent = async (post:Expressable, patch:Expressable, get: HandleType, authInput:AuthInput) => {
-  const res = await patch.handle(generate(post.contract.returns), undefined, authInput)
-  expect(res.code).toBe(404)
+export const cantPutNonExistent = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput) => {
+  const bodyOnlyResult = await put.handle(generate(post.contract.returns), undefined, authInput)
+  expect(bodyOnlyResult.code).toBe(404)
+  expect(bodyOnlyResult.response).toHaveProperty('code', 404)
 
-  expect(res.response).toHaveProperty('code', 404)
+  const generated = generate(post.contract.returns)
+  const withIdResult = await put.handle(generated, generated.id, authInput)
+  expect(withIdResult.code).toBe(404)
+  expect(withIdResult.response).toHaveProperty('code', 404)
+
   await expectEmptyWhenNoRecordsPresent(get)
 }
 
-export const cantChangeId = async (post:Expressable, patch:Expressable, get: HandleType, authInput:AuthInput) => {
+export const putCantChangeId = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)
 
   const postFirst:any = posted[0]
-  const patching:any = {}
-  const stringFieldName = getFirstStringFieldName(post.contract.returns)
-  let generatedInput = postFirst[stringFieldName]
-
-  while (generatedInput === postFirst[stringFieldName]) {
-    generatedInput = generate('string')
-  }
-  patching[stringFieldName] = generatedInput
+  const patching:any = { ...postFirst }
+  const generated = generateForFirstTextField(postFirst, post.contract.returns)
+  patching[generated.key] = generated.value
   patching.id = 'newId'
-  const res = await patch.handle(patching, postFirst.id, authInput)
+  const res = await put.handle(patching, postFirst.id, authInput)
   expect(res.code).toBe(400)
+  expect(res.response).toHaveProperty('errorType', 'id mismatch')
 
-  const res2 = await patch.handle({ id: postFirst.id }, 'newId', authInput)
+  const res2 = await put.handle({ id: postFirst.id }, 'newId', authInput)
   expect(res2.code).toBe(400)
+  expect(res2.response).toHaveProperty('errorType', 'id mismatch')
 
   patching.id = postFirst.id
-  const res3 = await patch.handle(patching, 'newId', authInput)
+  const res3 = await put.handle(patching, 'newId', authInput)
   expect(res3.code).toBe(400)
+  expect(res3.response).toHaveProperty('errorType', 'id mismatch')
+
+  return expectGetToReturnRecords(posted, {}, get, authInput)
+}
+
+export const putRejectsPartialModification = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput) => {
+  const posted = await postRecords(post, authInput)
+  const postFirst:any = posted[0]
+  const generated = generateForFirstTextField(postFirst, post.contract.returns)
+
+  const nonOptionalParameter = Object.entries(post.contract.returns).find(x => x[0] !== 'id' && x[0] !== generated.key && (!Array.isArray(x[1] || !x[1].find((y:any) => y === '?'))))
+
+  expect(nonOptionalParameter).toHaveLength(2)
+  const lackingPut = { ...postFirst }
+  lackingPut[generated.key] = generated.value
+  delete lackingPut[nonOptionalParameter?.[0] || '']
+
+  const putResult = await put.handle(lackingPut)
+  expect(putResult.code).toBe(400)
+
+  expectGetToReturnRecords(posted, {}, get, authInput)
 }
