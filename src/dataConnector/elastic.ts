@@ -108,7 +108,7 @@ Promise<T & any> => {
 export const del = async (index: string, auth:HandlerAuth, id: string|string[]): Promise<any> => {
   if (Array.isArray(id)) return Promise.all(id.map(x => del(index, auth, x)))
   const result = await get(index, auth, id)
-  if (!result) {
+  if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to delete this', 403)
   }
   await client().delete(
@@ -128,6 +128,22 @@ export const patch = async <T extends object, K extends object>(index: string, a
       refresh: 'wait_for',
       id,
       body: { doc: body }
+    })
+  return (await get(index, auth, id) as any)[0]
+}
+
+export const put = async <T extends object, K extends object>(index: string, auth:HandlerAuth, body: T, id: string
+): Promise<K> => {
+  const result = await get(index, auth, id)
+  if (!result || result.length === 0) {
+    throw new RequestHandlingError('User has no right to patch this', 403)
+  }
+  await client().index(
+    {
+      index: index.toLocaleLowerCase(),
+      refresh: 'wait_for',
+      id,
+      body
     })
   return (await get(index, auth, id) as any)[0]
 }

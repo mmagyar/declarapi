@@ -31,17 +31,17 @@ This is done with property based tests, with randomized data.
 - *DONE* Get the full posted set to make sure only the patched record is different
 - *DONE* Can't patch item that does not exist yet
 - *DONE* Can't change record id
-- Optional parameters can be removed with patch
+- *DONE* Optional parameters not can be removed with patch
 
 ### PUT
 - *DONE* Putting all fields can completely replace a records data
 - *DONE* Rejects partial modification
 - *DONE* Can't put item that does not exist
 - *DONE* Can't change record id
-- Optional parameters can be removed with put
+- *DONE* Optional parameters can be removed with put
 
 ### DELETE
-- Delete one by id, make sure only that one is removed
+- *DONE* Delete one by id, make sure only that one is removed
 - Delete many by id, make sure only the listed ones are removed
 - Delete all by id, make sure that no records remain
 

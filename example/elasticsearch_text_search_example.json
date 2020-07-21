@@ -6,6 +6,7 @@
     "id": "string",
     "name": "string",
     "ownerId":"string",
+    "otherAnimals": [{"$array": "string"}, "?"],
     "dogs": {
       "$array": {
         "name": "string",

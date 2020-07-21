@@ -23,7 +23,7 @@ export const elasticCodeGen = (driver: Elastic, input: ElasticInputType):string 
     }
     case 'post': return `(input, auth) => elastic.post("${index}", auth, input)`
     case 'patch': return `(input, auth) => elastic.patch("${index}", auth, input, input.id)`
-    case 'put': return `(input, auth) => elastic.patch("${index}", auth, input, input.id)`
+    case 'put': return `(input, auth) => elastic.put("${index}", auth, input, input.id)`
     case 'delete': return `(input, auth) => elastic.del("${index}", auth, input.id)`
   }
 }

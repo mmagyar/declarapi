@@ -4,8 +4,9 @@ import { expectEmptyForNonMatchingInput, expectNotFound, expectEmptyWithTextSear
 import { postRecords, postAndGetRecordsByIdParam, postAndGetRecordsByIdArray, postAndGetSomeRecordsByIdArray, postAndGetRecordsByEmptyGet, postAndGetByTextSearch, postAndRejectRePost, postAndGetAvailableIdsIgnoringWrong, postAndRejectPostWithSameId } from './unauthenticated/post'
 import { Expressable } from '../../src/runtime/registerRestMethods'
 import { generateContract } from './common'
-import { canPatch, cantPatchNonExistent, patchCantChangeId, putRejectsPartialModification, putCantChangeId, cantPutNonExistent, canPut } from './unauthenticated/put'
-
+import { putRejectsPartialModification, putCantChangeId, cantPutNonExistent, canPut, putCanRemoveOptionalParameters } from './unauthenticated/put'
+import { canPatch, cantPatchNonExistent, patchCantChangeId, patchCanNotRemoveOptionalParameters } from './unauthenticated/patch'
+import * as uaDel from './unauthenticated/delete'
 describe('elasticsearch data connector test', () => {
   const schemaFilePath = path.join(__dirname, '../../example/elasticsearch_text_search_example.json')
   let indexName:string
@@ -14,6 +15,7 @@ describe('elasticsearch data connector test', () => {
   let post:Expressable
   let patch:Expressable
   let put:Expressable
+  let del:Expressable
 
   beforeAll(async () => {
     indexName = 'test-' + Date.now()
@@ -56,6 +58,7 @@ describe('elasticsearch data connector test', () => {
       post = contract.find((x:Expressable) => x.method === 'post')
       patch = contract.find((x:Expressable) => x.method === 'patch')
       put = contract.find((x:Expressable) => x.method === 'put')
+      del = contract.find((x:Expressable) => x.method === 'delete')
     })
 
     describe('get empty', () => {
@@ -132,6 +135,10 @@ describe('elasticsearch data connector test', () => {
       it('can not change id', async () => {
         await patchCantChangeId(post, patch, get.handle, {})
       })
+
+      it('can not remove optional field', async () => {
+        await patchCanNotRemoveOptionalParameters(post, patch, get.handle, {})
+      })
     })
 
     describe('put', () => {
@@ -143,12 +150,22 @@ describe('elasticsearch data connector test', () => {
         await cantPutNonExistent(post, put, get.handle, {})
       })
 
+      it('can not change id', async () => {
+        await putCantChangeId(post, put, get.handle, {})
+      })
+
       it('rejects put that is missing a non optional field', async () => {
         await putRejectsPartialModification(post, put, get.handle, {})
       })
 
-      it('can not change id', async () => {
-        await putCantChangeId(post, put, get.handle, {})
+      it('can remove optional field', async () => {
+        await putCanRemoveOptionalParameters(post, put, get.handle, {})
+      })
+    })
+
+    describe('delete', () => {
+      it.only('can delete one of many', async () => {
+        await uaDel.canDeleteOneOfMany(post, del, get.handle)
       })
     })
   })

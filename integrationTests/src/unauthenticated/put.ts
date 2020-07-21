@@ -3,6 +3,7 @@ import { postRecords } from './post'
 import { AuthInput } from '../../../src'
 import { generate } from 'yaschva'
 import { expectEmptyWhenNoRecordsPresent, expectGetToReturnRecords } from './get'
+import { generateForFirstTextField } from '../common'
 
 export const canPut = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)
@@ -61,7 +62,8 @@ export const putRejectsPartialModification = async (post:Expressable, put:Expres
   const postFirst:any = posted[0]
   const generated = generateForFirstTextField(postFirst, post.contract.returns)
 
-  const nonOptionalParameter = Object.entries(post.contract.returns).find(x => x[0] !== 'id' && x[0] !== generated.key && (!Array.isArray(x[1] || !x[1].find((y:any) => y === '?'))))
+  const nonOptionalParameter = Object.entries(post.contract.returns)
+    .find(x => x[0] !== 'id' && x[0] !== generated.key && (!Array.isArray(x[1]) || !x[1].find((y:any) => y === '?')))
 
   expect(nonOptionalParameter).toHaveLength(2)
   const lackingPut = { ...postFirst }
@@ -71,5 +73,29 @@ export const putRejectsPartialModification = async (post:Expressable, put:Expres
   const putResult = await put.handle(lackingPut)
   expect(putResult.code).toBe(400)
 
-  expectGetToReturnRecords(posted, {}, get, authInput)
+  await expectGetToReturnRecords(posted, {}, get, authInput)
+}
+
+export const putCanRemoveOptionalParameters = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput) => {
+  const posted = await postRecords(post, authInput)
+  const generated = generateForFirstTextField(posted[0], post.contract.returns)
+
+  const optionalParameter = Object.entries(post.contract.returns)
+    .find(x => x[0] !== 'id' && x[0] !== generated.key && (Array.isArray(x[1]) && x[1].find((y:any) => y === '?')))
+
+  const postWithOptional:any = posted.find((x:any) => x[optionalParameter?.[0] || ''])
+
+  expect(optionalParameter).toHaveLength(2)
+  const lackingPut = { ...postWithOptional }
+  lackingPut[generated.key] = generated.value
+  delete lackingPut[optionalParameter?.[0] || '']
+
+  const putResult = await put.handle(lackingPut)
+  // console.log(putResult)
+  expect(putResult.code).toBe(200)
+  expect(putResult.response).toStrictEqual(lackingPut)
+
+  const newSet = [...posted]
+  newSet[0] = lackingPut
+  await expectGetToReturnRecords(newSet, {}, get, authInput)
 }

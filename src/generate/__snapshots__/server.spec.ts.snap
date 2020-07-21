@@ -153,7 +153,7 @@ testPut: {
           name: \\"test\\",
           authentication: false,
           type: \\"put\\",
-          handle: (input, auth) => elastic.patch(\\"test\\", auth, input, input.id),
+          handle: (input, auth) => elastic.put(\\"test\\", auth, input, input.id),
           arguments: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPatch: {

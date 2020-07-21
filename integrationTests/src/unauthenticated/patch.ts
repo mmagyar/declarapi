@@ -64,3 +64,22 @@ export const patchCantChangeId = async (post:Expressable, patch:Expressable, get
 
   return expectGetToReturnRecords(posted, {}, get, authInput)
 }
+
+export const patchCanNotRemoveOptionalParameters = async (post:Expressable, patch:Expressable, get: HandleType, authInput:AuthInput) => {
+  const posted = await postRecords(post, authInput)
+
+  const optionalParameter = Object.entries(post.contract.returns)
+    .find(x => x[0] !== 'id' && (Array.isArray(x[1]) && x[1].find((y:any) => y === '?')))
+
+  expect(optionalParameter).toHaveLength(2)
+  const postWithOptional:any = posted.find((x:any) => x[optionalParameter?.[0] || ''])
+
+  const lackingPatch = { ...postWithOptional }
+  delete lackingPatch[optionalParameter?.[0] || '']
+
+  const patchResult = await patch.handle(lackingPatch)
+  expect(patchResult.code).toBe(200)
+  expect(patchResult.response).toStrictEqual(postWithOptional)
+
+  await expectGetToReturnRecords(posted, {}, get, authInput)
+}
