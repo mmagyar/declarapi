@@ -95,7 +95,6 @@ export const putCanRemoveOptionalParameters = async (post:Expressable, put:Expre
   expect(putResult.code).toBe(200)
   expect(putResult.response).toStrictEqual(lackingPut)
 
-  const newSet = [...posted]
-  newSet[0] = lackingPut
+  const newSet = posted.map((x:any) => x.id === lackingPut.id ? lackingPut : x)
   await expectGetToReturnRecords(newSet, {}, get, authInput)
 }

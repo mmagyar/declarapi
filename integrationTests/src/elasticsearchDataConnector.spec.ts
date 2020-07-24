@@ -164,8 +164,15 @@ describe('elasticsearch data connector test', () => {
     })
 
     describe('delete', () => {
-      it.only('can delete one of many', async () => {
+      it('can delete one of many', async () => {
         await uaDel.canDeleteOneOfMany(post, del, get.handle)
+      })
+      it('can delete some one of many', async () => {
+        await uaDel.canDeleteSomeOfMany(post, del, get.handle)
+      })
+
+      it('can delete all of many', async () => {
+        await uaDel.canDeleteAll(post, del, get.handle)
       })
     })
   })

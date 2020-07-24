@@ -106,11 +106,12 @@ Promise<T & any> => {
 }
 
 export const del = async (index: string, auth:HandlerAuth, id: string|string[]): Promise<any> => {
-  if (Array.isArray(id)) return Promise.all(id.map(x => del(index, auth, x)))
+  if (Array.isArray(id)) return (await Promise.all(id.map(x => del(index, auth, x)))).map(x => x[0])
   const result = await get(index, auth, id)
   if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to delete this', 403)
   }
+
   await client().delete(
     { index: index.toLocaleLowerCase(), id, refresh: 'wait_for' })
   return result

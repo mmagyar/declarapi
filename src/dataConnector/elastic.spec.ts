@@ -163,7 +163,7 @@ describe('elasticsearch data connector', () => {
 
     it('returns the deleted values when multiple ids are deleted', async () => {
       expect(await del('test', { authentication: false }, ['2', '3']))
-        .toStrictEqual([[{ id: '2', value: 'getmock' }], [{ id: '2', value: 'getmock' }]])
+        .toStrictEqual([{ id: '2', value: 'getmock' }, { id: '2', value: 'getmock' }])
       expect(client().get).toHaveBeenCalledTimes(2)
       expect(client().delete).toHaveBeenCalledTimes(2)
     })

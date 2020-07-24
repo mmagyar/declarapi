@@ -42,8 +42,8 @@ This is done with property based tests, with randomized data.
 
 ### DELETE
 - *DONE* Delete one by id, make sure only that one is removed
-- Delete many by id, make sure only the listed ones are removed
-- Delete all by id, make sure that no records remain
+- *DONE* Delete many by id, make sure only the listed ones are removed
+- *DONE* Delete all by id, make sure that no records remain
 
 
 With Authentication (just permissions, no userID field)
