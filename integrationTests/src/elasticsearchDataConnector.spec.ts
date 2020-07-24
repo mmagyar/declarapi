@@ -338,6 +338,7 @@ describe('elasticsearch data connector test', () => {
             err = e
           }
           expect(err).toHaveProperty('code', 401)
+          await expectEmptyWhenNoRecordsPresent(get.handle, auth)
         })
 
         it('Unauthorized user can\'t access the post endpoint, error 403', async () => {
@@ -346,6 +347,7 @@ describe('elasticsearch data connector test', () => {
             err = e
           }
           expect(err).toHaveProperty('code', 403)
+          await expectEmptyWhenNoRecordsPresent(get.handle, auth)
         })
       })
 
