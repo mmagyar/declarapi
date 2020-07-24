@@ -34,6 +34,18 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
     const handle:HandleType = async (body, id?, user?) => {
       const { authentication } = x.contract
 
+      if (authentication && !user?.sub) {
+        return {
+          code: 401,
+          response: {
+            code: 401,
+            errorType: 'unauthorized',
+            data: { id },
+            errors: ['Only logged in users can do this']
+          }
+        }
+      }
+
       if (authentication && Array.isArray(authentication)) {
         const perm: string[] = user?.permissions || []
 
@@ -48,16 +60,6 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
               data: { id },
               errors: ["You don't have permission to do this"]
             }
-          }
-        }
-      } else if (authentication && !user?.sub) {
-        return {
-          code: 401,
-          response: {
-            code: 401,
-            errorType: 'unauthorized',
-            data: { id },
-            errors: ['Only logged in users can do this']
           }
         }
       }

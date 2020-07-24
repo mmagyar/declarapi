@@ -51,7 +51,7 @@ export const postAndGetByTextSearch = async (post:Expressable, get: HandleType, 
   const first:any = posted[0]
   const textToSearch = first[getFirstStringFieldName(post.contract.returns)]
 
-  const result = await get({ search: textToSearch })
+  const result = await get({ search: textToSearch }, undefined, authInput)
   expect(result.code).toBe(200)
   expect(result.response[0]).toStrictEqual(first)
 }

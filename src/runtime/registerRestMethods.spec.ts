@@ -103,11 +103,11 @@ describe('registerRestMethods', () => {
       const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: ['user', ' moderator'], sub: 'abc' })
 
       await result[0].handler(req, res.chainedMock)
-      expectResult(res, 403, {
-        code: 403,
+      expectResult(res, 401, {
+        code: 401,
         data: { id: undefined },
         errorType: 'unauthorized',
-        errors: ["You don't have permission to do this"]
+        errors: ['Only logged in users can do this']
       })
     })
 

@@ -7,7 +7,7 @@ export const canDeleteOneOfMany = async (post:Expressable, del:Expressable, get:
   const record:any[] = await postRecords(post, authInput, 20)
   const firstRecord = record.shift()
 
-  const delResult = await del.handle({ id: firstRecord.id })
+  const delResult = await del.handle({ id: firstRecord.id }, undefined, authInput)
 
   expect(delResult.code).toBe(200)
   expect(delResult.response).toStrictEqual([firstRecord])
@@ -16,7 +16,7 @@ export const canDeleteOneOfMany = async (post:Expressable, del:Expressable, get:
 
   const secondRecord = record.shift()
 
-  const delResult2 = await del.handle({ }, secondRecord.id)
+  const delResult2 = await del.handle({ }, secondRecord.id, authInput)
 
   expect(delResult2.code).toBe(200)
   expect(delResult2.response).toStrictEqual(secondRecord)
@@ -34,7 +34,7 @@ export const canDeleteSomeOfMany = async (post:Expressable, del:Expressable, get
   for (let i = 0; i < deleteCount; i++) {
     toDelete.push(Math.random() > 0.5 ? record.shift() : record.pop())
   }
-  const delResult = await del.handle({ id: toDelete.map((x:any) => x.id) })
+  const delResult = await del.handle({ id: toDelete.map((x:any) => x.id) }, undefined, authInput)
   expect(delResult.code).toBe(200)
   expect(delResult.response).toStrictEqual(toDelete)
 
@@ -45,7 +45,7 @@ export const canDeleteAll = async (post:Expressable, del:Expressable, get: Handl
   const recordCount = 20
   const record:any[] = await postRecords(post, authInput, recordCount)
 
-  const delResult = await del.handle({ id: record.map((x:any) => x.id) })
+  const delResult = await del.handle({ id: record.map((x:any) => x.id) }, undefined, authInput)
   expect(delResult.code).toBe(200)
   expect(delResult.response).toStrictEqual(record)
 

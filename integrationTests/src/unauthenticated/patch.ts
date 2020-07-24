@@ -38,7 +38,7 @@ export const cantPatchNonExistent = async (post:Expressable, patch:Expressable, 
   expect(withIdResult.code).toBe(404)
   expect(withIdResult.response).toHaveProperty('code', 404)
 
-  await expectEmptyWhenNoRecordsPresent(get)
+  await expectEmptyWhenNoRecordsPresent(get, authInput)
 }
 
 export const patchCantChangeId = async (post:Expressable, patch:Expressable, get: HandleType, authInput:AuthInput) => {
@@ -77,7 +77,7 @@ export const patchCanNotRemoveOptionalParameters = async (post:Expressable, patc
   const lackingPatch = { ...postWithOptional }
   delete lackingPatch[optionalParameter?.[0] || '']
 
-  const patchResult = await patch.handle(lackingPatch)
+  const patchResult = await patch.handle(lackingPatch, undefined, authInput)
   expect(patchResult.code).toBe(200)
   expect(patchResult.response).toStrictEqual(postWithOptional)
 

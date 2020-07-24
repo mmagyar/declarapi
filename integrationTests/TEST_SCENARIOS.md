@@ -49,14 +49,14 @@ This is done with property based tests, with randomized data.
 With Authentication (just permissions, no userID field)
 
 ### GET
-- Unauthenticated user can't access the get endpoint, error 401
-- User without necessary permission gets 403
-- Authenticated, Authorized users get an empty array returned
+- *DONE* Unauthenticated user can't access the get endpoint, error 401
+- *DONE* User without necessary permission gets 403
+- *DONE* Authenticated, Authorized users get an empty array returned
 
 ### POST
-- Unauthenticated gets 401, unauthorized gets 403
-- Authenticated, Authorized user can POST records
-- Authorized user can get all records, run full GET test suit with authorized user
+- *DONE* Unauthenticated gets 401, unauthorized gets 403
+- *DONE* Authenticated, Authorized user can POST records
+- *DONE* Authorized user can get all records, run full GET test suit with authorized user
 - Run full GET test suit with unauthorized user to make sure no records leak
 - Run full GET test suit with unauthenticated user to make sure no records leak
 

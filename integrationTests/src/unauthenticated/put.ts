@@ -30,7 +30,7 @@ export const cantPutNonExistent = async (post:Expressable, put:Expressable, get:
   expect(withIdResult.code).toBe(404)
   expect(withIdResult.response).toHaveProperty('code', 404)
 
-  await expectEmptyWhenNoRecordsPresent(get)
+  await expectEmptyWhenNoRecordsPresent(get, authInput)
 }
 
 export const putCantChangeId = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput) => {
@@ -70,7 +70,7 @@ export const putRejectsPartialModification = async (post:Expressable, put:Expres
   lackingPut[generated.key] = generated.value
   delete lackingPut[nonOptionalParameter?.[0] || '']
 
-  const putResult = await put.handle(lackingPut)
+  const putResult = await put.handle(lackingPut, undefined, authInput)
   expect(putResult.code).toBe(400)
 
   await expectGetToReturnRecords(posted, {}, get, authInput)
@@ -90,7 +90,7 @@ export const putCanRemoveOptionalParameters = async (post:Expressable, put:Expre
   lackingPut[generated.key] = generated.value
   delete lackingPut[optionalParameter?.[0] || '']
 
-  const putResult = await put.handle(lackingPut)
+  const putResult = await put.handle(lackingPut, undefined, authInput)
   // console.log(putResult)
   expect(putResult.code).toBe(200)
   expect(putResult.response).toStrictEqual(lackingPut)
