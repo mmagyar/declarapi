@@ -61,3 +61,12 @@ export const generateForFirstTextField = (record:any, validation:Validation) => 
 
   return { key: stringFieldName, value: generatedInput }
 }
+
+export type Contracts = {get:Expressable, post:Expressable, patch:Expressable, put:Expressable, del:Expressable}
+export const getMethods = (contract:any):Contracts => ({
+  get: contract.find((x:Expressable) => x.method === 'get'),
+  post: contract.find((x:Expressable) => x.method === 'post'),
+  patch: contract.find((x:Expressable) => x.method === 'patch'),
+  put: contract.find((x:Expressable) => x.method === 'put'),
+  del: contract.find((x:Expressable) => x.method === 'delete')
+})

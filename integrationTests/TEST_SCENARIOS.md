@@ -57,23 +57,29 @@ With Authentication (just permissions, no userID field)
 - *DONE* Unauthenticated gets 401, unauthorized gets 403
 - *DONE* Authenticated, Authorized user can POST records
 - *DONE* Authorized user can get all records, run full GET test suit with authorized user
-- Run full GET test suit with unauthorized user to make sure no records leak
-- Run full GET test suit with unauthenticated user to make sure no records leak
+- *DONE* Run GET test with unauthorized user to make sure no records leak
+- *DONE* Run GET test with unauthenticated user to make sure no records leak
 
 ### PATCH
-- Authorized user can patch any record, check that only the desired record is changed
-- Authenticated but not authorized user gets 403, make sure records are not modified
-- Unauthenticated user gets 401, make sure records are not modified
+- *DONE* Authorized user can patch any record, check that only the desired record is changed
+- *DONE* Authenticated but not authorized user gets 403, make sure records are not modified
+- *DONE* Unauthenticated user gets 401, make sure records are not modified
+
+### PUT
+- *DONE* Authorized user can put any record, check that only the desired record is changed
+- *DONE* Authenticated but not authorized user gets 403, make sure records are not modified
+- *DONE* Unauthenticated user gets 401, make sure records are not modified
 
 ### DELETE
-- Authorized user can delete any record by id, check that only that one is removed, to this with both single id and array of ids
-- Authenticated but not authorized user gets 403, make sure no records where deleted
-- Unauthenticated user gets 401, make sure no records where deleted
+- *DONE* Authorized user can delete any record by id, check that only that one is removed, do this with both single id and array of ids
+- *DONE* Authenticated but not authorized user gets 403, make sure no records where deleted
+- *DONE* Unauthenticated user gets 401, make sure no records where deleted
 
 ## With Authentication (userID field is present on all but POST)
 
 ### GET
 - Same as Authentication without userID
+- Logged in user does not get 403 anymore, just returns empty if no owned resources found.
 
 ### POST
 - Post does not have userID options, same as above should work
