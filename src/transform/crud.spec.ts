@@ -1,5 +1,5 @@
 import { transform } from './crud'
-import { CrudContract, CrudAuthAll, CrudAuthSome } from './types'
+import { CrudContract, CrudAuthAll, CrudAuthSome, AuthType } from './types'
 describe('transform crud', () => {
   it('id must be present on input', async () => {
     const resultErr = await transform({ name: 'test', authentication: false, dataType: { notId: 'string' } })
@@ -255,5 +255,32 @@ describe('transform crud', () => {
     expect(resultAuth.results?.find(x => x.method === 'post')?.authentication).toStrictEqual(true)
     expect(resultAuth.results?.find(x => x.method === 'put')?.authentication).toStrictEqual(['owner'])
     expect(resultAuth.results?.find(x => x.method === 'delete')?.authentication).toStrictEqual(['admin'])
+  })
+
+  it('does not required user to post when user auth is set globally', async () => {
+    const auth = ['admin', { userId: 'ownerId' }]
+    const withAuth: (auth? : AuthType | CrudAuthAll | CrudAuthSome) => CrudContract =
+     (auth: AuthType | CrudAuthAll | CrudAuthSome = true) => ({
+       name: 'test',
+       authentication: auth,
+       dataType: {
+         id: 'string',
+         notAnId: 'boolean'
+       }
+     })
+
+    const stringAllRole = (await transform(withAuth(['aUserRole']))).results || []
+    expect(stringAllRole).toHaveLength(5)
+    stringAllRole.forEach(x => expect(x.authentication).toStrictEqual(['aUserRole']))
+
+    const boolAll = (await transform(withAuth(true))).results || []
+    expect(boolAll).toHaveLength(5)
+    boolAll.forEach(x => expect(x.authentication).toStrictEqual(true))
+
+    const resultAuth = await transform(withAuth(auth))
+    expect(resultAuth.results?.find(x => x.method === 'get')?.authentication).toStrictEqual(auth)
+    expect(resultAuth.results?.find(x => x.method === 'post')?.authentication).toStrictEqual(true)
+    expect(resultAuth.results?.find(x => x.method === 'put')?.authentication).toStrictEqual(auth)
+    expect(resultAuth.results?.find(x => x.method === 'delete')?.authentication).toStrictEqual(auth)
   })
 })

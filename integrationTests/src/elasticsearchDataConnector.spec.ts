@@ -379,4 +379,140 @@ describe('elasticsearch data connector test', () => {
       })
     })
   })
+
+  describe.only('with user authentication', () => {
+    const auth: AuthInput = { sub: 'user1', permissions: ['editor'] }
+    // const unAuthorized:AuthInput = { sub: 'user2', permissions: ['editor'] }
+    beforeAll(async () => {
+      await generateContract(schemaFilePath, 'test-elastic-user-auth', (input) => {
+        input.preferredImplementation = {
+          type: 'elasticsearch',
+          index: indexName
+        }
+        input.authentication = ['admin', { userId: 'ownerId' }]
+        return input
+      })
+      // @ts-ignore
+      const inputs = await import('../temp/test-elastic-user-auth-server')
+      contract = registerRestMethods(addValidationToContract(inputs.contracts))
+      m = getMethods(contract)
+    })
+
+    describe('basic workflow test with authorized user', () => {
+      describe('get empty', () => {
+        it('will return 404 when the element is requested by id', async () => {
+          await get.expectNotFound(m.get.handle, auth)
+        })
+
+        it('will get empty sets when there are no params or multiple ids requested', async () => {
+          await get.expectEmptyForNonMatchingInput(m.get.handle, auth)
+          await get.expectEmptyWhenNoRecordsPresent(m.get.handle, auth)
+        })
+
+        it('will get empty sets when searching for text', async () => {
+          await get.expectEmptyWithTextSearch(m.get.handle, auth)
+        })
+      })
+
+      describe('post', () => {
+        it.only('can post items and get all with empty arguments', async () => {
+          await post.postAndGetRecordsByEmptyGet(m.post, m.get.handle, auth)
+        })
+
+        it('can get all posted items by id, one by one', async () => {
+          await post.postAndGetRecordsByIdParam(m.post, m.get.handle, auth)
+        })
+
+        it('can get all posted items by id array', async () => {
+          await post.postAndGetRecordsByIdArray(m.post, m.get.handle, auth)
+        })
+
+        it('can get some of the posted items by id array', async () => {
+          await post.postAndGetSomeRecordsByIdArray(m.post, m.get.handle, auth)
+        })
+
+        it('Text search for the first generated, and it should be the first result returned', async () => {
+        // So this should look for a string field that is not the id
+        })
+
+        it('will return 404 when the element is requested by id', async () => {
+          await post.postRecords(m.post, auth)
+          await get.expectNotFound(m.get.handle, auth)
+        })
+
+        it('will get empty sets when there are no params or multiple ids requested', async () => {
+          await post.postRecords(m.post, auth)
+          await get.expectEmptyForNonMatchingInput(m.get.handle, auth)
+        })
+
+        it('Gets available records, ignores non existent ones when an array of ids is supplied', async () => {
+          await post.postAndGetAvailableIdsIgnoringWrong(m.post, m.get.handle, auth)
+        })
+        it('can perform text search', async () => {
+          await post.postAndGetByTextSearch(m.post, m.get.handle, auth)
+        })
+
+        it('rejects re-post', async () => {
+          await post.postAndRejectRePost(m.post, m.get.handle, auth)
+        })
+
+        it('rejects post with same id', async () => {
+          await post.postAndRejectPostWithSameId(m.post, m.get.handle, auth)
+        })
+      })
+
+      describe('patch', () => {
+        it('can patch item and verify that only that one record changed', async () => {
+          await patch.canPatch(m.post, m.patch, m.get.handle, auth)
+        })
+
+        it('can not patch non existing record', async () => {
+          await patch.cantPatchNonExistent(m.post, m.patch, m.get.handle, auth)
+        })
+
+        it('can not change id', async () => {
+          await patch.patchCantChangeId(m.post, m.patch, m.get.handle, auth)
+        })
+
+        it('can not remove optional field', async () => {
+          await patch.patchCanNotRemoveOptionalParameters(m.post, m.patch, m.get.handle, auth)
+        })
+      })
+
+      describe('put', () => {
+        it('can put item and verify that only that one record changed', async () => {
+          await put.canPut(m.post, m.put, m.get.handle, auth)
+        })
+
+        it('can not put non existing record', async () => {
+          await put.cantPutNonExistent(m.post, m.put, m.get.handle, auth)
+        })
+
+        it('can not change id', async () => {
+          await put.putCantChangeId(m.post, m.put, m.get.handle, auth)
+        })
+
+        it('rejects put that is missing a non optional field', async () => {
+          await put.putRejectsPartialModification(m.post, m.put, m.get.handle, auth)
+        })
+
+        it('can remove optional field', async () => {
+          await put.putCanRemoveOptionalParameters(m.post, m.put, m.get.handle, auth)
+        })
+      })
+
+      describe('delete', () => {
+        it('can delete one of many', async () => {
+          await uaDel.canDeleteOneOfMany(m.post, m.del, m.get.handle, auth)
+        })
+        it('can delete some one of many', async () => {
+          await uaDel.canDeleteSomeOfMany(m.post, m.del, m.get.handle, auth)
+        })
+
+        it('can delete all of many', async () => {
+          await uaDel.canDeleteAll(m.post, m.del, m.get.handle, auth)
+        })
+      })
+    })
+  })
 })

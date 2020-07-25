@@ -29,8 +29,7 @@
     "authentication": {
       "description": "If the request needs any kind of authentication. False means that it is public, true means that any logged in user can use it, or the needed roles can be listed in an array",
       "oneOf": [
-        { "type": "boolean" },
-        { "type": ["array"], "items": { "type": "string" } },
+        { "$ref": "#/definitions/auth"},
         {
           "type": "object",
           "description": "put and patch will have the same permission",

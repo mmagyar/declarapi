@@ -38,7 +38,7 @@ const searchToType =
 
 const isCrudAuth = (tbd: any): tbd is CrudAuthAll => tbd.post !== undefined
 const isCrudAuthSome = (tbd: any): tbd is CrudAuthSome => tbd.modify !== undefined
-
+const transformForPost = (tbd: any) => Array.isArray(tbd) && tbd.find(x => x.userId) ? true : tbd
 export const transform = async (data:CrudContract | any): Promise<Output> => {
   const valid = await validate(require(`${baseSchemaLocation}crudContractSchema.json`), data)
   if (isValidationError(valid)) return valid
@@ -48,11 +48,11 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
   const au = contractData.authentication
 
   const auth = {
-    get: isCrudAuth(au) ? au.get : isCrudAuthSome(au) ? au.get : au,
-    post: isCrudAuth(au) ? au.post : isCrudAuthSome(au) ? au.modify : au,
-    put: isCrudAuth(au) ? au.put : isCrudAuthSome(au) ? au.modify : au,
-    patch: isCrudAuth(au) ? au.put : isCrudAuthSome(au) ? au.modify : au,
-    delete: isCrudAuth(au) ? au.delete : isCrudAuthSome(au) ? au.delete || au.modify : au
+    get: isCrudAuth(au) ? au.get : (isCrudAuthSome(au) ? au.get : au),
+    post: isCrudAuth(au) ? au.post : (isCrudAuthSome(au) ? au.modify : transformForPost(au)),
+    put: isCrudAuth(au) ? au.put : (isCrudAuthSome(au) ? au.modify : au),
+    patch: isCrudAuth(au) ? au.put : (isCrudAuthSome(au) ? au.modify : au),
+    delete: isCrudAuth(au) ? au.delete : (isCrudAuthSome(au) ? au.delete || au.modify : au)
   }
 
   const createOutput = (method: HttpMethods, args: ObjectType = contractData.dataType,

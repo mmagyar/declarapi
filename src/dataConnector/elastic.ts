@@ -55,7 +55,7 @@ export const get = async <T extends object>(
     bool: {
       should: getUserIdFields(auth).map(userIdField => {
         const r:any = { term: { } }
-        r[userIdField] = [auth.sub]
+        r.term[userIdField] = auth.sub
         return r
       })
     }
