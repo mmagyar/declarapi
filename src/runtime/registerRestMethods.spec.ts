@@ -4,7 +4,7 @@ import { AuthInput } from '../globalTypes'
 describe('registerRestMethods', () => {
   const input = ():ContractWithValidatedHandler => ({
     test: {
-      contract: { name: 'test', authentication: false, arguments: {}, returns: {}, type: 'get' },
+      contract: { name: 'test', authentication: false, manageFields: {}, arguments: {}, returns: {}, type: 'get' },
       handle: async (data: { a: string }): Promise<ContractResult> =>
         ({ result: { ...data } })
     }

@@ -5,6 +5,7 @@ describe('Generate typing and fetch function for client', () => {
     {
       name: 'test',
       authentication: false,
+      manageFields: {},
       method: 'get',
       arguments: { myNumber: 'number' },
       returns: {}
@@ -16,6 +17,7 @@ describe('Generate typing and fetch function for client', () => {
       method: 'get',
       name: 'test',
       authentication: false,
+      manageFields: {},
       arguments: { search: ['string', '?'], id: ['string', { $array: 'string' }, '?'] },
       returns: { $array: { id: 'string', myNumber: 'number' } }
     },
@@ -23,6 +25,7 @@ describe('Generate typing and fetch function for client', () => {
       method: 'post',
       name: 'test',
       authentication: false,
+      manageFields: {},
       arguments: { id: ['string', '?'], myNumber: 'number' },
       returns: { id: 'string', myNumber: 'number' }
     },
@@ -30,6 +33,7 @@ describe('Generate typing and fetch function for client', () => {
       method: 'put',
       name: 'test',
       authentication: false,
+      manageFields: {},
       arguments: { id: 'string', myNumber: 'number' },
       returns: { id: 'string', myNumber: 'number' }
     },
@@ -37,6 +41,7 @@ describe('Generate typing and fetch function for client', () => {
       method: 'patch',
       name: 'test',
       authentication: false,
+      manageFields: {},
       arguments: { id: 'string', myNumber: ['number', '?'] },
       returns: { id: 'string', myNumber: 'number' }
     },
@@ -44,6 +49,7 @@ describe('Generate typing and fetch function for client', () => {
       method: 'delete',
       name: 'test',
       authentication: false,
+      manageFields: {},
       arguments: { id: ['string', { $array: 'string' }] },
       returns: { $array: { id: 'string', myNumber: 'number' } }
     }

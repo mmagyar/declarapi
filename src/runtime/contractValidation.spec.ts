@@ -5,6 +5,7 @@ describe('contractProcessor', () => {
   const input: ()=>{test: ContractType<{a:string}, {b:string}>} = () => ({
     test: {
       arguments: { a: 'string' },
+      manageFields: {},
       name: 'test',
       returns: { b: 'string' },
       handle: async (obj) => ({ b: obj.a }),
@@ -75,7 +76,7 @@ describe('contractProcessor', () => {
     expect(ogHandle).toBeCalled()
   })
 
-  it('runs a fully formbed error when the handler is undefined', async () => {
+  it('runs a fully formed error when the handler is undefined', async () => {
     const modifiedHandler = input()
     modifiedHandler.test.handle = undefined
     expect(await addValidationToContract(modifiedHandler).test.handle({ a: 'foo' }, auth))

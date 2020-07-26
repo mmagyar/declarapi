@@ -1,6 +1,18 @@
 import { transform } from './crud'
-import { CrudContract, CrudAuthAll, CrudAuthSome, AuthType } from './types'
+import { CrudContract, CrudAuthAll, CrudAuthSome, AuthType, Output } from './types'
 describe('transform crud', () => {
+  const getArgs = (result: Output, method:string) => {
+    const res = result.results?.find(x => x.method === method)?.arguments
+    if (!res) throw new Error(`Method not found ${method}`)
+    return res
+  }
+
+  const getReturns = (result: Output, method:string) => {
+    const res = result.results?.find(x => x.method === method)?.returns
+    if (!res) throw new Error(`Method not found ${method}`)
+    return res
+  }
+
   it('id must be present on input', async () => {
     const resultErr = await transform({ name: 'test', authentication: false, dataType: { notId: 'string' } })
     expect(resultErr).toStrictEqual({
@@ -152,7 +164,7 @@ describe('transform crud', () => {
     expect(result).toMatchSnapshot()
   })
 
-  it('accpets regex validated id', async () => {
+  it('accepts regex validated id', async () => {
     const input:CrudContract = {
       name: 'test',
       authentication: false,
@@ -282,5 +294,71 @@ describe('transform crud', () => {
     expect(resultAuth.results?.find(x => x.method === 'post')?.authentication).toStrictEqual(true)
     expect(resultAuth.results?.find(x => x.method === 'put')?.authentication).toStrictEqual(auth)
     expect(resultAuth.results?.find(x => x.method === 'delete')?.authentication).toStrictEqual(auth)
+  })
+
+  describe('manageFields', () => {
+    const schema = () => ({
+      name: 'test',
+      authentication: false,
+      manageFields: { createdBy: true },
+      dataType: {
+        id: 'string',
+        notAnId: 'boolean'
+      }
+    })
+    it('returns error when manageFields createdBy is set to true, but the field is missing', async () => {
+      const result = await transform(schema())
+
+      expect(result).toHaveProperty('type', 'error')
+      expect(result).toHaveProperty('errors', 'managed field "createdBy" is not present on data type')
+    })
+
+    it('returns error when manageFields createdBy is set to true, but field is not declared as string', async () => {
+      const input:any = schema()
+      input.dataType.createdBy = 'number'
+      const result = await transform(input)
+
+      expect(result).toHaveProperty('type', 'error')
+      expect(result).toHaveProperty('errors', 'managed field "createdBy" must be a string, current type :number')
+    })
+    it('does not generate error when createdBy managedField is a string', async () => {
+      const input:any = schema()
+      input.dataType.createdBy = 'string'
+
+      expect(await transform(input)).toHaveProperty('type', 'result')
+
+      input.dataType.createdBy = { $string: {} }
+      expect(await transform(input)).toHaveProperty('type', 'result')
+    })
+
+    it('does not generate error when createdBy managedField is disabled', async () => {
+      const input:any = schema()
+      input.manageFields.createdBy = false
+      input.dataType.createdBy = 'number'
+
+      expect(await transform(input)).toHaveProperty('type', 'result')
+    })
+
+    it('removes managed field from post arguments', async () => {
+      const input:any = schema()
+      input.dataType.createdBy = 'string'
+
+      const result = await transform(input)
+      expect(result).toHaveProperty('type', 'result')
+
+      expect(getReturns(result, 'get').$array).toHaveProperty('createdBy', 'string')
+
+      expect(getArgs(result, 'post')).not.toHaveProperty('createdBy')
+      expect(getReturns(result, 'post')).toHaveProperty('createdBy', 'string')
+
+      expect(getArgs(result, 'put')).not.toHaveProperty('createdBy')
+      expect(getReturns(result, 'put')).toHaveProperty('createdBy', 'string')
+
+      expect(getArgs(result, 'patch')).not.toHaveProperty('createdBy')
+      expect(getReturns(result, 'patch')).toHaveProperty('createdBy', 'string')
+
+      expect(getArgs(result, 'delete')).not.toHaveProperty('createdBy')
+      expect(getReturns(result, 'delete').$array).toHaveProperty('createdBy', 'string')
+    })
   })
 })

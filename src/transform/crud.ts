@@ -5,7 +5,7 @@ import {
   CrudContract,
 
   CrudAuthAll,
-  CrudAuthSome, OutputSuccess, Output, baseSchemaLocation
+  CrudAuthSome, OutputSuccess, Output, baseSchemaLocation, ManageableFields
 } from './types'
 import {
   HttpMethods,
@@ -36,6 +36,57 @@ const searchToType =
     return search
   }
 
+const checkIdField = (contract:CrudContract) :Output | false => {
+  if (contract.dataType.id === undefined) {
+    return {
+      type: 'error',
+      errors: 'id field does not exist in the data declaration'
+    }
+  }
+
+  const idType: any = contract.dataType.id
+  if (!(idType === 'string' || idType.$string)) {
+    return {
+      type: 'error',
+      errors: 'Type of id field must be string'
+    }
+  }
+
+  return false
+}
+const checkManagedFields = (contract: CrudContract): Output|false => {
+  for (const [key, value] of Object.entries(contract.manageFields || {})) {
+    if (value) {
+      const fieldType: any = contract.dataType[key]
+      if (fieldType === undefined) {
+        return {
+          type: 'error',
+          errors: `managed field "${key}" is not present on data type`
+        }
+      }
+
+      if (!(fieldType === 'string' || fieldType.$string)) {
+        return {
+          type: 'error',
+          errors: `managed field "${key}" must be a string, current type :${fieldType}`
+        }
+      }
+    }
+  }
+
+  return false
+}
+
+const removeManaged = (args: ObjectType, manageFields?: ManageableFields):ObjectType => {
+  const result = { ...args }
+  for (const [key, value] of Object.entries(manageFields || {})) {
+    if (value) {
+      delete result[key]
+    }
+  }
+
+  return result
+}
 const isCrudAuth = (tbd: any): tbd is CrudAuthAll => tbd.post !== undefined
 const isCrudAuthSome = (tbd: any): tbd is CrudAuthSome => tbd.modify !== undefined
 const transformForPost = (tbd: any) => Array.isArray(tbd) && tbd.find(x => x.userId) ? true : tbd
@@ -60,31 +111,23 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
     method,
     name: contractData.name,
     authentication: auth[method],
+    manageFields: contractData.manageFields || {},
     search: contractData.search,
     preferredImplementation: contractData.preferredImplementation,
     arguments: args,
     returns
   })
 
-  if (contractData.dataType.id === undefined) {
-    return {
-      type: 'error',
-      errors: 'id field does not exist in the data declaration'
-    }
-  }
-
-  const idType: any = contractData.dataType.id
-
-  if (!(idType === 'string' || idType.$string)) {
-    return {
-      type: 'error',
-      errors: 'Type of id field must be string'
-    }
-  }
-
   const returnArray = { $array: contractData.dataType }
   const output: OutputSuccess[] = []
 
+  const errorWithId = checkIdField(contractData)
+  if (errorWithId) return errorWithId
+
+  const errorWithManagedFields = checkManagedFields(contractData)
+  if (errorWithManagedFields) return errorWithManagedFields
+
+  const idType: any = contractData.dataType.id
   if (contractData.methods?.get !== false) {
     const search = contractData.search
     output.push(createOutput('get',
@@ -93,17 +136,17 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
 
   if (contractData.methods?.post !== false) {
     const post = { ...contractData.dataType, id: [idType, '?'] }
-    output.push(createOutput('post', post))
+    output.push(createOutput('post', removeManaged(post, contractData.manageFields)))
   }
 
   if (contractData.methods?.put !== false) {
-    output.push(createOutput('put'))
+    output.push(createOutput('put', removeManaged(contractData.dataType, contractData.manageFields)))
   }
 
   if (contractData.methods?.patch !== false) {
     const patch: {[s: string]: ValueType | ValueType[];} =
     { ...map(contractData.dataType, contractOptions), id: idType }
-    output.push(createOutput('patch', patch))
+    output.push(createOutput('patch', removeManaged(patch, contractData.manageFields)))
   }
 
   if (contractData.methods?.delete !== false) {

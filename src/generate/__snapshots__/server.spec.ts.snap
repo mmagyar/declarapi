@@ -37,6 +37,7 @@ testDelete: ContractType<testDeleteArgument, testDeleteReturns>
   export const contracts: ContractListType = {
 testGet: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"get\\",
           handle: undefined,
@@ -44,6 +45,7 @@ testGet: {
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}},
 testPost: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"post\\",
           handle: undefined,
@@ -51,6 +53,7 @@ testPost: {
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPut: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"put\\",
           handle: undefined,
@@ -58,6 +61,7 @@ testPut: {
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPatch: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"patch\\",
           handle: undefined,
@@ -65,6 +69,7 @@ testPatch: {
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testDelete: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"delete\\",
           handle: undefined,
@@ -91,6 +96,7 @@ testGet: ContractType<testGetArgument, testGetReturns>
   export const contracts: ContractListType = {
 testGet: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"get\\",
           handle: undefined,
@@ -137,6 +143,7 @@ testDelete: ContractType<testDeleteArgument, testDeleteReturns>
   export const contracts: ContractListType = {
 testGet: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"get\\",
           handle: (input, auth) => elastic.get(\\"test\\", auth, input && input.id, input && input.search),
@@ -144,6 +151,7 @@ testGet: {
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}},
 testPost: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"post\\",
           handle: (input, auth) => elastic.post(\\"test\\", auth, input),
@@ -151,6 +159,7 @@ testPost: {
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPut: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"put\\",
           handle: (input, auth) => elastic.put(\\"test\\", auth, input, input.id),
@@ -158,6 +167,7 @@ testPut: {
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPatch: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"patch\\",
           handle: (input, auth) => elastic.patch(\\"test\\", auth, input, input.id),
@@ -165,6 +175,7 @@ testPatch: {
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testDelete: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"delete\\",
           handle: (input, auth) => elastic.del(\\"test\\", auth, input.id),
@@ -191,6 +202,7 @@ testGet: ContractType<testGetArgument, testGetReturns>
   export const contracts: ContractListType = {
 testGet: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"get\\",
           handle: (input, auth) => elastic.get(\\"test\\", auth, input && input.id),

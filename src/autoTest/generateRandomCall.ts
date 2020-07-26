@@ -11,7 +11,6 @@ export const generateRandomCall =
      const error:any = new Error('Random data generation returned with error')
      error.code = handled?.code
      error.response = handled?.response
-     console.log(handled?.response)
      throw error
    }
    return {

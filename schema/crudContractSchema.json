@@ -26,6 +26,13 @@
         "delete": { "type": "boolean" }
       }
     },
+    "manageFields": {
+      "description": "Fields that are managed / update by the application",
+      "type":"object",
+      "properties": {
+        "createdBy": { "type":"boolean" }
+      }
+    },
     "authentication": {
       "description": "If the request needs any kind of authentication. False means that it is public, true means that any logged in user can use it, or the needed roles can be listed in an array",
       "oneOf": [

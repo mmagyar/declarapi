@@ -1,0 +1,1 @@
+- check out the signature of delete returns, it may be missing single item return.

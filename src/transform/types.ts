@@ -4,11 +4,13 @@ import { Elastic } from '../DataDriverTypes'
 import { HttpMethods, SearchTypes } from '../globalTypes'
 
 export type AuthType = (string | {userId:string})[] | boolean
+export type ManageableFields ={ createdBy?: boolean }
 
 export type Contract = {
   name: string;
   type?: HttpMethods;
   authentication: AuthType;
+  manageFields: ManageableFields;
   arguments: ObjectType;
   returns: ObjectType;
   description?: string;
@@ -25,10 +27,12 @@ export type CrudAuthSome = {
   modify: AuthType;
   delete?: AuthType;
 };
+
 export type CrudContract = {
   name: string;
   methods?: { get?:boolean, post?:boolean, put?: boolean, patch?:boolean, delete?:boolean},
   authentication: AuthType | CrudAuthAll | CrudAuthSome;
+  manageFields?:ManageableFields;
   dataType: ObjectType;
   search?: SearchTypes;
   description?: string;
@@ -38,6 +42,7 @@ export type CrudContract = {
 export type OutputSuccess = {
   name: string;
   authentication: AuthType;
+  manageFields: ManageableFields;
   method: HttpMethods;
   arguments: ObjectType;
   returns: ObjectType;

@@ -83,6 +83,7 @@ With Authentication (just permissions, no userID field)
 
 ### POST
 - Post does not have userID options, same as above should work
+- Can't post with someone elses user id
 - Authenticated user, without permissions can get it's own posted items by id
 - Authenticated user, without permissions can get it's own posted items by id array
 - Authenticated user, without permissions can get it's own posted items by text search

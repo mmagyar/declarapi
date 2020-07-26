@@ -13,6 +13,7 @@ describe('generateRandomCall', () => {
       name: 'test',
       type: 'post',
       authentication: false,
+      manageFields: {},
       arguments: {
         myString: 'string',
         myNumber: 'number',

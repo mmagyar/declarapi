@@ -15,6 +15,7 @@ export const server = (contracts: OutputSuccess[]): string => {
 
     return `${name(x)}: {
           name: "${x.name}",
+          manageFields: ${JSON.stringify(x.manageFields, undefined, 2)},
           authentication: ${JSON.stringify(x.authentication, undefined, 2)},
           type: "${x.method}",
           handle: ${handle},

@@ -55,7 +55,7 @@ export const get = async <T extends object>(
     bool: {
       should: getUserIdFields(auth).map(userIdField => {
         const r:any = { term: { } }
-        r.term[userIdField] = auth.sub
+        r[userIdField] = auth.sub
         return r
       })
     }
@@ -94,6 +94,10 @@ Promise<T & any> => {
   const id = body.id || uuid()
   const newBody: any = { ...body }
   newBody.id = id
+
+  // OK, so now we don't check at the beginning for the userId,
+  // but know we don't know which field is the user id... argh
+  // maybe add a createdBy field to the top schema?
   getUserIdFields(auth).forEach(x => { newBody[x] = auth.sub })
   await client().create({
     id,
