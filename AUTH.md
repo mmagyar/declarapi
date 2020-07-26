@@ -64,19 +64,65 @@ The referred field can be either a single id or an array of ids.
 ```json
 "authentication" : {
   "get": true,
-  "modify": ["admin", { "userId": "userIdFieldNameOnRecord" }]
+  "modify": ["admin", { "createdBy": true }]
 }
 ```
-In the example above, either the user who has their id in `userIdFieldNameOnRecord` OR they have `admin` permissions.
+In the example above, either the user who has their id in `createdBy` OR they have `admin` permissions.
 
-You can reference multiple fields as well
-```json
-"authentication" : [{"userId" : "writtenBy"}, {"userId": "editedBy"}]
-```
 
 ### This is checked in the data connectors, if you implement handle manually, you need to take care of this.
 
 This feature is not available for `POST` method because it makes no sense there. We can't check the owner of an object that does not exist yet
+
+Features considered for future implementation
+---------------------------------------------
+
+These ideas need more consideration to be fully specified in the
+
+### Allow to add 'AND' to access control
+Right now, giving multiple access control parameters (groups or user id) will treat them with an OR operator.
+The user needs to comply with only one of them.
+This makes it hard to restrict users from posting when short form is used,
+and it's not possible to restrict a users access to their own records.
+
+To restrict users from posting, but enabling them to edit their own records,
+you need to specify access control for each method independently,
+and add a separate group to post
+(which most likely needs to different from the one use in put, patch and delete,
+ because adding a group there allows unrestricted access to all the resources to the users in that group).
+
+#### Syntax idea 1
+Keep the syntax simple, just add an object notation for AND.
+```json
+"authentication" : {
+  "get": true,
+  "post":true,
+  "delete": ["admin", {"and" :["editor", { "createdBy": true }]}],
+  "put": ["admin", { "createdBy": true }],
+  "patch": ["admin", { "createdBy": true }],
+}
+```
+
+#### Syntax idea 2
+Make it explicitly require to declare OR / AND.
+This makes the implementation a bit more complex,
+since it needs to support recursive resolution
+```json
+"authentication" : {
+  "get": true,
+  "post":true,
+  "delete": {"or": ["admin", {"and" :["editor", { "createdBy": true }]}]},
+  "put": {"or": ["admin", { "createdBy": true }]},
+  "patch": {"or" : ["admin", { "createdBy": true }]},
+}
+```
+
+The schema above would mean that
+ - An admin can modify all the records.
+ - The owner of the record can modify the record
+ - An admin can delete any records
+ - A regular user cannot delete their own records.
+ - A user can only delete their own records if they have 'editor' permission
 
 Non-goals
 =========

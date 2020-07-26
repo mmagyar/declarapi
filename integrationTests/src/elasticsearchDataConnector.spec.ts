@@ -373,7 +373,7 @@ describe('elasticsearch data connector test', () => {
       })
 
       describe('delete', () => {
-        it('can delete one of many', async () => {
+        it('can not delete one of many', async () => {
           await authDel.cantDeleteOneOfMany(m.post, m.del, m.get.handle, auth, unAuthorized)
         })
       })
@@ -382,7 +382,7 @@ describe('elasticsearch data connector test', () => {
 
   describe('with user authentication', () => {
     const auth: AuthInput = { sub: 'user1', permissions: ['editor'] }
-    // const unAuthorized:AuthInput = { sub: 'user2', permissions: ['editor'] }
+    const unAuthorized:AuthInput = { sub: 'user2', permissions: ['editor'] }
     beforeAll(async () => {
       await generateContract(schemaFilePath, 'test-elastic-user-auth', (input) => {
         input.preferredImplementation = {
@@ -515,6 +515,59 @@ describe('elasticsearch data connector test', () => {
           await uaDel.canDeleteAll(m.post, m.del, m.get.handle, auth)
         })
       })
+    })
+
+    describe('Auth reject tests', () => {
+      describe('get empty', () => {
+        it('Unauthenticated user can\'t access the get endpoint, error 401', async () => {
+          await authGet.expect401ForUnauthenticatedUser(m.get.handle)
+        })
+      })
+
+      describe('post', () => {
+        it('Unauthenticated user can\'t access the post endpoint, error 401', async () => {
+          let err:any
+          try { await post.postRecords(m.post, {}) } catch (e) {
+            err = e
+          }
+          expect(err).toHaveProperty('code', 401)
+          expect(err.response).toEqual({
+            code: 401,
+            data: { id: undefined },
+            errorType: 'unauthorized',
+            errors: ['Only logged in users can do this']
+          })
+          await get.expectEmptyWhenNoRecordsPresent(m.get.handle, auth)
+        })
+
+        it('posted records cannot be read by unauthenticated user', async () => {
+          await post.postRecords(m.post, auth)
+          await authGet.expect401ForUnauthenticatedUser(m.get.handle)
+          await get.expectEmptyWhenNoRecordsPresent(m.get.handle, unAuthorized)
+        })
+      })
+
+      describe('patch', () => {
+        it('Authenticated but not authorized user gets 403', async () => {
+          await authPatch.cantPatch(m.post, m.patch, m.get.handle, auth, unAuthorized)
+        })
+      })
+
+      describe('put', () => {
+        it('Authenticated but not authorized user gets 403', async () => {
+          await authPut.cantPut(m.post, m.put, m.get.handle, auth, unAuthorized)
+        })
+      })
+
+      describe('delete', () => {
+        it('can delete one of many', async () => {
+          await authDel.cantDeleteOneOfMany(m.post, m.del, m.get.handle, auth, unAuthorized)
+        })
+      })
+    })
+
+    describe('additional cases', () => {
+
     })
   })
 })

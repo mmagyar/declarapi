@@ -100,7 +100,7 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
 
   const auth = {
     get: isCrudAuth(au) ? au.get : (isCrudAuthSome(au) ? au.get : au),
-    post: isCrudAuth(au) ? au.post : (isCrudAuthSome(au) ? au.modify : transformForPost(au)),
+    post: isCrudAuth(au) ? au.post : transformForPost((isCrudAuthSome(au) ? au.modify : au)),
     put: isCrudAuth(au) ? au.put : (isCrudAuthSome(au) ? au.modify : au),
     patch: isCrudAuth(au) ? au.put : (isCrudAuthSome(au) ? au.modify : au),
     delete: isCrudAuth(au) ? au.delete : (isCrudAuthSome(au) ? au.delete || au.modify : au)

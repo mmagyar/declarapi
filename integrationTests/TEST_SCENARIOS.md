@@ -78,29 +78,28 @@ With Authentication (just permissions, no userID field)
 ## With Authentication (userID field is present on all but POST)
 
 ### GET
-- Same as Authentication without userID
-- Logged in user does not get 403 anymore, just returns empty if no owned resources found.
+- *DONE* Same as Authentication without userID
+- *DONE* Logged in user does not get 403 anymore, just returns empty if no owned resources found.
 
 ### POST
-- Post does not have userID options, same as above should work
 - Can't post with someone elses user id
-- Authenticated user, without permissions can get it's own posted items by id
-- Authenticated user, without permissions can get it's own posted items by id array
-- Authenticated user, without permissions can get it's own posted items by text search
+- *DONE* Authenticated user, without permissions can get it's own posted items by id
+- *DONE* Authenticated user, without permissions can get it's own posted items by id array
+- *DONE* Authenticated user, without permissions can get it's own posted items by text search
 - Authenticated user, without permissions can't get records posted by another user, in either by id, by id array or text search
 - Authorized user with permission can get all records posted by other users
 
 
 ### PATCH and PUT
- - Same with plain authentication
- - Authenticated user, without permissions, can patch own items
+ - *DONE* Same with plain authentication
+ - *DONE* Authenticated user, without permissions, can patch own items
  - Authenticated user, without permissions, can't patch other users items
  - Can't change userID
  - createdBy ID stays the same if admin updates
 
 ### DELETE
- - Same as plain authentication
- - Authenticated user, without permissions, can delete own items
+ - *DONE* Same as plain authentication
+ - *DONE* Authenticated user, without permissions, can delete own items
  - Authenticated user, without permissions, can't delete other users items
 
 
@@ -109,7 +108,6 @@ With Authentication (just permissions, no userID field)
  - Without authentication
  - With permission based authentication
  - With userId based permission
- - With multiple userId based permission
 
 ## TODO:
  - Patch with objects

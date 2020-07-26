@@ -27,6 +27,6 @@ export const cantPatch = async (post:Expressable, patch:Expressable, get: Handle
   const patchResult2 = await patch.handle(patching, postFirst.id, unAuthorized)
   expect(patchResult2.code).toBe(403)
   expect(patchResult2.response).toHaveProperty('code', 403)
-  expect(patchResult2.response).toHaveProperty('errorType', 'unauthorized')
+  expect(patchResult2.response).toHaveProperty('errorType')
   await expectGetToReturnRecords(posted, {}, get, authInput)
 }
