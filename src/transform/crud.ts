@@ -54,7 +54,7 @@ const checkIdField = (contract:CrudContract) :Output | false => {
 
   return false
 }
-const checkManagedFields = (contract: CrudContract): Output|false => {
+const checkManageFields = (contract: CrudContract): Output|false => {
   for (const [key, value] of Object.entries(contract.manageFields || {})) {
     if (value) {
       const fieldType: any = contract.dataType[key]
@@ -89,7 +89,7 @@ const removeManaged = (args: ObjectType, manageFields?: ManageableFields):Object
 }
 const isCrudAuth = (tbd: any): tbd is CrudAuthAll => tbd.post !== undefined
 const isCrudAuthSome = (tbd: any): tbd is CrudAuthSome => tbd.modify !== undefined
-const transformForPost = (tbd: any) => Array.isArray(tbd) && tbd.find(x => x.userId) ? true : tbd
+const transformForPost = (tbd: any) => Array.isArray(tbd) && tbd.find(x => x.createdBy) ? true : tbd
 export const transform = async (data:CrudContract | any): Promise<Output> => {
   const valid = await validate(require(`${baseSchemaLocation}crudContractSchema.json`), data)
   if (isValidationError(valid)) return valid
@@ -124,8 +124,8 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
   const errorWithId = checkIdField(contractData)
   if (errorWithId) return errorWithId
 
-  const errorWithManagedFields = checkManagedFields(contractData)
-  if (errorWithManagedFields) return errorWithManagedFields
+  const errorWithManageFields = checkManageFields(contractData)
+  if (errorWithManageFields) return errorWithManageFields
 
   const idType: any = contractData.dataType.id
   if (contractData.methods?.get !== false) {

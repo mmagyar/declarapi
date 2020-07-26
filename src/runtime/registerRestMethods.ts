@@ -32,7 +32,7 @@ export type Expressable = {
 export const registerRestMethods = (input:ContractWithValidatedHandler):Expressable[] =>
   Object.values(input).map(x => {
     const handle:HandleType = async (body, id?, user?) => {
-      const { authentication } = x.contract
+      const { authentication, manageFields } = x.contract
 
       if (authentication && !user?.sub) {
         return {
@@ -50,7 +50,7 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
         const perm: string[] = user?.permissions || []
 
         const hasPerm = perm.some(y => authentication.some(z => z === y))
-        const canUserAccess = authentication.find((x:any) => x?.userId)
+        const canUserAccess = manageFields.createdBy
         if (!hasPerm && !canUserAccess) {
           return {
             code: 403,
@@ -84,7 +84,7 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
 
       try {
         const result: ContractResult =
-          await x.handle(body, { ...user, authentication })
+          await x.handle(body, { ...user, authentication }, manageFields)
         if (isContractInError(result)) { return { code: result.code, response: result } }
 
         const statusCode = x.contract.type === 'post' ? 201 : 200

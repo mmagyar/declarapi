@@ -3,7 +3,7 @@ import { ObjectType } from 'yaschva'
 import { Elastic } from '../DataDriverTypes'
 import { HttpMethods, SearchTypes } from '../globalTypes'
 
-export type AuthType = (string | {userId:string})[] | boolean
+export type AuthType = (string | {createdBy: boolean})[] | boolean
 export type ManageableFields ={ createdBy?: boolean }
 
 export type Contract = {

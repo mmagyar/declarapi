@@ -270,14 +270,15 @@ describe('transform crud', () => {
   })
 
   it('does not required user to post when user auth is set globally', async () => {
-    const auth = ['admin', { userId: 'ownerId' }]
+    const auth = ['admin', { createdBy: true }]
     const withAuth: (auth? : AuthType | CrudAuthAll | CrudAuthSome) => CrudContract =
      (auth: AuthType | CrudAuthAll | CrudAuthSome = true) => ({
        name: 'test',
        authentication: auth,
        dataType: {
          id: 'string',
-         notAnId: 'boolean'
+         notAnId: 'boolean',
+         createdBy: 'string'
        }
      })
 

@@ -1,6 +1,6 @@
 import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
 import { AuthInput } from 'declarapi'
-import { checkedGenerate, getFirstStringFieldName } from '../common'
+import { checkedGenerate, getFirstStringFieldName, removeManaged } from '../common'
 import { generate } from 'yaschva'
 import { expectGetToReturnRecords } from './get'
 
@@ -58,7 +58,7 @@ export const postAndGetByTextSearch = async (post:Expressable, get: HandleType, 
 
 export const postAndRejectRePost = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postAndGetRecordsByEmptyGet(post, get, authInput)
-  const handled:any = await post.handle(posted[0], undefined, authInput)
+  const handled:any = await post.handle(removeManaged(posted[0], post.contract.manageFields), undefined, authInput)
   expect(handled).toHaveProperty('code', 409)
   expect(handled.response).toHaveProperty('code', 409)
   expect(handled.response).toHaveProperty('data')

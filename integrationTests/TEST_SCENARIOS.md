@@ -96,6 +96,7 @@ With Authentication (just permissions, no userID field)
  - Authenticated user, without permissions, can patch own items
  - Authenticated user, without permissions, can't patch other users items
  - Can't change userID
+ - createdBy ID stays the same if admin updates
 
 ### DELETE
  - Same as plain authentication

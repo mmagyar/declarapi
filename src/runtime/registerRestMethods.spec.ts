@@ -81,6 +81,17 @@ describe('registerRestMethods', () => {
       expectResult(res, 200, { a: 'sadf' })
     })
 
+    it('happy path - with createdBy', async () => {
+      const data = input()
+      data.test.contract.manageFields = { createdBy: true }
+      data.test.contract.authentication = [{ createdBy: true }]
+      const result = registerRestMethods(data)
+      const res = resMock()
+      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: [], sub: 'abc' })
+      await result[0].handler(req, res.chainedMock)
+      expectResult(res, 200, { a: 'sadf' })
+    })
+
     it('auth failure - with simple authentication', async () => {
       const data = input()
       data.test.contract.authentication = true

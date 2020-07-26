@@ -3,29 +3,35 @@ import { postRecords } from './post'
 import { AuthInput } from '../../../src'
 import { generate } from 'yaschva'
 import { expectEmptyWhenNoRecordsPresent, expectGetToReturnRecords } from './get'
-import { generateForFirstTextField } from '../common'
+import { generateForFirstTextField, removeManaged } from '../common'
 
 export const canPut = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)
 
   const postFirst:any = posted[0]
-  const putting:any = generate(post.contract.returns)
+  const putting:any = removeManaged(generate(post.contract.returns), post.contract.manageFields)
   putting.id = postFirst.id
   const patchResult = await put.handle(putting, postFirst.id, authInput)
   expect(patchResult.code).toBe(200)
+  if (post.contract.manageFields.createdBy) {
+    putting.createdBy = authInput.sub
+  }
   expect(patchResult.response).toStrictEqual(putting)
 
-  const toExpectAll = [...posted]
-  toExpectAll[0] = putting
+  const toExpectAll:any = [...posted]
+  toExpectAll[0] = { ...putting }
+  if (post.contract.manageFields.createdBy) {
+    toExpectAll[0].createdBy = authInput.sub
+  }
   await expectGetToReturnRecords(toExpectAll, {}, get, authInput)
 }
 
 export const cantPutNonExistent = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput) => {
-  const bodyOnlyResult = await put.handle(generate(post.contract.returns), undefined, authInput)
+  const bodyOnlyResult = await put.handle(removeManaged(generate(post.contract.returns), post.contract.manageFields), undefined, authInput)
   expect(bodyOnlyResult.code).toBe(404)
   expect(bodyOnlyResult.response).toHaveProperty('code', 404)
 
-  const generated = generate(post.contract.returns)
+  const generated = removeManaged(generate(post.contract.returns), post.contract.manageFields)
   const withIdResult = await put.handle(generated, generated.id, authInput)
   expect(withIdResult.code).toBe(404)
   expect(withIdResult.response).toHaveProperty('code', 404)
@@ -86,15 +92,18 @@ export const putCanRemoveOptionalParameters = async (post:Expressable, put:Expre
   const postWithOptional:any = posted.find((x:any) => x[optionalParameter?.[0] || ''])
 
   expect(optionalParameter).toHaveLength(2)
-  const lackingPut = { ...postWithOptional }
+  const lackingPut = removeManaged(postWithOptional, post.contract.manageFields)
   lackingPut[generated.key] = generated.value
   delete lackingPut[optionalParameter?.[0] || '']
 
   const putResult = await put.handle(lackingPut, undefined, authInput)
-  // console.log(putResult)
   expect(putResult.code).toBe(200)
-  expect(putResult.response).toStrictEqual(lackingPut)
+  const toExpect = { ...lackingPut }
+  if (post.contract.manageFields.createdBy) {
+    toExpect.createdBy = authInput.sub
+  }
+  expect(putResult.response).toStrictEqual(toExpect)
 
-  const newSet = posted.map((x:any) => x.id === lackingPut.id ? lackingPut : x)
+  const newSet = posted.map((x:any) => x.id === lackingPut.id ? toExpect : x)
   await expectGetToReturnRecords(newSet, {}, get, authInput)
 }

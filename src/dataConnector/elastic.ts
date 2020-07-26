@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { HandlerAuth } from '../globalTypes'
 import { RequestHandlingError } from '../RequestHandlingError'
 import { mapFilter } from 'microtil'
+import { ManageableFields } from '../transform/types'
 
 let clientInstance: Client | undefined
 export const client = () => clientInstance || init()
@@ -32,19 +33,19 @@ export const init = () => {
 }
 
 export const info = () => client().info()
-type UserIdObject = {userId: string}
 export const defaultSize = 1000
 const authorizedByPermission = (auth:HandlerAuth) =>
   typeof auth.authentication === 'boolean' ||
   auth.authentication.some(x => (auth.permissions || []).some(y => x === y))
 
-const getUserIdFields = (auth:HandlerAuth):string[] => (Array.isArray(auth.authentication) &&
-  auth.authentication.filter((x:any):x is UserIdObject => x.userId).map(x => x.userId)) || []
+const getUserIdFields = (fields:ManageableFields):string[] => Object.entries(fields).filter(x => x[1]).map(x => x[0])
 
-const filterToAccess = (input:any[], auth:HandlerAuth):any[] => authorizedByPermission(auth) ? input : input.filter((x:any) => getUserIdFields(auth).some(y => x[y] === auth.sub))
+const filterToAccess = (input:any[], auth:HandlerAuth, fields:ManageableFields):any[] =>
+  authorizedByPermission(auth) ? input : input.filter((x:any) => getUserIdFields(fields).some(y => x[y] === auth.sub))
 
 export const get = async <T extends object>(
   indexName: string,
+  manageFields: ManageableFields,
   auth:HandlerAuth,
   id?: string | string[] | null,
   search?: string | null
@@ -53,9 +54,9 @@ export const get = async <T extends object>(
 
   const userIdFilter: any = {
     bool: {
-      should: getUserIdFields(auth).map(userIdField => {
+      should: getUserIdFields(manageFields).map(userIdField => {
         const r:any = { term: { } }
-        r[userIdField] = auth.sub
+        r.term[userIdField] = auth.sub
         return r
       })
     }
@@ -64,10 +65,10 @@ export const get = async <T extends object>(
   if (Array.isArray(id)) {
     if (id.length === 0) return []
     const { body: { docs } } = await client().mget({ index, body: { ids: id } })
-    return filterToAccess(mapFilter(docs, (x: any) => x._source), auth)
+    return filterToAccess(mapFilter(docs, (x: any) => x._source), auth, manageFields)
   } else if (id) {
     const { body } = await client().get({ index, id })
-    return filterToAccess([body._source], auth)
+    return filterToAccess([body._source], auth, manageFields)
   } else if (search) {
     const queryString = {
       query: {
@@ -88,17 +89,16 @@ export const get = async <T extends object>(
   const result = new Array(all.body.hits.hits).flatMap((y: any) => y.map((x: any) => x._source))
   return result
 }
-export const post = async <T extends {[key: string]: any}>(index: string, auth:HandlerAuth, body: T):
+export const post = async <T extends {[key: string]: any}>(index: string, manageFields: ManageableFields, auth:HandlerAuth, body: T):
 Promise<T & any> => {
   if (!authorizedByPermission(auth)) throw new RequestHandlingError('User not authorized to POST', 403)
   const id = body.id || uuid()
   const newBody: any = { ...body }
   newBody.id = id
 
-  // OK, so now we don't check at the beginning for the userId,
-  // but know we don't know which field is the user id... argh
-  // maybe add a createdBy field to the top schema?
-  getUserIdFields(auth).forEach(x => { newBody[x] = auth.sub })
+  if (manageFields.createdBy === true) {
+    newBody.createdBy = auth.sub
+  }
   await client().create({
     id,
     index: index.toLocaleLowerCase(),
@@ -109,9 +109,9 @@ Promise<T & any> => {
   return newBody
 }
 
-export const del = async (index: string, auth:HandlerAuth, id: string|string[]): Promise<any> => {
-  if (Array.isArray(id)) return (await Promise.all(id.map(x => del(index, auth, x)))).map(x => x[0])
-  const result = await get(index, auth, id)
+export const del = async (index: string, manageFields: ManageableFields, auth:HandlerAuth, id: string|string[]): Promise<any> => {
+  if (Array.isArray(id)) return (await Promise.all(id.map(x => del(index, manageFields, auth, x)))).map(x => x[0])
+  const result = await get(index, manageFields, auth, id)
   if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to delete this', 403)
   }
@@ -121,9 +121,9 @@ export const del = async (index: string, auth:HandlerAuth, id: string|string[]):
   return result
 }
 
-export const patch = async <T extends object, K extends object>(index: string, auth:HandlerAuth, body: T, id: string
+export const patch = async <T extends object, K extends object>(index: string, manageFields: ManageableFields, auth:HandlerAuth, body: T, id: string
 ): Promise<K> => {
-  const result = await get(index, auth, id)
+  const result = await get(index, manageFields, auth, id)
   if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to patch this', 403)
   }
@@ -134,21 +134,26 @@ export const patch = async <T extends object, K extends object>(index: string, a
       id,
       body: { doc: body }
     })
-  return (await get(index, auth, id) as any)[0]
+  return (await get(index, manageFields, auth, id) as any)[0]
 }
 
-export const put = async <T extends object, K extends object>(index: string, auth:HandlerAuth, body: T, id: string
+export const put = async <T extends object, K extends object>(index: string, manageFields: ManageableFields, auth:HandlerAuth, body: T, id: string
 ): Promise<K> => {
-  const result = await get(index, auth, id)
+  const result: any[] = await get(index, manageFields, auth, id)
   if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to patch this', 403)
   }
+  const newBody :any = { ...body }
+  if (manageFields.createdBy === true) {
+    newBody.createdBy = result[0].createdBy
+  }
+
   await client().index(
     {
       index: index.toLocaleLowerCase(),
       refresh: 'wait_for',
       id,
-      body
+      body: newBody
     })
-  return (await get(index, auth, id) as any)[0]
+  return (await get(index, manageFields, auth, id) as any)[0]
 }

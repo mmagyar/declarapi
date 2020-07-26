@@ -1,6 +1,7 @@
 import { validate, ValidationResult } from 'yaschva'
 import { map } from 'microtil'
 import { ContractType, AuthInput, HandlerAuth } from '../globalTypes'
+import { ManageableFields } from '../transform/types'
 
 export type ContractResultError = {
   errorType: string; data: any; code: number; errors: ValidationResult|string[];
@@ -14,7 +15,7 @@ export const isContractInError = (tbd: any): tbd is ContractResultError =>
 
 export type ContractWithValidatedHandler = {
   [key: string]: {
-    handle: (input: any, auth: HandlerAuth) => Promise<ContractResult>;
+    handle: (input: any, auth: HandlerAuth, manageFields:ManageableFields) => Promise<ContractResult>;
     contract: ContractType<any, any>
   }
 };
@@ -39,7 +40,7 @@ export const addValidationToContract = (
 
         if (value.handle) {
           const result = await value.handle(input,
-            { ...auth, authentication: value.authentication })
+            { ...auth, authentication: value.authentication }, value.manageFields)
           if (validateOutput) {
             const outputValidation = validate(value.returns, result)
             if (outputValidation.result === 'fail') {

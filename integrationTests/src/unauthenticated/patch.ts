@@ -1,7 +1,7 @@
 import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
 import { AuthInput } from '../../../src'
 import { postRecords } from './post'
-import { getFirstStringFieldName, generateForFirstTextField } from '../common'
+import { getFirstStringFieldName, generateForFirstTextField, removeManaged } from '../common'
 import { generate } from 'yaschva'
 import { expectGetToReturnRecords, expectEmptyWhenNoRecordsPresent } from './get'
 
@@ -29,11 +29,12 @@ export const canPatch = async (post:Expressable, patch:Expressable, get: HandleT
 }
 
 export const cantPatchNonExistent = async (post:Expressable, patch:Expressable, get: HandleType, authInput:AuthInput) => {
-  const bodyOnlyResult = await patch.handle(generate(post.contract.returns), undefined, authInput)
+  const bodyOnlyResult = await patch.handle(
+    removeManaged(generate(post.contract.returns), post.contract.manageFields), undefined, authInput)
   expect(bodyOnlyResult.code).toBe(404)
   expect(bodyOnlyResult.response).toHaveProperty('code', 404)
 
-  const generated = generate(post.contract.returns)
+  const generated = removeManaged(generate(post.contract.returns), post.contract.manageFields)
   const withIdResult = await patch.handle(generated, generated.id, authInput)
   expect(withIdResult.code).toBe(404)
   expect(withIdResult.response).toHaveProperty('code', 404)
@@ -74,7 +75,7 @@ export const patchCanNotRemoveOptionalParameters = async (post:Expressable, patc
   expect(optionalParameter).toHaveLength(2)
   const postWithOptional:any = posted.find((x:any) => x[optionalParameter?.[0] || ''])
 
-  const lackingPatch = { ...postWithOptional }
+  const lackingPatch = removeManaged(postWithOptional, post.contract.manageFields)
   delete lackingPatch[optionalParameter?.[0] || '']
 
   const patchResult = await patch.handle(lackingPatch, undefined, authInput)

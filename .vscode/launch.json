@@ -8,7 +8,16 @@
       "command": "npm run test:integration:dev",
       "name": "Integration tests",
       "request": "launch",
-      "type": "node-terminal"
+      "type": "node-terminal",
+      "smartStep": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "<node_internals>/**/*.js",
+        "**/async_hooks.js",
+        "**/inspector_async_hook.js"
+
+
+      ]
     },
     {
       "type": "node",

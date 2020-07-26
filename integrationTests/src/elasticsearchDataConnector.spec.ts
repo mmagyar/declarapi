@@ -380,7 +380,7 @@ describe('elasticsearch data connector test', () => {
     })
   })
 
-  describe.only('with user authentication', () => {
+  describe('with user authentication', () => {
     const auth: AuthInput = { sub: 'user1', permissions: ['editor'] }
     // const unAuthorized:AuthInput = { sub: 'user2', permissions: ['editor'] }
     beforeAll(async () => {
@@ -389,7 +389,9 @@ describe('elasticsearch data connector test', () => {
           type: 'elasticsearch',
           index: indexName
         }
-        input.authentication = ['admin', { userId: 'ownerId' }]
+        input.dataType.createdBy = 'string'
+        input.manageFields = { createdBy: true }
+        input.authentication = ['admin', { createdBy: true }]
         return input
       })
       // @ts-ignore
@@ -415,7 +417,7 @@ describe('elasticsearch data connector test', () => {
       })
 
       describe('post', () => {
-        it.only('can post items and get all with empty arguments', async () => {
+        it('can post items and get all with empty arguments', async () => {
           await post.postAndGetRecordsByEmptyGet(m.post, m.get.handle, auth)
         })
 

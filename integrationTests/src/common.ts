@@ -1,7 +1,7 @@
 import { AuthInput } from '../../src/globalTypes'
 import { generateRandomCall } from '../../src/index'
 import { Expressable } from '../../src/runtime/registerRestMethods'
-import { CrudContract } from '../../src/transform/types'
+import { CrudContract, ManageableFields } from '../../src/transform/types'
 import { promises as fs } from 'fs'
 import { generate, writeFile } from '../../src/bin/generate'
 import path from 'path'
@@ -33,8 +33,8 @@ export const checkMatchingGenerated = (generatorOut:{output: any, generatedInput
     expect(generatorOut.output.id).toBe(generatorOut.generatedInput.id)
   }
 
-  const newOut = { ...generatorOut.output, id: undefined }
-  const newIn = { ...generatorOut.generatedInput, id: undefined }
+  const newOut = { ...generatorOut.output, id: undefined, createdBy: undefined }
+  const newIn = { ...generatorOut.generatedInput, id: undefined, createdBy: undefined }
   expect(newOut).toStrictEqual(newIn)
   return generatorOut
 }
@@ -70,3 +70,11 @@ export const getMethods = (contract:any):Contracts => ({
   put: contract.find((x:Expressable) => x.method === 'put'),
   del: contract.find((x:Expressable) => x.method === 'delete')
 })
+
+export const removeManaged = <T extends object>(removeFrom:T, manageFields:ManageableFields):T => {
+  const result:any = { ...removeFrom }
+  for (const [key, value] of Object.entries(manageFields)) {
+    if (value) delete result[key]
+  }
+  return result
+}

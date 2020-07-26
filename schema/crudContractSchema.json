@@ -6,7 +6,7 @@
     "items": {
       "oneOf": [
       {"type":  "string"} ,
-      {"type":"object", "properties":{"userId":{"type":"string"}}}
+      {"type":"object", "properties":{"createdBy":{"type":"boolean"}}, "required": ["createdBy"]}
     ]}}
   },
   "properties": {

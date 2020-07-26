@@ -99,14 +99,14 @@ describe('elasticsearch data connector', () => {
 
   describe('get', () => {
     it('gets all when no id or search is provided', async () => {
-      expect(await get('test', { authentication: false })).toStrictEqual([{ id: '3', value: 'searchResult' }, { id: '4', value: 'searchResultX' }])
+      expect(await get('test', {}, { authentication: false })).toStrictEqual([{ id: '3', value: 'searchResult' }, { id: '4', value: 'searchResultX' }])
       expect(client().search).toHaveBeenCalledTimes(1)
       expect(client().search).toBeCalledWith({ index: 'test', size: defaultSize })
       expect(client().get).toHaveBeenCalledTimes(0)
     })
 
     it('gets by query when no id, but search is provided', async () => {
-      expect(await get('test', { authentication: false }, undefined, 'searchResult'))
+      expect(await get('test', {}, { authentication: false }, undefined, 'searchResult'))
         .toStrictEqual([{ id: '3', value: 'searchResult' }, { id: '4', value: 'searchResultX' }])
       expect(client().search).toHaveBeenCalledTimes(1)
       expect(client().search)
@@ -120,7 +120,7 @@ describe('elasticsearch data connector', () => {
     })
 
     it('gets by id when id is provided', async () => {
-      expect(await get('test', { authentication: false }, '2'))
+      expect(await get('test', {}, { authentication: false }, '2'))
         .toStrictEqual([{ id: '2', value: 'getmock' }])
       expect(client().get).toBeCalledWith({ index: 'test', id: '2' })
       expect(client().get).toHaveBeenCalledTimes(1)
@@ -128,7 +128,7 @@ describe('elasticsearch data connector', () => {
     })
 
     it('gets by array of ids ', async () => {
-      expect(await get('test', { authentication: false }, ['4', '5']))
+      expect(await get('test', {}, { authentication: false }, ['4', '5']))
         .toStrictEqual([{ id: '4', value: 'mget4' }, { id: '5', value: 'mget5' }])
       expect(client().mget).toBeCalledWith({ body: { ids: ['4', '5'] }, index: 'test' })
       expect(client().mget).toHaveBeenCalledTimes(1)
@@ -139,14 +139,14 @@ describe('elasticsearch data connector', () => {
 
   describe('post', () => {
     it('post returns the saved value', async () => {
-      expect(await post('test', { authentication: false }, { id: 1, value: 'abc' }))
+      expect(await post('test', {}, { authentication: false }, { id: 1, value: 'abc' }))
         .toStrictEqual({ id: 1, value: 'abc' })
       expect(client().create).toHaveBeenCalledTimes(1)
       expect(client().update).toHaveBeenCalledTimes(0)
     })
 
     it('post generated uuid, if id not given', async () => {
-      const posted = await post('test', { authentication: false }, { value: 'abc' })
+      const posted = await post('test', {}, { authentication: false }, { value: 'abc' })
       expect(posted.value).toBe('abc')
       expect(isValidUUID(posted.id)).toBeTruthy()
       expect(client().create).toHaveBeenCalledTimes(1)
@@ -155,14 +155,14 @@ describe('elasticsearch data connector', () => {
 
   describe('del', () => {
     it('returns the deleted value', async () => {
-      expect(await del('test', { authentication: false }, '2'))
+      expect(await del('test', {}, { authentication: false }, '2'))
         .toStrictEqual([{ id: '2', value: 'getmock' }])
       expect(client().get).toHaveBeenCalledTimes(1)
       expect(client().delete).toHaveBeenCalledTimes(1)
     })
 
     it('returns the deleted values when multiple ids are deleted', async () => {
-      expect(await del('test', { authentication: false }, ['2', '3']))
+      expect(await del('test', {}, { authentication: false }, ['2', '3']))
         .toStrictEqual([{ id: '2', value: 'getmock' }, { id: '2', value: 'getmock' }])
       expect(client().get).toHaveBeenCalledTimes(2)
       expect(client().delete).toHaveBeenCalledTimes(2)
@@ -170,7 +170,7 @@ describe('elasticsearch data connector', () => {
   })
 
   it('can update / patch existing items, returns value read by get', async () => {
-    expect(await patch('test', { authentication: false }, { id: '1', value: 'testValue' }, '1'))
+    expect(await patch('test', {}, { authentication: false }, { id: '1', value: 'testValue' }, '1'))
       .toStrictEqual({ id: '2', value: 'getmock' })
     expect(client().update).toHaveBeenCalledTimes(1)
     expect(client().create).toHaveBeenCalledTimes(0)
