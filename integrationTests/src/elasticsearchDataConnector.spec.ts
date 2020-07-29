@@ -93,7 +93,10 @@ describe('elasticsearch data connector test', () => {
       })
 
       it('Text search for the first generated, and it should be the first result returned', async () => {
-        // So this should look for a string field that is not the id
+        const posted :any[] = await post.postRecords(m.post, {})
+        await get.expectFirstRecordToEqual(posted[0], {
+          search: get.findFirstTextFieldContent(posted[0], m.get)
+        }, m.get.handle, {})
       })
 
       it('will return 404 when the element is requested by id', async () => {
@@ -228,7 +231,10 @@ describe('elasticsearch data connector test', () => {
         })
 
         it('Text search for the first generated, and it should be the first result returned', async () => {
-        // So this should look for a string field that is not the id
+          const posted :any[] = await post.postRecords(m.post, auth)
+          await get.expectFirstRecordToEqual(posted[0], {
+            search: get.findFirstTextFieldContent(posted[0], m.get)
+          }, m.get.handle, auth)
         })
 
         it('will return 404 when the element is requested by id', async () => {

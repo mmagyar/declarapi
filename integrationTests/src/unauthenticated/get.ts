@@ -1,4 +1,4 @@
-import { HandleType, HandleResponse } from '../../../src/runtime/registerRestMethods'
+import { HandleType, HandleResponse, Expressable } from '../../../src/runtime/registerRestMethods'
 import { ArgumentVariations } from '../common'
 import { AuthInput } from '../../../src'
 
@@ -58,4 +58,22 @@ export const expectGetToReturnRecords = async (records:any[], getArguments: any 
   expect(new Set(getResult.response)).toStrictEqual(new Set(records))
 
   return getResult.response
+}
+
+export const expectFirstRecordToEqual = async (record:any, getArguments: any = {}, get:HandleType, authInput:AuthInput = {}) => {
+  const getResult = await get(getArguments, undefined, authInput)
+  expect(getResult.code).toBe(200)
+
+  // Order does not matter, use set, and check length to make sure they are the same
+  expect(getResult.response.length).toBeGreaterThan(0)
+  expect(getResult.response[0]).toStrictEqual(record)
+
+  return getResult.response
+}
+
+export const findFirstTextFieldContent = (record:any, get:Expressable) => {
+  const managedField = Object.keys(get.contract.manageFields)
+  return Object.entries(record).map(([key, value]) =>
+    !([...managedField, 'id'].includes(key)) && typeof value === 'string'
+      ? value : undefined).find(x => x) || ''
 }

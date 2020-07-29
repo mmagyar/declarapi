@@ -111,7 +111,6 @@ With Authentication (just permissions, no userID field)
  - With userId based permission
 
 ## TODO:
- - Patch with objects
- - Better testing for textSearch
+ - Refactor tests to be usable with arbitrary schema
  - Test parametric search when it's implemented
  - Maybe define behavior for get when both and and search is specified
