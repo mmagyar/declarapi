@@ -5,8 +5,8 @@ import { getFirstStringFieldName, generateForFirstTextField, removeManaged } fro
 import { generate } from 'yaschva'
 import { expectGetToReturnRecords, expectEmptyWhenNoRecordsPresent } from './get'
 
-export const canPatch = async (post:Expressable, patch:Expressable, get: HandleType, authInput:AuthInput) => {
-  const posted = await postRecords(post, authInput)
+export const canPatch = async (post:Expressable, patch:Expressable, get: HandleType, postAuth:AuthInput, patchAuth?:AuthInput) => {
+  const posted = await postRecords(post, postAuth)
 
   const postFirst:any = posted[0]
   const patching:any = {}
@@ -17,7 +17,7 @@ export const canPatch = async (post:Expressable, patch:Expressable, get: HandleT
     generatedInput = generate('string')
   }
   patching[stringFieldName] = generatedInput
-  const patchResult = await patch.handle(patching, postFirst.id, authInput)
+  const patchResult = await patch.handle(patching, postFirst.id, patchAuth || postAuth)
   expect(patchResult.code).toBe(200)
   const toExpectPatchReturn = { ...postFirst }
   toExpectPatchReturn[stringFieldName] = generatedInput
@@ -25,7 +25,7 @@ export const canPatch = async (post:Expressable, patch:Expressable, get: HandleT
 
   const toExpectAll = [...posted]
   toExpectAll[0] = toExpectPatchReturn
-  await expectGetToReturnRecords(toExpectAll, {}, get, authInput)
+  await expectGetToReturnRecords(toExpectAll, {}, get, postAuth)
 }
 
 export const cantPatchNonExistent = async (post:Expressable, patch:Expressable, get: HandleType, authInput:AuthInput) => {

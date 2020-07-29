@@ -24,3 +24,16 @@ export const cantPut = async (post:Expressable, put:Expressable, get: HandleType
   expect(putResult2.response).toHaveProperty('errorType')
   await expectGetToReturnRecords(posted, {}, get, authInput)
 }
+
+export const cantChangeCreatedBy = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput, adminAuth:AuthInput) => {
+  const posted:any[] = await postRecords(post, authInput)
+
+  const postFirst:any = { ...removeManaged(posted[0], post.contract.manageFields), createdBy: adminAuth.sub }
+
+  const putResult = await put.handle(postFirst, postFirst.id, adminAuth)
+  expect(putResult.code).toBe(400)
+  expect(putResult.response).toHaveProperty('code', 400)
+  expect(putResult.response).toHaveProperty('errorType')
+
+  await expectGetToReturnRecords(posted, {}, get, authInput)
+}

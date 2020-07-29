@@ -13,6 +13,7 @@ import * as authGet from './authenticated/get'
 import * as authPatch from './authenticated/patch'
 import * as authPut from './authenticated/put'
 import * as authDel from './authenticated/delete'
+import { expectGetToReturnRecords } from './unauthenticated/get'
 
 describe('elasticsearch data connector test', () => {
   const schemaFilePath = path.join(__dirname, '../../example/elasticsearch_text_search_example.json')
@@ -383,6 +384,7 @@ describe('elasticsearch data connector test', () => {
   describe('with user authentication', () => {
     const auth: AuthInput = { sub: 'user1', permissions: ['editor'] }
     const unAuthorized:AuthInput = { sub: 'user2', permissions: ['editor'] }
+    const adminUser :AuthInput = { sub: 'adminUser', permissions: ['admin'] }
     beforeAll(async () => {
       await generateContract(schemaFilePath, 'test-elastic-user-auth', (input) => {
         input.preferredImplementation = {
@@ -540,10 +542,18 @@ describe('elasticsearch data connector test', () => {
           await get.expectEmptyWhenNoRecordsPresent(m.get.handle, auth)
         })
 
-        it('posted records cannot be read by unauthenticated user', async () => {
-          await post.postRecords(m.post, auth)
+        it('posted records cannot be read by another non admin user and unauthorized user gets 401', async () => {
+          const posted:any[] = await post.postRecords(m.post, auth)
           await authGet.expect401ForUnauthenticatedUser(m.get.handle)
           await get.expectEmptyWhenNoRecordsPresent(m.get.handle, unAuthorized)
+          await expectGetToReturnRecords([], {}, m.get.handle, unAuthorized)
+          await expectGetToReturnRecords([], { id: posted.map(x => x.id) }, m.get.handle, unAuthorized)
+          await expectGetToReturnRecords([], { id: posted[0].id }, m.get.handle, unAuthorized)
+          await expectGetToReturnRecords([], {
+            search: Object.entries(posted[0]).map(([key, value]) =>
+              !(['createdBy', 'id'].includes(key)) && typeof value === 'string' ? value : undefined).find(x => x) || ''
+          },
+          m.get.handle, unAuthorized)
         })
       })
 
@@ -551,23 +561,40 @@ describe('elasticsearch data connector test', () => {
         it('Authenticated but not authorized user gets 403', async () => {
           await authPatch.cantPatch(m.post, m.patch, m.get.handle, auth, unAuthorized)
         })
+        it('Admin can not change createdBy user id', async () => {
+          await authPatch.cantChangeCreatedBy(m.post, m.patch, m.get.handle, auth, adminUser)
+        })
       })
 
       describe('put', () => {
         it('Authenticated but not authorized user gets 403', async () => {
           await authPut.cantPut(m.post, m.put, m.get.handle, auth, unAuthorized)
         })
+
+        it('Admin can not change createdBy user id', async () => {
+          await authPut.cantChangeCreatedBy(m.post, m.patch, m.get.handle, auth, adminUser)
+        })
       })
 
       describe('delete', () => {
-        it('can delete one of many', async () => {
+        it('can not delete other users records', async () => {
           await authDel.cantDeleteOneOfMany(m.post, m.del, m.get.handle, auth, unAuthorized)
         })
       })
     })
 
     describe('additional cases', () => {
+      it('Authorized user with permission can get all records posted by other users', async () => {
+        const posted1:any[] = await post.postRecords(m.post, auth)
+        const posted2:any[] = await post.postRecords(m.post, unAuthorized)
 
+        await expectGetToReturnRecords(posted1, {}, m.get.handle, auth)
+        await expectGetToReturnRecords(posted2, {}, m.get.handle, unAuthorized)
+        await expectGetToReturnRecords(posted1.concat(posted2), {}, m.get.handle, adminUser)
+      })
+      it('Admin user, can patch other users items, user can get item back', async () => {
+        await patch.canPatch(m.post, m.patch, m.get.handle, auth, adminUser)
+      })
     })
   })
 })

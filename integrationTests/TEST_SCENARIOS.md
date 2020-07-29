@@ -86,21 +86,22 @@ With Authentication (just permissions, no userID field)
 - *DONE* Authenticated user, without permissions can get it's own posted items by id
 - *DONE* Authenticated user, without permissions can get it's own posted items by id array
 - *DONE* Authenticated user, without permissions can get it's own posted items by text search
-- Authenticated user, without permissions can't get records posted by another user, in either by id, by id array or text search
-- Authorized user with permission can get all records posted by other users
+- *DONE* Authenticated user, without permissions can't get records posted by another user, in either by id, by id array or text search
+- *DONE* Authorized user with permission can get all records posted by other users
 
 
 ### PATCH and PUT
  - *DONE* Same with plain authentication
  - *DONE* Authenticated user, without permissions, can patch own items
- - Authenticated user, without permissions, can't patch other users items
- - Can't change userID
- - createdBy ID stays the same if admin updates
+ - *DONE* Authenticated user, without permissions, can't patch other users items
+ - *DONE* Admin user, can patch other users items, user can get item back
+ - *DONE* Admin can not change createdBy user id
+ - *DONE* createdBy ID stays the same if admin updates (done by admin user can patch)
 
 ### DELETE
  - *DONE* Same as plain authentication
  - *DONE* Authenticated user, without permissions, can delete own items
- - Authenticated user, without permissions, can't delete other users items
+ - *DONE* Authenticated user, without permissions, can't delete other users items
 
 
 
