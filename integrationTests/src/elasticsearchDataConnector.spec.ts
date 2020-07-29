@@ -13,7 +13,6 @@ import * as authGet from './authenticated/get'
 import * as authPatch from './authenticated/patch'
 import * as authPut from './authenticated/put'
 import * as authDel from './authenticated/delete'
-import { expectGetToReturnRecords } from './unauthenticated/get'
 
 describe('elasticsearch data connector test', () => {
   const schemaFilePath = path.join(__dirname, '../../example/elasticsearch_text_search_example.json')
@@ -546,10 +545,10 @@ describe('elasticsearch data connector test', () => {
           const posted:any[] = await post.postRecords(m.post, auth)
           await authGet.expect401ForUnauthenticatedUser(m.get.handle)
           await get.expectEmptyWhenNoRecordsPresent(m.get.handle, unAuthorized)
-          await expectGetToReturnRecords([], {}, m.get.handle, unAuthorized)
-          await expectGetToReturnRecords([], { id: posted.map(x => x.id) }, m.get.handle, unAuthorized)
-          await expectGetToReturnRecords([], { id: posted[0].id }, m.get.handle, unAuthorized)
-          await expectGetToReturnRecords([], {
+          await get.expectGetToReturnRecords([], {}, m.get.handle, unAuthorized)
+          await get.expectGetToReturnRecords([], { id: posted.map(x => x.id) }, m.get.handle, unAuthorized)
+          await get.expectGetToReturnRecords([], { id: posted[0].id }, m.get.handle, unAuthorized)
+          await get.expectGetToReturnRecords([], {
             search: Object.entries(posted[0]).map(([key, value]) =>
               !(['createdBy', 'id'].includes(key)) && typeof value === 'string' ? value : undefined).find(x => x) || ''
           },
@@ -588,9 +587,9 @@ describe('elasticsearch data connector test', () => {
         const posted1:any[] = await post.postRecords(m.post, auth)
         const posted2:any[] = await post.postRecords(m.post, unAuthorized)
 
-        await expectGetToReturnRecords(posted1, {}, m.get.handle, auth)
-        await expectGetToReturnRecords(posted2, {}, m.get.handle, unAuthorized)
-        await expectGetToReturnRecords(posted1.concat(posted2), {}, m.get.handle, adminUser)
+        await get.expectGetToReturnRecords(posted1, {}, m.get.handle, auth)
+        await get.expectGetToReturnRecords(posted2, {}, m.get.handle, unAuthorized)
+        await get.expectGetToReturnRecords(posted1.concat(posted2), {}, m.get.handle, adminUser)
       })
       it('Admin user, can patch other users items, user can get item back', async () => {
         await patch.canPatch(m.post, m.patch, m.get.handle, auth, adminUser)
