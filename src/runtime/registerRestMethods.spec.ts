@@ -71,6 +71,16 @@ describe('registerRestMethods', () => {
       expectResult(res, 200, { a: 'sadf' })
     })
 
+    it('permissions can be undefined, equals empty array', async () => {
+      const data = input()
+      data.test.contract.authentication = ['admin']
+      const result = registerRestMethods(data)
+      const res = resMock()
+      const req = reqMock({ a: 'sadf' }, undefined, undefined, { sub: 'user' })
+      await result[0].handler(req, res.chainedMock)
+      expect(res.statusMock).toBeCalledWith(403)
+    })
+
     it('happy path - with role authentication', async () => {
       const data = input()
       data.test.contract.authentication = ['admin']

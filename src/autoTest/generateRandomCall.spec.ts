@@ -48,4 +48,22 @@ describe('generateRandomCall', () => {
     expect(data.handle).toBeCalledTimes(1)
     expect(validate(data.contract.arguments, result.generatedInput)).toHaveProperty('result', 'pass')
   })
+
+  it('handle can return falsy value', async () => {
+    expect.assertions(1)
+    const data:any = input()
+    data.handle = jest.fn(() => false)
+    await generateRandomCall(data.handle, data.contract, auth).catch(x => {
+      expect(x).toHaveProperty('message', 'Random data generation returned with error')
+    })
+  })
+
+  it('handle can return error code', async () => {
+    expect.assertions(1)
+    const data:any = input()
+    data.handle = jest.fn(() => ({ code: 401 }))
+    await generateRandomCall(data.handle, data.contract, auth).catch(x => {
+      expect(x).toHaveProperty('message', 'Random data generation returned with error')
+    })
+  })
 })

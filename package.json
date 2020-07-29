@@ -75,6 +75,7 @@
       "!./src/bin/**",
       "!./src/index.ts",
       "!./src/dataConnector/**",
+      "!./src/RequestHandlingError.ts",
       "!**/vendor/**"
     ],
     "resetModules": true,
