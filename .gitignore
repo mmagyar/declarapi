@@ -1,6 +1,7 @@
 node_modules
 # dependencies
 integrationTests/dist
+integrationTests/coverage
 integrationTests/temp/*.ts
 
 /node_modules
