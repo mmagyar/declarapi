@@ -106,7 +106,7 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
     delete: isCrudAuth(au) ? au.delete : (isCrudAuthSome(au) ? au.delete || au.modify : au)
   }
 
-  const createOutput = (method: HttpMethods, args: ObjectType = contractData.dataType,
+  const createOutput = (method: HttpMethods, args: ObjectType,
     returns: ObjectType = contractData.dataType): OutputSuccess => ({
     method,
     name: contractData.name,
