@@ -4,8 +4,8 @@ describe('Generate typing and fetch function for client', () => {
   const singleExample = (): OutputSuccess[] => [
     {
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       method: 'get',
       arguments: { myNumber: 'number' },
       returns: {}
@@ -16,40 +16,40 @@ describe('Generate typing and fetch function for client', () => {
     {
       method: 'get',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       arguments: { search: ['string', '?'], id: ['string', { $array: 'string' }, '?'] },
       returns: { $array: { id: 'string', myNumber: 'number' } }
     },
     {
       method: 'post',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       arguments: { id: ['string', '?'], myNumber: 'number' },
       returns: { id: 'string', myNumber: 'number' }
     },
     {
       method: 'put',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       arguments: { id: 'string', myNumber: 'number' },
       returns: { id: 'string', myNumber: 'number' }
     },
     {
       method: 'patch',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       arguments: { id: 'string', myNumber: ['number', '?'] },
       returns: { id: 'string', myNumber: 'number' }
     },
     {
       method: 'delete',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       arguments: { id: ['string', { $array: 'string' }] },
       returns: { $array: { id: 'string', myNumber: 'number' } }
     }

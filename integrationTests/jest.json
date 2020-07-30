@@ -1,0 +1,39 @@
+{
+  "globals": {
+    "ts-jest": {
+      "tsConfig": "<rootDir>/tsconfig.json"
+    }
+  },
+  "setupFiles": [
+    "./env.js"
+  ],
+  "globalSetup": "./setup.js",
+  "globalTeardown": "./teardown.js",
+  "roots": [
+    "<rootDir>/src"
+  ],
+  "moduleNameMapper": {
+    "declarapi$": "<rootDir>/../src"
+  },
+  "transform": {
+    "^.+\\.tsx?$": "ts-jest"
+  },
+  "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+  "moduleFileExtensions": [
+    "ts",
+    "tsx",
+    "js",
+    "jsx",
+    "json",
+    "node"
+  ],
+  "collectCoverageFrom": [
+    "**/*.{js,jsx,ts,tsx}",
+    "!**/node_modules/**",
+    "!./src/bin/**",
+    "!**/vendor/**"
+  ],
+  "resetModules": true,
+  "clearMocks": true,
+  "testTimeout": 300000
+}

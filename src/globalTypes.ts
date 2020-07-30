@@ -1,13 +1,18 @@
 import { ObjectType, Validation } from 'yaschva'
+import { ManageableFields, AuthType } from './transform/types'
 
 export type HttpMethods = 'get' | 'post' | 'put' | 'patch' | 'delete';
 export type SearchTypes = 'textSearch' | 'full' | 'idOnly' | ObjectType;
 
+export type AuthInput = {permissions? : string [], sub?: string}
+export type ContractAuth = { authentication: AuthType}
+export type HandlerAuth = AuthInput & ContractAuth
+
 export type ContractType<T, K> = {
   name: string
-  authentication: boolean | string[]
   type: 'get' | 'post' | 'put' | 'patch' | 'delete'
-  handle?: (input: T) => Promise<K>
+  manageFields: ManageableFields,
+  handle?: (input: T, auth: HandlerAuth, manageFields: ManageableFields) => Promise<K>
   arguments: Validation
   returns: Validation
-}
+} & ContractAuth

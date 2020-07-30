@@ -1,11 +1,10 @@
 import registerRestMethods, { reqType } from './registerRestMethods'
 import { ContractWithValidatedHandler, ContractResult, ContractResultError, ContractResultSuccess } from './contractValidation'
+import { AuthInput } from '../globalTypes'
 describe('registerRestMethods', () => {
   const input = ():ContractWithValidatedHandler => ({
     test: {
-      authentication: false,
-      method: 'get',
-      name: 'test',
+      contract: { name: 'test', authentication: false, manageFields: {}, arguments: {}, returns: {}, type: 'get' },
       handle: async (data: { a: string }): Promise<ContractResult> =>
         ({ result: { ...data } })
     }
@@ -21,7 +20,7 @@ describe('registerRestMethods', () => {
     query: {[key: string]: any} = {},
     body: {[key: string]: any} = {},
     id?: string,
-    user? : {permissions?: string[]}
+    user? :AuthInput
   ):reqType => ({ query, body, params: { id }, user })
 
   type ResultMockType = {
@@ -64,33 +63,54 @@ describe('registerRestMethods', () => {
 
     it('happy path - with simple authentication', async () => {
       const data = input()
-      data.test.authentication = true
+      data.test.contract.authentication = true
       const result = registerRestMethods(data)
       const res = resMock()
-      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: [] })
+      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: [], sub: 'abc' })
       await result[0].handler(req, res.chainedMock)
       expectResult(res, 200, { a: 'sadf' })
     })
 
-    it('happy path - with role authentication', async () => {
+    it('permissions can be undefined, equals empty array', async () => {
       const data = input()
-      data.test.authentication = ['admin']
+      data.test.contract.authentication = ['admin']
       const result = registerRestMethods(data)
       const res = resMock()
-      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: ['admin'] })
+      const req = reqMock({ a: 'sadf' }, undefined, undefined, { sub: 'user' })
+      await result[0].handler(req, res.chainedMock)
+      expect(res.statusMock).toBeCalledWith(403)
+    })
+
+    it('happy path - with role authentication', async () => {
+      const data = input()
+      data.test.contract.authentication = ['admin']
+      const result = registerRestMethods(data)
+      const res = resMock()
+      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: ['admin'], sub: 'abc' })
+      await result[0].handler(req, res.chainedMock)
+      expectResult(res, 200, { a: 'sadf' })
+    })
+
+    it('happy path - with createdBy', async () => {
+      const data = input()
+      data.test.contract.manageFields = { createdBy: true }
+      data.test.contract.authentication = [{ createdBy: true }]
+      const result = registerRestMethods(data)
+      const res = resMock()
+      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: [], sub: 'abc' })
       await result[0].handler(req, res.chainedMock)
       expectResult(res, 200, { a: 'sadf' })
     })
 
     it('auth failure - with simple authentication', async () => {
       const data = input()
-      data.test.authentication = true
+      data.test.contract.authentication = true
       const result = registerRestMethods(data)
       const res = resMock()
       await result[0].handler(reqMock({ a: 'sadf' }), res.chainedMock)
       expectResult(res, 401, {
         code: 401,
-        data: { params: { id: undefined } },
+        data: { id: undefined },
         errorType: 'unauthorized',
         errors: ['Only logged in users can do this']
       })
@@ -98,38 +118,38 @@ describe('registerRestMethods', () => {
 
     it('auth failure - unauthenticated user with role authentication', async () => {
       const data = input()
-      data.test.authentication = ['admin']
+      data.test.contract.authentication = ['admin']
       const result = registerRestMethods(data)
       const res = resMock()
-      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: ['user', ' moderator'] })
+      const req = reqMock({ a: 'sadf' }, undefined, undefined, { permissions: ['user', ' moderator'], sub: 'abc' })
 
       await result[0].handler(req, res.chainedMock)
-      expectResult(res, 401, {
-        code: 401,
-        data: { params: { id: undefined } },
+      expectResult(res, 403, {
+        code: 403,
+        data: { id: undefined },
         errorType: 'unauthorized',
-        errors: ["You don't have permission to do this"]
+        errors: ['You don\'t have permission to do this']
       })
     })
 
     it('auth failure - user without admin role with role authentication', async () => {
       const data = input()
-      data.test.authentication = ['admin']
+      data.test.contract.authentication = ['admin']
       const result = registerRestMethods(data)
       const res = resMock()
       await result[0].handler(reqMock({ a: 'sadf' }), res.chainedMock)
       expectResult(res, 401, {
         code: 401,
-        data: { params: { id: undefined } },
+        data: { id: undefined },
         errorType: 'unauthorized',
-        errors: ["You don't have permission to do this"]
+        errors: ['Only logged in users can do this']
       })
     })
   })
 
   it('uses req.body for it\'s arguments on non get methods (post)', async () => {
     const data = input()
-    data.test.method = 'post'
+    data.test.contract.type = 'post'
     const result = registerRestMethods(data)
     const res = resMock()
     await result[0].handler(reqMock(undefined, { a: 'sadf' }), res.chainedMock)
@@ -161,7 +181,7 @@ describe('registerRestMethods', () => {
       .handler(reqMock({ a: 'sadf', id: '3' }, undefined, '4'), res2.chainedMock)
     expectResult(res2, 400, {
       code: 400,
-      data: { params: { id: '4' }, query: { a: 'sadf', id: '3' } },
+      data: { id: '4', query: { a: 'sadf', id: '3' } },
       errorType: 'id mismatch',
       errors: ['Mismatch between the object Id in the body and the URL']
     })
@@ -177,7 +197,7 @@ describe('registerRestMethods', () => {
     expectResult(res, 500, { code: 500, data: {}, errorType: 'contractError', errors: ['Testing errors'] })
   })
 
-  describe('only returns one element if id is given', () => {
+  describe('only returns one element if id is given in params', () => {
     const originalWarn = console.warn
     let consoleWarnMock = jest.fn()
     beforeEach(() => { consoleWarnMock = console.warn = jest.fn() })
@@ -190,7 +210,7 @@ describe('registerRestMethods', () => {
       const res = resMock()
 
       await registerRestMethods(data)[0]
-        .handler(reqMock({ a: 'sadf', id: '3' }), res.chainedMock)
+        .handler(reqMock({ a: 'sadf' }, undefined, '3'), res.chainedMock)
       expectResult(res, 200, { a: 'el1' })
       expect(consoleWarnMock).not.toBeCalled()
     })
@@ -203,7 +223,7 @@ describe('registerRestMethods', () => {
       const res = resMock()
 
       await registerRestMethods(data)[0]
-        .handler(reqMock({ a: 'sadf', id: '3' }), res.chainedMock)
+        .handler(reqMock({ a: 'sadf' }, undefined, '3'), res.chainedMock)
       expectResult(res, 200, { a: 'el1' })
       expect(consoleWarnMock)
         .toBeCalledWith('Results contained more than one entry for single return by id')

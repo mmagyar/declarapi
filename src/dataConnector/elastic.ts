@@ -1,5 +1,9 @@
 import { Client, ClientOptions } from '@elastic/elasticsearch'
 import { v4 as uuid } from 'uuid'
+import { HandlerAuth } from '../globalTypes'
+import { RequestHandlingError } from '../RequestHandlingError'
+import { mapFilter } from 'microtil'
+import { ManageableFields } from '../transform/types'
 
 let clientInstance: Client | undefined
 export const client = () => clientInstance || init()
@@ -12,14 +16,15 @@ export const init = () => {
   const password = process.env.ELASTIC_PASSWORD
   const apiKey = process.env.ELASTIC_API_KEY
   const apiId = process.env.ELASTIC_API_ID
+  const unauthenticated = process.env.ELASTIC_UNAUTHENTICATED
 
-  const setup: ClientOptions = { node }
+  const setup: ClientOptions = { node, requestTimeout: 90000 }
 
   if (username && password) {
     setup.auth = { username, password }
   } else if (apiKey) {
     setup.auth = apiId ? { apiKey: { id: apiId, api_key: apiKey } } : { apiKey }
-  } else {
+  } else if (!unauthenticated) {
     console.warn('Elasticsearch api credentials are not set')
   }
 
@@ -28,30 +33,72 @@ export const init = () => {
 }
 
 export const info = () => client().info()
-
 export const defaultSize = 1000
+const authorizedByPermission = (auth:HandlerAuth) =>
+  typeof auth.authentication === 'boolean' ||
+  auth.authentication.some(x => (auth.permissions || []).some(y => x === y))
+
+const getUserIdFields = (fields:ManageableFields):string[] => Object.entries(fields).filter(x => x[1]).map(x => x[0])
+
+const filterToAccess = (input:any[], auth:HandlerAuth, fields:ManageableFields):any[] =>
+  authorizedByPermission(auth) ? input : input.filter((x:any) => getUserIdFields(fields).some(y => x[y] === auth.sub))
+
 export const get = async <T extends object>(
-  indexName: string, id?: string | string[] | null, search?: string | null
+  indexName: string,
+  manageFields: ManageableFields,
+  auth:HandlerAuth,
+  id?: string | string[] | null,
+  search?: string | null
 ): Promise<T[]> => {
   const index = indexName.toLocaleLowerCase()
+
+  const userIdFilter: any = {
+    bool: {
+      should: getUserIdFields(manageFields).map(userIdField => {
+        const r:any = { term: { } }
+        r.term[userIdField] = auth.sub
+        return r
+      })
+    }
+  }
+
   if (Array.isArray(id)) {
+    if (id.length === 0) return []
     const { body: { docs } } = await client().mget({ index, body: { ids: id } })
-    return docs.map((x: any) => x._source)
+    return filterToAccess(mapFilter(docs, (x: any) => x._source), auth, manageFields)
   } else if (id) {
-    const { body: { _source } } = await client().get({ index, id })
-    return [_source]
+    const { body } = await client().get({ index, id })
+    return filterToAccess([body._source], auth, manageFields)
   } else if (search) {
-    const all = await client().search({ index, q: search, size: defaultSize })
+    const queryString = {
+      query: {
+        bool: {
+          must: [{ simple_query_string: { query: search } }]
+        }
+      }
+
+    }
+    if (!authorizedByPermission(auth)) queryString.query.bool.must.push(userIdFilter)
+    const all = await client().search({ index, body: queryString, size: defaultSize })
     return new Array(all.body.hits.hits).flatMap((y: any) => y.map((x: any) => x._source))
   }
-  const all = await client().search({ index, size: defaultSize })
-  return new Array(all.body.hits.hits).flatMap((y: any) => y.map((x: any) => x._source))
+
+  const searchAll:any = { index, size: defaultSize }
+  if (!authorizedByPermission(auth)) { searchAll.body = { query: userIdFilter } }
+  const all = await client().search(searchAll)
+  const result = new Array(all.body.hits.hits).flatMap((y: any) => y.map((x: any) => x._source))
+  return result
 }
-export const post = async <T extends {[key: string]: any}>(index: string, body: T, idFieldName: string):
+export const post = async <T extends {[key: string]: any}>(index: string, manageFields: ManageableFields, auth:HandlerAuth, body: T):
 Promise<T & any> => {
-  const id = (body)[idFieldName] || uuid()
+  if (!authorizedByPermission(auth)) throw new RequestHandlingError('User not authorized to POST', 403)
+  const id = body.id || uuid()
   const newBody: any = { ...body }
-  newBody[idFieldName] = id
+  newBody.id = id
+
+  if (manageFields.createdBy === true) {
+    newBody.createdBy = auth.sub
+  }
   await client().create({
     id,
     index: index.toLocaleLowerCase(),
@@ -62,16 +109,24 @@ Promise<T & any> => {
   return newBody
 }
 
-export const del = async (index: string, id: string|string[]): Promise<any> => {
-  if (Array.isArray(id)) return Promise.all(id.map(x => del(index, x)))
-  const result = await get(index, id)
+export const del = async (index: string, manageFields: ManageableFields, auth:HandlerAuth, id: string|string[]): Promise<any> => {
+  if (Array.isArray(id)) return (await Promise.all(id.map(x => del(index, manageFields, auth, x)))).map(x => x[0])
+  const result = await get(index, manageFields, auth, id)
+  if (!result || result.length === 0) {
+    throw new RequestHandlingError('User has no right to delete this', 403)
+  }
+
   await client().delete(
     { index: index.toLocaleLowerCase(), id, refresh: 'wait_for' })
   return result
 }
 
-export const patch = async <T extends object, K extends object>(index: string, body: T, id: string
+export const patch = async <T extends object, K extends object>(index: string, manageFields: ManageableFields, auth:HandlerAuth, body: T, id: string
 ): Promise<K> => {
+  const result = await get(index, manageFields, auth, id)
+  if (!result || result.length === 0) {
+    throw new RequestHandlingError('User has no right to patch this', 403)
+  }
   await client().update(
     {
       index: index.toLocaleLowerCase(),
@@ -79,5 +134,26 @@ export const patch = async <T extends object, K extends object>(index: string, b
       id,
       body: { doc: body }
     })
-  return body as any
+  return (await get(index, manageFields, auth, id) as any)[0]
+}
+
+export const put = async <T extends object, K extends object>(index: string, manageFields: ManageableFields, auth:HandlerAuth, body: T, id: string
+): Promise<K> => {
+  const result: any[] = await get(index, manageFields, auth, id)
+  if (!result || result.length === 0) {
+    throw new RequestHandlingError('User has no right to patch this', 403)
+  }
+  const newBody :any = { ...body }
+  if (manageFields.createdBy === true) {
+    newBody.createdBy = result[0].createdBy
+  }
+
+  await client().index(
+    {
+      index: index.toLocaleLowerCase(),
+      refresh: 'wait_for',
+      id,
+      body: newBody
+    })
+  return (await get(index, manageFields, auth, id) as any)[0]
 }

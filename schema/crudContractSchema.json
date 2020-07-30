@@ -1,6 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "type": "object",
+  "definitions": {"auth":{
+    "type": ["boolean", "array"],
+    "items": {
+      "oneOf": [
+      {"type":  "string"} ,
+      {"type":"object", "properties":{"createdBy":{"type":"boolean"}}, "required": ["createdBy"]}
+    ]}}
+  },
   "properties": {
     "$schema": { "type": "string" },
     "name": {
@@ -18,31 +26,28 @@
         "delete": { "type": "boolean" }
       }
     },
+    "manageFields": {
+      "description": "Fields that are managed / update by the application",
+      "type":"object",
+      "properties": {
+        "createdBy": { "type":"boolean" }
+      }
+    },
     "authentication": {
       "description": "If the request needs any kind of authentication. False means that it is public, true means that any logged in user can use it, or the needed roles can be listed in an array",
       "oneOf": [
-        { "type": "boolean" },
-        { "type": ["array"], "items": { "type": "string" } },
+        { "$ref": "#/definitions/auth"},
         {
           "type": "object",
           "description": "put and patch will have the same permission",
           "properties": {
-            "get": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            },
+            "get": { "$ref": "#/definitions/auth" },
             "post": {
               "type": ["boolean", "array"],
               "items": { "type": "string" }
             },
-            "put": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            },
-            "delete": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            }
+            "put": { "$ref": "#/definitions/auth" },
+            "delete":{ "$ref": "#/definitions/auth" }
           },
           "additionalProperties": false,
           "required": ["get", "post", "put", "delete"]
@@ -51,18 +56,9 @@
           "type": "object",
           "description": "delete is optional, will fall back to `modify` if omitted",
           "properties": {
-            "get": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            },
-            "modify": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            },
-            "delete": {
-              "type": ["boolean", "array"],
-              "items": { "type": "string" }
-            }
+            "get": { "$ref": "#/definitions/auth" },
+            "modify": { "$ref": "#/definitions/auth" },
+            "delete": { "$ref": "#/definitions/auth" }
           },
           "additionalProperties": false,
           "required": ["get", "modify"]
@@ -74,7 +70,6 @@
       "$ref": "../node_modules/yaschva/typeSchema.json"
 
     },
-    "idFieldName":{"type":"string"},
     "search": {
       "oneOf": [
         {

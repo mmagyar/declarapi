@@ -1,22 +1,32 @@
 import { generateRandomCall } from './generateRandomCall'
-import { ContractType } from '../globalTypes'
+import { } from '../globalTypes'
 import { validate } from 'yaschva'
+import { Expressable } from '../runtime/registerRestMethods'
 describe('generateRandomCall', () => {
-  const input = ():ContractType<{}, {}> => ({
-    name: 'test',
-    type: 'post',
-    authentication: false,
-    arguments: {
-      myString: 'string',
-      myNumber: 'number',
-      myRegex: { $string: { regex: '\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b' } }
-    },
-    returns: {}
+  const auth = { }
+  const input = ():Expressable => ({
+    method: 'post',
+    route: '/',
+    handle: jest.fn(),
+    handler: jest.fn(),
+    contract: {
+      name: 'test',
+      type: 'post',
+      authentication: false,
+      manageFields: {},
+      arguments: {
+        myString: 'string',
+        myNumber: 'number',
+        myRegex: { $string: { regex: '\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b' } }
+      },
+      returns: {}
+    }
   })
   it('will fail if handle is missing', async () => {
     expect.assertions(1)
-    generateRandomCall(input()).catch(x => {
-      expect(x).toHaveProperty('message', 'handle must be defined to call it with randomly generated arguments')
+    const data = input()
+    await generateRandomCall(data.handle, data.contract, auth).catch(x => {
+      expect(x).toHaveProperty('message', 'Random data generation returned with error')
     })
   })
 
@@ -30,12 +40,30 @@ describe('generateRandomCall', () => {
       expect(typeof input.myString).toBe('string')
       expect(Object.keys(input)).toHaveLength(3)
       handlerData = input
-      return 'done'
+      return { response: 'done', code: 200 }
     })
-    const result = await generateRandomCall(data)
+    const result = await generateRandomCall(data.handle, data.contract, auth)
     expect(result.output).toBe('done')
     expect(result.generatedInput).toStrictEqual(handlerData)
     expect(data.handle).toBeCalledTimes(1)
-    expect(validate(data.arguments, result.generatedInput)).toHaveProperty('result', 'pass')
+    expect(validate(data.contract.arguments, result.generatedInput)).toHaveProperty('result', 'pass')
+  })
+
+  it('handle can return falsy value', async () => {
+    expect.assertions(1)
+    const data:any = input()
+    data.handle = jest.fn(() => false)
+    await generateRandomCall(data.handle, data.contract, auth).catch(x => {
+      expect(x).toHaveProperty('message', 'Random data generation returned with error')
+    })
+  })
+
+  it('handle can return error code', async () => {
+    expect.assertions(1)
+    const data:any = input()
+    data.handle = jest.fn(() => ({ code: 401 }))
+    await generateRandomCall(data.handle, data.contract, auth).catch(x => {
+      expect(x).toHaveProperty('message', 'Random data generation returned with error')
+    })
   })
 })

@@ -3,33 +3,36 @@ import { ObjectType } from 'yaschva'
 import { Elastic } from '../DataDriverTypes'
 import { HttpMethods, SearchTypes } from '../globalTypes'
 
+export type AuthType = (string | {createdBy: boolean})[] | boolean
+export type ManageableFields ={ createdBy?: boolean }
+
 export type Contract = {
   name: string;
-  idFieldName?: string;
   type?: HttpMethods;
-  authentication: string[] | boolean;
+  authentication: AuthType;
+  manageFields: ManageableFields;
   arguments: ObjectType;
   returns: ObjectType;
   description?: string;
 };
-
 export type CrudAuthAll = {
-  get: string[] | boolean;
-  put: string[] | boolean;
+  get: AuthType;
+  put: AuthType;
   post: string[] | boolean;
-  delete: string[] | boolean;
+  delete: AuthType;
 };
 
 export type CrudAuthSome = {
-  get: string[] | boolean;
-  modify: string[] | boolean;
-  delete?: string[] | boolean;
+  get: AuthType;
+  modify: AuthType;
+  delete?: AuthType;
 };
+
 export type CrudContract = {
   name: string;
   methods?: { get?:boolean, post?:boolean, put?: boolean, patch?:boolean, delete?:boolean},
-  authentication: string[] | boolean | CrudAuthAll | CrudAuthSome;
-  idFieldName?: string;
+  authentication: AuthType | CrudAuthAll | CrudAuthSome;
+  manageFields?:ManageableFields;
   dataType: ObjectType;
   search?: SearchTypes;
   description?: string;
@@ -38,8 +41,8 @@ export type CrudContract = {
 
 export type OutputSuccess = {
   name: string;
-  authentication: boolean | string[];
-  idFieldName: string;
+  authentication: AuthType;
+  manageFields: ManageableFields;
   method: HttpMethods;
   arguments: ObjectType;
   returns: ObjectType;

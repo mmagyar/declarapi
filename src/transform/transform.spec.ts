@@ -24,8 +24,8 @@ describe('Generator', () => {
       results: [
         {
           name: 'test',
-          idFieldName: 'id',
           authentication: false,
+          manageFields: {},
           method: 'get',
           arguments: {
             myNumber: 'number'
@@ -39,7 +39,6 @@ describe('Generator', () => {
   it('generates for object crud contract input', async () => {
     const input = {
       $schema: './schema/crudContractSchema.json',
-      idFieldName: 'id',
       name: 'test',
       authentication: false,
       dataType: { id: 'string', myNumber: 'number' }
@@ -87,7 +86,8 @@ describe('Generator', () => {
     }
 
     const result: any = await transform(input)
-    expect(result.errors).toHaveLength(13)
+    expect(result.errors).toHaveLength(14)
+
     expect(result.errors[0]).toEqual({
       dataPath: ".arguments['invalidProp']",
       keyword: 'type',

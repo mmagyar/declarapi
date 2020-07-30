@@ -4,8 +4,8 @@ describe('Generate typing and fetch function for server', () => {
   const singleExample = (): OutputSuccess[] => [
     {
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       method: 'get',
       arguments: {
         myNumber: 'number'
@@ -18,40 +18,40 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'get',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       arguments: { search: ['string', '?'], id: ['string', { $array: 'string' }, '?'] },
       returns: { $array: { id: 'string', myNumber: 'number' } }
     },
     {
       method: 'post',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       arguments: { id: ['string', '?'], myNumber: 'number' },
       returns: { id: 'string', myNumber: 'number' }
     },
     {
       method: 'put',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       arguments: { id: 'string', myNumber: 'number' },
       returns: { id: 'string', myNumber: 'number' }
     },
     {
       method: 'patch',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       arguments: { id: 'string', myNumber: ['number', '?'] },
       returns: { id: 'string', myNumber: 'number' }
     },
     {
       method: 'delete',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       arguments: { id: ['string', { $array: 'string' }] },
       returns: { $array: { id: 'string', myNumber: 'number' } }
     }
@@ -70,8 +70,8 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'get',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       search: 'textSearch',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
       arguments: {
@@ -83,8 +83,8 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'post',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       search: 'textSearch',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
       arguments: { id: ['string', '?'], myNumber: 'number' },
@@ -93,8 +93,8 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'put',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       search: 'textSearch',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
       arguments: { id: 'string', myNumber: 'number' },
@@ -103,8 +103,8 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'patch',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       search: 'textSearch',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
       arguments: { id: 'string', myNumber: ['number', '?'] },
@@ -113,8 +113,8 @@ describe('Generate typing and fetch function for server', () => {
     {
       method: 'delete',
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       search: 'textSearch',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
       arguments: { id: ['string', { $array: 'string' }] },
@@ -130,8 +130,8 @@ describe('Generate typing and fetch function for server', () => {
   const singleElasticExample = (): OutputSuccess[] => [
     {
       name: 'test',
-      idFieldName: 'id',
       authentication: false,
+      manageFields: {},
       method: 'get',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
       arguments: {

@@ -37,6 +37,7 @@ testDelete: ContractType<testDeleteArgument, testDeleteReturns>
   export const contracts: ContractListType = {
 testGet: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"get\\",
           handle: undefined,
@@ -44,6 +45,7 @@ testGet: {
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}},
 testPost: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"post\\",
           handle: undefined,
@@ -51,6 +53,7 @@ testPost: {
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPut: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"put\\",
           handle: undefined,
@@ -58,6 +61,7 @@ testPut: {
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPatch: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"patch\\",
           handle: undefined,
@@ -65,6 +69,7 @@ testPatch: {
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testDelete: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"delete\\",
           handle: undefined,
@@ -91,6 +96,7 @@ testGet: ContractType<testGetArgument, testGetReturns>
   export const contracts: ContractListType = {
 testGet: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"get\\",
           handle: undefined,
@@ -137,37 +143,42 @@ testDelete: ContractType<testDeleteArgument, testDeleteReturns>
   export const contracts: ContractListType = {
 testGet: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"get\\",
-          handle: input => elastic.get(\\"test\\", input && input.id, input && input.search),
+          handle: (input, auth, manageFields) => elastic.get(\\"test\\", manageFields, auth, input && input.id, input && input.search),
           arguments: {\\"search\\":[\\"string\\",\\"?\\"],\\"id\\":[\\"string\\",{\\"$array\\":\\"string\\"},\\"?\\"]} ,
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}},
 testPost: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"post\\",
-          handle: input => elastic.post(\\"test\\", input, \\"id\\"),
+          handle: (input, auth, manageFields) => elastic.post(\\"test\\", manageFields, auth, input),
           arguments: {\\"id\\":[\\"string\\",\\"?\\"],\\"myNumber\\":\\"number\\"} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPut: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"put\\",
-          handle: input => elastic.patch(\\"test\\", input, input.id),
+          handle: (input, auth, manageFields) => elastic.put(\\"test\\", manageFields, auth, input, input.id),
           arguments: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPatch: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"patch\\",
-          handle: input => elastic.patch(\\"test\\", input, input.id),
+          handle: (input, auth, manageFields) => elastic.patch(\\"test\\", manageFields, auth, input, input.id),
           arguments: {\\"id\\":\\"string\\",\\"myNumber\\":[\\"number\\",\\"?\\"]} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testDelete: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"delete\\",
-          handle: input => elastic.del(\\"test\\", input.id),
+          handle: (input, auth, manageFields) => elastic.del(\\"test\\", manageFields, auth, input.id),
           arguments: {\\"id\\":[\\"string\\",{\\"$array\\":\\"string\\"}]} ,
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}}
 }
@@ -191,9 +202,10 @@ testGet: ContractType<testGetArgument, testGetReturns>
   export const contracts: ContractListType = {
 testGet: {
           name: \\"test\\",
+          manageFields: {},
           authentication: false,
           type: \\"get\\",
-          handle: input => elastic.get(\\"test\\", input && input.id),
+          handle: (input, auth, manageFields) => elastic.get(\\"test\\", manageFields, auth, input && input.id),
           arguments: {\\"myNumber\\":\\"number\\"} ,
           returns: {}}
 }

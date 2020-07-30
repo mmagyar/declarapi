@@ -7,14 +7,15 @@ export const server = (contracts: OutputSuccess[]): string => {
     let handle = 'undefined'
     if (x.preferredImplementation && x.preferredImplementation.type === 'elasticsearch') {
       const elin:ElasticInputType = x.method === 'get'
-        ? { idField: x.idFieldName, method: x.method, search: x.search || 'idOnly' }
-        : { idField: x.idFieldName, method: x.method }
+        ? { method: x.method, search: x.search || 'idOnly' }
+        : { method: x.method }
 
       handle = elasticCodeGen(x.preferredImplementation, elin)
     }
 
     return `${name(x)}: {
           name: "${x.name}",
+          manageFields: ${JSON.stringify(x.manageFields, undefined, 2)},
           authentication: ${JSON.stringify(x.authentication, undefined, 2)},
           type: "${x.method}",
           handle: ${handle},
