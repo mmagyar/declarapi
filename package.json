@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "Declarative API generation",
   "keywords": [
     "api",
