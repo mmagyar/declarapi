@@ -6,6 +6,12 @@
     "chenxsan.vscode-standardjs",
     "tabnine.tabnine-vscode",
     "usernamehw.errorlens",
-    "streetsidesoftware.code-spell-checker"
-  ]
+    "streetsidesoftware.code-spell-checker",
+    "dbaeumer.vscode-eslint",
+    "ms-vscode.vscode-typescript-tslint-plugin"
+  ],
+  "dockerFile": "Dockerfile",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  }
 }
