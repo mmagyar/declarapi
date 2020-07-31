@@ -1,19 +1,20 @@
 {
   "globals": {
     "ts-jest": {
-      "tsConfig": "<rootDir>/tsconfig.json"
+      "tsConfig": "<rootDir>/../../tsconfig.json"
     }
   },
   "setupFiles": [
     "./env.js"
   ],
-  "globalSetup": "./setup.js",
+  "globalSetup": "./global.js",
   "globalTeardown": "./teardown.js",
+  "setupFilesAfterEnv": ["./setup.js"],
   "roots": [
-    "<rootDir>/src"
+    "<rootDir>../../src"
   ],
   "moduleNameMapper": {
-    "declarapi$": "<rootDir>/../src"
+    "declarapi$": "<rootDir>/../../../src"
   },
   "transform": {
     "^.+\\.tsx?$": "ts-jest"

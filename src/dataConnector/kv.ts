@@ -1,4 +1,3 @@
-import { Client, ClientOptions } from '@elastic/elasticsearch'
 import { v4 as uuid } from 'uuid'
 import { HandlerAuth } from '../globalTypes'
 import { RequestHandlingError } from '../RequestHandlingError'

@@ -32,7 +32,7 @@
     "test:watch": "jest --watch",
     "test:dev": "npm run standard:fix && jest --no-cache --coverage --detectOpenHandles --runInBand",
     "test:clearCache": "jest --clearCache",
-    "test:integration": "jest --no-cache --verbose --config integrationTests/jest.json --colors --coverage=true",
+    "test:integration": "jest --no-cache --verbose --config integrationTests/setup/elastic/jest.json --colors --coverage=true",
     "test:integration:dev": "export ELASTIC_KEEP=\"true\"; npm run test:integration; unset ELASTIC_KEEP",
     "generate": "node ./dist/bin/generate.js",
     "generate:dev": "npm run build && npm run generate"
