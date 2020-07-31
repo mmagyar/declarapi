@@ -14,7 +14,8 @@ RUN wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add 
 RUN echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | tee -a /etc/apt/sources.list.d/elastic-7.x.list
 
  RUN apt-get update \
- && export DEBIAN_FRONTEND=noninteractive    && apt-get -y install --no-install-recommends elasticsearch htop
+ && export DEBIAN_FRONTEND=noninteractive    && apt-get -y install --no-install-recommends elasticsearch htop vim
 
+RUN git config --global core.editor "vim"
 RUN update-rc.d elasticsearch defaults 95 10
 

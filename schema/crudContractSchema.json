@@ -118,6 +118,14 @@
           },
           "required": ["type", "index"],
           "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": { "type": "string", "enum": ["key-value"] },
+            "index": { "type": "string" }
+          },
+          "required": ["type", "index"],
+          "additionalProperties": false
         }
       ]
     }

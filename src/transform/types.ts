@@ -1,6 +1,6 @@
 import Ajv from 'ajv'
 import { ObjectType } from 'yaschva'
-import { Elastic } from '../DataDriverTypes'
+import { Elastic, KeyValue } from '../DataDriverTypes'
 import { HttpMethods, SearchTypes } from '../globalTypes'
 
 export type AuthType = (string | {createdBy: boolean})[] | boolean
@@ -46,7 +46,7 @@ export type OutputSuccess = {
   method: HttpMethods;
   arguments: ObjectType;
   returns: ObjectType;
-  preferredImplementation?: Elastic;
+  preferredImplementation?: Elastic | KeyValue;
   search?: SearchTypes;
 };
 
