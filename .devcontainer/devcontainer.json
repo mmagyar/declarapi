@@ -8,7 +8,8 @@
     "usernamehw.errorlens",
     "streetsidesoftware.code-spell-checker",
     "dbaeumer.vscode-eslint",
-    "ms-vscode.vscode-typescript-tslint-plugin"
+    "ms-vscode.vscode-typescript-tslint-plugin",
+    "github.vscode-pull-request-github"
   ],
   "dockerFile": "Dockerfile",
   "settings": {

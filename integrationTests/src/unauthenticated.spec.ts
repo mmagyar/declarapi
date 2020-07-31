@@ -12,6 +12,8 @@ describe('Unauthenticated schema test', () => {
     m = (global as any).contract.unauthenticated
   })
 
+  beforeEach((global as any).beforeTestCategory.unauthenticated)
+  afterEach((global as any).afterTestCategory.unauthenticated)
   describe('get empty', () => {
     it('will return 404 when the element is requested by id', async () => {
       await get.expectNotFound(m.get.handle)

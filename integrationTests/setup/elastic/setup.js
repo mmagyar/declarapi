@@ -37,13 +37,16 @@ global.beforeAll(async () => {
   global.contract.userAuthenticated = methodsFor('test-elastic-user-auth-server')
 })
 
-global.beforeEach(async () => {
-  await Promise.all(Object.values(allIdx).map(idx =>
-    elastic.client().indices.create({ index: idx.index })))
-  return ''
-})
+global.beforeTestCategory = {
+  unauthenticated: async () => (await elastic.client().indices.create({ index: allIdx.unauthenticated.index })) && '',
+  authenticated: async () => (await elastic.client().indices.create({ index: allIdx.authenticated.index })) && '',
+  userAuthenticated: async () => (await elastic.client().indices.create({ index: allIdx.userAuthenticated.index })) && ''
 
-global.afterEach(async () => {
-  await elastic.client().indices.delete({ index: 'test*' })
-  return ''
-})
+}
+
+global.afterTestCategory = {
+  unauthenticated: async () => (await elastic.client().indices.delete({ index: allIdx.unauthenticated.index })) && '',
+  authenticated: async () => (await elastic.client().indices.delete({ index: allIdx.authenticated.index })) && '',
+  userAuthenticated: async () => (await elastic.client().indices.delete({ index: allIdx.userAuthenticated.index })) && ''
+
+}
