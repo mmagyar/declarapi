@@ -1,3 +1,5 @@
+import { RequestHandlingError } from '../RequestHandlingError';
+
 export type ValueType = string
 export type MetaData = {
   'name': string,
@@ -62,7 +64,9 @@ export const memoryKV = (): KV => {
   }
   const get = async (key:string) : Promise<ValueType> => {
     const result = db.get(key)
-    if (!result) throw new Error('Key not found')
+    if (!result) {
+      throw new RequestHandlingError('Key not found', 404)
+    }
     return result
   }
   const put = async (key:string, value:ValueType | {value:ValueType, metadata: MetaData}, expiration?: number, expirationType: 'ttl' | 'time' = 'ttl'): Promise<ResponseMeta> => {

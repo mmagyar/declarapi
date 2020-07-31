@@ -35,10 +35,16 @@ export const get = async <T extends object>(
 
   if (Array.isArray(id)) {
     if (id.length === 0) return []
-    const docs = await Promise.all(id.map(x => client().get(x)))
+    const docs = (await Promise.all(id.map(async x => {
+      try {
+        return await client().get(index.toLocaleLowerCase() + ':' + x)
+      } catch (err) {
+        return undefined
+      }
+    }))).filter(x => x !== undefined)
     return filterToAccess(mapFilter(docs, (x: any) => x._source), auth, manageFields)
   } else if (id) {
-    return filterToAccess([await client().get(id)], auth, manageFields)
+    return filterToAccess([await client().get(index.toLocaleLowerCase() + ':' + id)], auth, manageFields)
   } else if (search) {
     // TODO prolly get all and search in js
   }
@@ -74,7 +80,7 @@ Promise<T & any> => {
     newBody.createdBy = auth.sub
     metadata.createdBy = auth.sub
   }
-
+  // TODO returned without the full id, that contains the index, or maybe always remove the index when returning?
   await client().put(index.toLocaleLowerCase() + ':' + id, { value: newBody, metadata })
 
   return newBody
