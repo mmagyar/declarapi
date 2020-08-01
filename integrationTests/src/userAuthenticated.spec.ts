@@ -58,10 +58,6 @@ describe('user authentication schema test', () => {
         await post.postAndGetSomeRecordsByIdArray(m.post, m.get.handle, auth)
       })
 
-      it('Text search for the first generated, and it should be the first result returned', async () => {
-        // So this should look for a string field that is not the id
-      })
-
       it('will return 404 when the element is requested by id', async () => {
         await post.postRecords(m.post, auth)
         await get.expectNotFound(m.get.handle, auth)
@@ -76,7 +72,7 @@ describe('user authentication schema test', () => {
         await post.postAndGetAvailableIdsIgnoringWrong(m.post, m.get.handle, auth)
       })
       it('can perform text search', async () => {
-        await post.postAndGetByTextSearch(m.post, m.get.handle, auth)
+        await post.postAndGetByTextSearch(m.post, m.get, auth)
       })
 
       it('rejects re-post', async () => {

@@ -78,7 +78,7 @@ describe('authenticated schema test', () => {
         await post.postAndGetAvailableIdsIgnoringWrong(m.post, m.get.handle, auth)
       })
       it('can perform text search', async () => {
-        await post.postAndGetByTextSearch(m.post, m.get.handle, auth)
+        await post.postAndGetByTextSearch(m.post, m.get, auth)
       })
 
       it('rejects re-post', async () => {

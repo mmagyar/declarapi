@@ -1,8 +1,8 @@
 import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
 import { AuthInput } from 'declarapi'
-import { checkedGenerate, getFirstStringFieldName, removeManaged } from '../common'
+import { checkedGenerate, removeManaged } from '../common'
 import { generate } from 'yaschva'
-import { expectGetToReturnRecords } from './get'
+import { expectGetToReturnRecords, expectFirstRecordToEqual, findFirstTextFieldContent } from './get'
 
 export const postRecords = async (post:Expressable, authInput:AuthInput, howMany:number = 20) => {
   const posted = (await Promise.all(
@@ -46,14 +46,18 @@ export const postAndGetAvailableIdsIgnoringWrong = async (post:Expressable, get:
   return expectGetToReturnRecords(getBack, { id }, get, authInput)
 }
 
-export const postAndGetByTextSearch = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
-  const posted = await postRecords(post, authInput)
-  const first:any = posted[0]
-  const textToSearch = first[getFirstStringFieldName(post.contract.returns)]
+export const postAndGetByTextSearch = async (post:Expressable, get: Expressable, authInput:AuthInput) => {
+  // NOTE: This may be a bit flakey,
+  // since it's theoretically possible to have another text field with the same content,
+  // because it's randomly generated.
+  const posted :any[] = await postRecords(post, authInput)
+  await expectFirstRecordToEqual(posted[1], {
+    search: findFirstTextFieldContent(posted[1], get)
+  }, get.handle, authInput)
 
-  const result = await get({ search: textToSearch }, undefined, authInput)
-  expect(result.code).toBe(200)
-  expect(result.response[0]).toStrictEqual(first)
+  await expectFirstRecordToEqual(posted[3], {
+    search: findFirstTextFieldContent(posted[3], get)
+  }, get.handle, authInput)
 }
 
 export const postAndRejectRePost = async (post:Expressable, get: HandleType, authInput:AuthInput) => {

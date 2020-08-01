@@ -46,13 +46,6 @@ describe('Unauthenticated schema test', () => {
       await post.postAndGetSomeRecordsByIdArray(m.post, m.get.handle, {})
     })
 
-    it('Text search for the first generated, and it should be the first result returned', async () => {
-      const posted :any[] = await post.postRecords(m.post, {})
-      await get.expectFirstRecordToEqual(posted[0], {
-        search: get.findFirstTextFieldContent(posted[0], m.get)
-      }, m.get.handle, {})
-    })
-
     it('will return 404 when the element is requested by id', async () => {
       await post.postRecords(m.post, {})
       await get.expectNotFound(m.get.handle)
@@ -67,7 +60,7 @@ describe('Unauthenticated schema test', () => {
       await post.postAndGetAvailableIdsIgnoringWrong(m.post, m.get.handle, {})
     })
     it('can perform text search', async () => {
-      await post.postAndGetByTextSearch(m.post, m.get.handle, {})
+      await post.postAndGetByTextSearch(m.post, m.get, {})
     })
 
     it('rejects re-post', async () => {
