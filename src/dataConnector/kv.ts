@@ -1,9 +1,8 @@
 import { v4 as uuid } from 'uuid'
 import { HandlerAuth } from '../globalTypes'
 import { RequestHandlingError } from '../RequestHandlingError'
-import { mapFilter } from 'microtil'
 import { ManageableFields } from '../transform/types'
-import { KV, memoryKV, KVList, MetaData } from './memoryKv'
+import { KV, memoryKV, KVList, SuperMetaData } from './memoryKv'
 
 let clientInstance: KV | undefined
 export const client = () => clientInstance || init()
@@ -25,37 +24,32 @@ const filterToAccess = (input:any[], auth:HandlerAuth, fields:ManageableFields):
   authorizedByPermission(auth) ? input : input.filter((x:any) => getUserIdFields(fields).some(y => x[y] === auth.sub))
 
 export const get = async <T extends object>(
-  indexName: string,
+  index: string,
   manageFields: ManageableFields,
   auth:HandlerAuth,
   id?: string | string[] | null,
   search?: string | null
 ): Promise<T[]> => {
-  const index = indexName.toLocaleLowerCase()
-
   if (Array.isArray(id)) {
     if (id.length === 0) return []
-    const docs = (await Promise.all(id.map(async x => {
-      try {
-        return await client().get(index.toLocaleLowerCase() + ':' + x)
-      } catch (err) {
-        return undefined
-      }
-    }))).filter(x => x !== undefined)
-    return filterToAccess(mapFilter(docs, (x: any) => x._source), auth, manageFields)
+    const docs = (await Promise.all(id.map(x => client().get(`${index}:${x}`))))
+      .filter(x => x !== undefined)
+    return filterToAccess(docs, auth, manageFields)
   } else if (id) {
-    return filterToAccess([await client().get(index.toLocaleLowerCase() + ':' + id)], auth, manageFields)
+    const result = await client().get(`${index}:${id}`)
+    if (!result) throw new RequestHandlingError('Key not found', 404)
+    return filterToAccess([result], auth, manageFields)
   } else if (search) {
     // TODO prolly get all and search in js
   }
 
   const accessAll = authorizedByPermission(auth)
-  const listId : Promise<string>[] = []
+  const listId : Promise<string|undefined>[] = []
   let cursor
   do {
     const result:KVList = await client().list(10, cursor, index)
     if (result.success) {
-      result.result.forEach((x:MetaData) => {
+      result.result.forEach(async (x:SuperMetaData) => {
         // Maybe prefix key with user id instead?
         if (accessAll || (x.metadata as any)?.createdBy === auth.sub) {
           listId.push(client().get(x.name))
@@ -65,7 +59,7 @@ export const get = async <T extends object>(
     cursor = result.result_info.cursor
   } while (cursor)
 
-  return (await Promise.all(listId) as any)
+  return (await Promise.all(listId) as any).filter((x:any) => x !== undefined)
 }
 
 export const post = async <T extends {[key: string]: any}>(index: string, manageFields: ManageableFields, auth:HandlerAuth, body: T):
@@ -80,8 +74,9 @@ Promise<T & any> => {
     newBody.createdBy = auth.sub
     metadata.createdBy = auth.sub
   }
+  if (await client().get(`${index}:${id}`)) throw new RequestHandlingError('Resource already exists', 409)
   // TODO returned without the full id, that contains the index, or maybe always remove the index when returning?
-  await client().put(index.toLocaleLowerCase() + ':' + id, { value: newBody, metadata })
+  await client().put(`${index}:${id}`, { value: newBody, metadata })
 
   return newBody
 }
@@ -93,7 +88,7 @@ export const del = async (index: string, manageFields: ManageableFields, auth:Ha
     throw new RequestHandlingError('User has no right to delete this', 403)
   }
 
-  await client().destroy(index.toLocaleLowerCase() + ':' + id)
+  await client().destroy(`${index}:${id}`)
   return result
 }
 
@@ -104,15 +99,15 @@ export const patch = async <T extends object, K extends object>(index: string, m
     throw new RequestHandlingError('User has no right to patch this', 403)
   }
 
-  const newBody:any = { ...result }
+  const newBody:any = { ...result[0] }
   for (const [key, value] of Object.entries(body)) {
     newBody[key] = value
   }
 
-  const key = index.toLocaleLowerCase() + ':' + id
+  const key = `${index}:${id}`
   const meta:KVList = await client().list(1, undefined, key)
 
-  await client().put(key, { value: newBody, metadata: meta.result[0] })
+  await client().put(key, { value: newBody, metadata: meta.result[0].metadata })
 
   return (await get(index, manageFields, auth, id) as any)[0]
 }
@@ -131,7 +126,7 @@ export const put = async <T extends object, K extends object>(index: string, man
   const key = index.toLocaleLowerCase() + ':' + id
   const meta:KVList = await client().list(1, undefined, key)
 
-  await client().put(key, { value: newBody, metadata: meta.result[0] })
+  await client().put(key, { value: newBody, metadata: meta.result[0].metadata })
 
   return (await get(index, manageFields, auth, id) as any)[0]
 }

@@ -48,8 +48,8 @@ global.afterTestCategory = {
   unauthenticated: async () =>
     kv.client().destroy((await kv.client().list(undefined, undefined, allIdx.unauthenticated.index)).result.map(x => x.name)),
   authenticated: async () =>
-    kv.client().destroy((await kv.client().list(undefined, undefined, allIdx.unauthenticated.index)).result.map(x => x.name)),
+    kv.client().destroy((await kv.client().list(undefined, undefined, allIdx.authenticated.index)).result.map(x => x.name)),
   userAuthenticated: async () =>
-    kv.client().destroy((await kv.client().list(undefined, undefined, allIdx.unauthenticated.index)).result.map(x => x.name))
+    kv.client().destroy((await kv.client().list(undefined, undefined, allIdx.userAuthenticated.index)).result.map(x => x.name))
 
 }
