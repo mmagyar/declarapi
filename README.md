@@ -30,10 +30,5 @@ Declarative API generation.
 - Generate the source in a way that allows to create a summary file, so in case of multiple api methods / endpoints, the user only needs to import a single file.
 - Generate automatic functional tests for the APIs
 - Generate automatic load / performance tests for the APIs
-- Additional Data connectors
-- - SQL
-- - Other data storage solutions
-- Add opaque types to validation, to better encode schema in typescript type
-- Add option to automatically add optional ordering to get requests
 - Add pagination to get requests
-- Example for serverless deployment
+- [Other TODO](TODO.md).

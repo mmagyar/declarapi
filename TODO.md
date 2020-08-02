@@ -1,1 +1,7 @@
 - check out the signature of delete returns, it may be missing single item return.
+- Enable schema to be defined in ts or js file
+- Example for serverless deployment
+- Add option to automatically add optional ordering to get requests
+- Additional Data connectors
+- - SQL
+- - Other data storage solutions

@@ -4,6 +4,7 @@ import { RequestHandlingError } from '../RequestHandlingError'
 import { ManageableFields } from '../transform/types'
 import { KV, memoryKV, KVList, SuperMetaData } from './memoryKv'
 import Fuse from 'fuse.js'
+import { ValueTypes, ObjectType, isObj, isObjectMeta, isArray } from 'yaschva'
 let clientInstance: KV | undefined
 export const client = () => clientInstance || init()
 export const destroyClient = () => {
@@ -49,9 +50,27 @@ export const get = async (
     } else {
       cached = JSON.parse(cached)
     }
+
+    const subKeys = (current:ValueTypes, idx:string):string[] => {
+      if (Array.isArray(current)) {
+        return current.flatMap(x => subKeys(x, idx))
+      } else if (isArray(current)) {
+        return subKeys(current.$array, idx)
+      } else if (isObjectMeta(current)) {
+        return keysOfSchema(current.$object, idx)
+      } else if (typeof current === 'object' && isObj(current)) {
+        return keysOfSchema(current, idx)
+      }
+      return [idx]
+    }
+    const keysOfSchema = (returns: ObjectType, idPrefix?:string):string[] => {
+      return Object.keys(returns).flatMap(x => subKeys(returns[x], `${idPrefix ? idPrefix + '.' : ''}${x}`))
+    }
+
+    const keys = [...new Set(subKeys(contract.returns, ''))]
     if (!cached || cached.length === 0) return []
     // TODO we may need to pass the contract here, to make sure we don't miss any fields
-    const opts :Fuse.IFuseOptions<object> = { keys: Object.keys((cached as any)[0]) }
+    const opts :Fuse.IFuseOptions<object> = { keys }
     const fuse = new Fuse((cached as any), opts)
     const searched = fuse.search(search)
     return (searched.map(x => x.item) as any)
