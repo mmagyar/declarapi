@@ -86,7 +86,7 @@ export const registerRestMethods = (input:ContractWithValidatedHandler):Expressa
 
       try {
         const result: ContractResult =
-          await x.handle(body, { ...user, authentication }, manageFields)
+          await x.handle(body, { ...user, authentication }, x.contract)
         if (isContractInError(result)) { return { code: result.code, response: result } }
 
         const statusCode = x.contract.type === 'post' ? 201 : 200

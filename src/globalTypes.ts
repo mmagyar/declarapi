@@ -12,7 +12,7 @@ export type ContractType<T, K> = {
   name: string
   type: 'get' | 'post' | 'put' | 'patch' | 'delete'
   manageFields: ManageableFields,
-  handle?: (input: T, auth: HandlerAuth, manageFields: ManageableFields) => Promise<K>
+  handle?: (input: T, auth: HandlerAuth, contract:ContractType<T, K>) => Promise<K>
   arguments: Validation
   returns: Validation
 } & ContractAuth

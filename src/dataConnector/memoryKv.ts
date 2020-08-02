@@ -20,7 +20,7 @@ export type KVList = ResponseMeta & {
 export type KV = {
   list: (limit?: number, cursor?: string, prefix?: string) => Promise<KVList>
   get: (key:string) => Promise<ValueType | undefined>
-  put: (key:string, value:ValueType | {value:ValueType, metadata: any}, expiration?: number, expirationType?: 'ttl' | 'time') => Promise<ResponseMeta>
+  put: (key:string, value:ValueType | {value:ValueType, metadata: any}, expiration?: number, expirationType?: 'time'| 'ttl') => Promise<ResponseMeta>
   destroy: (key:string | string[]) => Promise<ResponseMeta>
 };
 
@@ -63,10 +63,10 @@ export const memoryKV = (): KV => {
   const get = async (key:string) : Promise<ValueType | undefined> => {
     return db.get(key)
   }
-  const put = async (key:string, value:ValueType | {value:ValueType, metadata: any}, expiration?: number, expirationType: 'ttl' | 'time' = 'ttl'): Promise<ResponseMeta> => {
+  const put = async (key:string, value:ValueType | {value:ValueType, metadata: any}, expiration?: number, expirationType: 'time' | 'ttl' = 'time'): Promise<ResponseMeta> => {
     let exp
     if (expiration) {
-      exp = expirationType === 'time' ? expiration : (Date.now() + expiration)
+      exp = expirationType === 'time' ? expiration : (Math.round(Date.now() / 1000) + expiration)
     }
 
     if (typeof value === 'object') {

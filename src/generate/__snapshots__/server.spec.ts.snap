@@ -146,7 +146,7 @@ testGet: {
           manageFields: {},
           authentication: false,
           type: \\"get\\",
-          handle: (input, auth, manageFields) => elastic.get(\\"test\\", manageFields, auth, input && input.id, input && input.search),
+          handle: (input, auth, contract) => elastic.get(\\"test\\", contract, auth, input && input.id, input && input.search),
           arguments: {\\"search\\":[\\"string\\",\\"?\\"],\\"id\\":[\\"string\\",{\\"$array\\":\\"string\\"},\\"?\\"]} ,
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}},
 testPost: {
@@ -154,7 +154,7 @@ testPost: {
           manageFields: {},
           authentication: false,
           type: \\"post\\",
-          handle: (input, auth, manageFields) => elastic.post(\\"test\\", manageFields, auth, input),
+          handle: (input, auth, contract) => elastic.post(\\"test\\", contract, auth, input),
           arguments: {\\"id\\":[\\"string\\",\\"?\\"],\\"myNumber\\":\\"number\\"} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPut: {
@@ -162,7 +162,7 @@ testPut: {
           manageFields: {},
           authentication: false,
           type: \\"put\\",
-          handle: (input, auth, manageFields) => elastic.put(\\"test\\", manageFields, auth, input, input.id),
+          handle: (input, auth, contract) => elastic.put(\\"test\\", contract, auth, input, input.id),
           arguments: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testPatch: {
@@ -170,7 +170,7 @@ testPatch: {
           manageFields: {},
           authentication: false,
           type: \\"patch\\",
-          handle: (input, auth, manageFields) => elastic.patch(\\"test\\", manageFields, auth, input, input.id),
+          handle: (input, auth, contract) => elastic.patch(\\"test\\", contract, auth, input, input.id),
           arguments: {\\"id\\":\\"string\\",\\"myNumber\\":[\\"number\\",\\"?\\"]} ,
           returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},
 testDelete: {
@@ -178,7 +178,7 @@ testDelete: {
           manageFields: {},
           authentication: false,
           type: \\"delete\\",
-          handle: (input, auth, manageFields) => elastic.del(\\"test\\", manageFields, auth, input.id),
+          handle: (input, auth, contract) => elastic.del(\\"test\\", contract, auth, input.id),
           arguments: {\\"id\\":[\\"string\\",{\\"$array\\":\\"string\\"}]} ,
           returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}}
 }
@@ -205,7 +205,7 @@ testGet: {
           manageFields: {},
           authentication: false,
           type: \\"get\\",
-          handle: (input, auth, manageFields) => elastic.get(\\"test\\", manageFields, auth, input && input.id),
+          handle: (input, auth, contract) => elastic.get(\\"test\\", contract, auth, input && input.id),
           arguments: {\\"myNumber\\":\\"number\\"} ,
           returns: {}}
 }

@@ -13,18 +13,18 @@ export const kvCodeGen = (driver: KeyValue, input: ElasticInputType):string => {
   switch (input.method) {
     case 'get': {
       if (input.search === 'textSearch') {
-        return `(input, auth, manageFields) => kv.get("${index}", manageFields, auth, input && input.id, input && input.search)`
+        return `(input, auth, contract) => kv.get("${index}", contract, auth, input && input.id, input && input.search)`
       } else if (input.search === 'idOnly') {
-        return `(input, auth, manageFields) => kv.get("${index}", manageFields, auth, input && input.id)`
+        return `(input, auth, contract) => kv.get("${index}", contract, auth, input && input.id)`
       } else if (input.search === 'full') {
         throw new Error('Parametric get not implemented yet')
       }
       throw new Error(`Unsupported automatic key-value methods: ${JSON.stringify(input.search)}`)
     }
-    case 'post': return `(input, auth, manageFields) => kv.post("${index}", manageFields, auth, input)`
-    case 'patch': return `(input, auth, manageFields) => kv.patch("${index}", manageFields, auth, input, input.id)`
-    case 'put': return `(input, auth, manageFields) => kv.put("${index}", manageFields, auth, input, input.id)`
-    case 'delete': return `(input, auth, manageFields) => kv.del("${index}", manageFields, auth, input.id)`
+    case 'post': return `(input, auth, contract) => kv.post("${index}", contract, auth, input)`
+    case 'patch': return `(input, auth, contract) => kv.patch("${index}", contract, auth, input, input.id)`
+    case 'put': return `(input, auth, contract) => kv.put("${index}", contract, auth, input, input.id)`
+    case 'delete': return `(input, auth, contract) => kv.del("${index}", contract, auth, input.id)`
   }
 }
 

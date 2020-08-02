@@ -32,8 +32,8 @@
     "test:watch": "jest --watch",
     "test:dev": "npm run standard:fix && jest --no-cache --coverage --detectOpenHandles --runInBand",
     "test:clearCache": "jest --clearCache",
-    "test:integration" : "npm run test:integration:elasticsearch",
-    "test:integration:dev" : "npm run test:integration:elasticsearch:dev",
+    "test:integration": "npm run test:integration:elasticsearch",
+    "test:integration:dev": "npm run test:integration:elasticsearch:dev",
     "test:integration:elasticsearch": "jest --no-cache --verbose --config integrationTests/setup/elastic/jest.json --colors --coverage=true",
     "test:integration:elasticsearch:dev": "export ELASTIC_KEEP=\"true\"; npm run test:integration; unset ELASTIC_KEEP",
     "test:integration:kv": "jest --no-cache --verbose --config integrationTests/setup/kv/jest.json --colors --coverage=true",
@@ -104,9 +104,11 @@
   "dependencies": {
     "@elastic/elasticsearch": "^7.8.0",
     "@types/commander": "^2.12.2",
+    "@types/fuse": "^2.6.0",
     "@types/uuid": "^8.0.0",
     "ajv": "^6.12.3",
     "commander": "^6.0.0",
+    "fuse.js": "^6.4.1",
     "microtil": "^1.1.4",
     "uuid": "^8.2.0",
     "yaschva": "^1.4.0"
