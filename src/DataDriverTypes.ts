@@ -5,5 +5,6 @@ export type Elastic = {
 
 export type KeyValue = {
   type: 'key-value';
+  backend: 'memory' | 'worker' // | 'redis'
   index: string;
 }

@@ -24,7 +24,7 @@ describe('Unauthenticated schema test', () => {
       await get.expectEmptyWhenNoRecordsPresent(m.get.handle)
     })
 
-    it('will get empty sets when searching for text', async () => {
+    it.only('will get empty sets when searching for text', async () => {
       await get.expectEmptyWithTextSearch(m.get.handle)
     })
   })

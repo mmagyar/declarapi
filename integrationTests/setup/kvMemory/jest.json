@@ -4,11 +4,6 @@
       "tsConfig": "<rootDir>/../../tsconfig.json"
     }
   },
-  "setupFiles": [
-    "./env.js"
-  ],
-  "globalSetup": "./global.js",
-  "globalTeardown": "./teardown.js",
   "setupFilesAfterEnv": ["./setup.js"],
   "roots": [
     "<rootDir>../../src"
@@ -31,7 +26,6 @@
   "collectCoverageFrom": [
     "**/*.{js,jsx,ts,tsx}",
     "!**/node_modules/**",
-    "!./src/bin/**",
     "!**/vendor/**"
   ],
   "resetModules": true,

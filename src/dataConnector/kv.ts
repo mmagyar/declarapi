@@ -2,17 +2,31 @@ import { v4 as uuid } from 'uuid'
 import { HandlerAuth, ContractType } from '../globalTypes'
 import { RequestHandlingError } from '../RequestHandlingError'
 import { ManageableFields } from '../transform/types'
-import { KV, memoryKV, KVList, SuperMetaData } from './memoryKv'
+import { memoryKV } from './memoryKv'
+import { KV, KVList, SuperMetaData } from './abstractKv'
 import Fuse from 'fuse.js'
 import { ValueTypes, ObjectType, isObj, isObjectMeta, isArray } from 'yaschva'
-let clientInstance: KV | undefined
-export const client = () => clientInstance || init()
-export const destroyClient = () => {
-  clientInstance = undefined
+import workerKv from './workerKv'
+
+type WorkerCache ={memory? :KV, worker?: KV}
+type WorkerTypes = keyof WorkerCache
+const clientInstance: WorkerCache = {}
+export const client = (key:WorkerTypes):KV => clientInstance[key] || init(key)
+export const destroyClient = (key:WorkerTypes) => {
+  delete clientInstance[key]
 }
-export const init = () => {
-  clientInstance = memoryKV()
-  return clientInstance
+export const init = (key:WorkerTypes):KV => {
+  if (key === 'worker') {
+    clientInstance.worker = workerKv()
+    return clientInstance.worker
+  }
+
+  if (key === 'memory') {
+    clientInstance.memory = memoryKV()
+    return clientInstance.memory
+  }
+
+  throw new Error(`Unknown key value backend ${key}`)
 }
 
 const authorizedByPermission = (auth:HandlerAuth) =>
@@ -25,6 +39,7 @@ const filterToAccess = (input:any[], auth:HandlerAuth, fields:ManageableFields):
   authorizedByPermission(auth) ? input : input.filter((x:any) => getUserIdFields(fields).some(y => x[y] === auth.sub))
 const keyId = (index:string, id:string):string => `${index}:records:${id}`
 export const get = async (
+  type: WorkerTypes,
   index: string,
   contract: ContractType<any, any>,
   auth:HandlerAuth,
@@ -33,20 +48,21 @@ export const get = async (
 ): Promise<any> => {
   if (Array.isArray(id)) {
     if (id.length === 0) return []
-    const docs = (await Promise.all(id.map(x => client().get(keyId(index, x)))))
+    const docs = (await Promise.all(id.map(x => client(type).get(keyId(index, x)))))
       .filter(x => x !== undefined)
     return filterToAccess(docs, auth, contract.manageFields)
   } else if (id) {
-    const result = await client().get(keyId(index, id))
+    const result = await client(type).get(keyId(index, id))
     if (!result) throw new RequestHandlingError('Key not found', 404)
     return filterToAccess([result], auth, contract.manageFields)
   } else if (search) {
     const cacheId = `${index}:$Al'kesh:${auth.sub}`
-    let cached: object[]| string| undefined = await client().get(cacheId)
+    let cached: object[]| string| undefined =
+    await client(type).get(cacheId).catch(x => { if (x.code === 404) return ''; else throw x })
     if (!cached) {
-      cached = await get(index, contract, auth)
+      cached = await get(type, index, contract, auth)
       const value = JSON.stringify(cached)
-      await client().put(cacheId, { value, metadata: { type: 'cache' } }, 120, 'ttl')
+      await client(type).put(cacheId, { value, metadata: { type: 'cache' } }, 120, 'ttl')
     } else {
       cached = JSON.parse(cached)
     }
@@ -80,12 +96,12 @@ export const get = async (
   const listId : Promise<string|undefined>[] = []
   let cursor
   do {
-    const result:KVList = await client().list(10, cursor, `${index}:records`)
+    const result:KVList = await client(type).list(10, cursor, `${index}:records`)
     if (result.success) {
       result.result.forEach(async (x:SuperMetaData) => {
         // Maybe prefix key with user id instead?
         if (accessAll || (x.metadata as any)?.createdBy === auth.sub) {
-          listId.push(client().get(x.name))
+          listId.push(client(type).get(x.name))
         }
       })
     }
@@ -95,7 +111,10 @@ export const get = async (
   return (await Promise.all(listId) as any).filter((x:any) => x !== undefined)
 }
 
-export const post = async <T extends {[key: string]: any}>(index: string, contract: ContractType<T, any>,
+export const post = async <T extends {[key: string]: any}>(
+  type: WorkerTypes,
+  index: string,
+  contract: ContractType<T, any>,
   auth:HandlerAuth, body: T):
 Promise<T & any> => {
   if (!authorizedByPermission(auth)) throw new RequestHandlingError('User not authorized to POST', 403)
@@ -108,27 +127,27 @@ Promise<T & any> => {
     newBody.createdBy = auth.sub
     metadata.createdBy = auth.sub
   }
-  if (await client().get(keyId(index, id))) throw new RequestHandlingError('Resource already exists', 409)
+  if (await client(type).get(keyId(index, id))) throw new RequestHandlingError('Resource already exists', 409)
   // TODO returned without the full id, that contains the index, or maybe always remove the index when returning?
-  await client().put(keyId(index, id), { value: newBody, metadata })
+  await client(type).put(keyId(index, id), { value: newBody, metadata })
 
   return newBody
 }
 
-export const del = async (index: string, contract: ContractType<any, any>, auth:HandlerAuth, id: string|string[]): Promise<any> => {
-  if (Array.isArray(id)) return (await Promise.all(id.map(x => del(index, contract, auth, x)))).map(x => x[0])
-  const result = await get(index, contract, auth, id)
+export const del = async (type: WorkerTypes, index: string, contract: ContractType<any, any>, auth:HandlerAuth, id: string|string[]): Promise<any> => {
+  if (Array.isArray(id)) return (await Promise.all(id.map(x => del(type, index, contract, auth, x)))).map(x => x[0])
+  const result = await get(type, index, contract, auth, id)
   if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to delete this', 403)
   }
 
-  await client().destroy(keyId(index, id))
+  await client(type).destroy(keyId(index, id))
   return result
 }
 
-export const patch = async <T extends object, K extends object>(index: string, contract: ContractType<T, K>, auth:HandlerAuth, body: T, id: string
+export const patch = async <T extends object, K extends object>(type: WorkerTypes, index: string, contract: ContractType<T, K>, auth:HandlerAuth, body: T, id: string
 ): Promise<K> => {
-  const result = await get(index, contract, auth, id)
+  const result = await get(type, index, contract, auth, id)
   if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to patch this', 403)
   }
@@ -139,16 +158,22 @@ export const patch = async <T extends object, K extends object>(index: string, c
   }
 
   const key = keyId(index, id)
-  const meta:KVList = await client().list(1, undefined, key)
+  const meta:KVList = await client(type).list(1, undefined, key)
 
-  await client().put(key, { value: newBody, metadata: meta.result[0].metadata })
+  await client(type).put(key, { value: newBody, metadata: meta.result[0].metadata })
 
-  return (await get(index, contract, auth, id) as any)[0]
+  return (await get(type, index, contract, auth, id) as any)[0]
 }
 
-export const put = async <T extends object, K extends object>(index: string, contract: ContractType<T, K>, auth:HandlerAuth, body: T, id: string
+export const put = async <T extends object, K extends object>(
+  type: WorkerTypes,
+  index: string,
+  contract: ContractType<T, K>,
+  auth:HandlerAuth,
+  body: T,
+  id: string
 ): Promise<K> => {
-  const result: any[] = await get(index, contract, auth, id)
+  const result: any[] = await get(type, index, contract, auth, id)
   if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to patch this', 403)
   }
@@ -158,9 +183,9 @@ export const put = async <T extends object, K extends object>(index: string, con
   }
 
   const key = keyId(index, id)
-  const meta:KVList = await client().list(1, undefined, key)
+  const meta:KVList = await client(type).list(1, undefined, key)
 
-  await client().put(key, { value: newBody, metadata: meta.result[0]?.metadata })
+  await client(type).put(key, { value: newBody, metadata: meta.result[0]?.metadata })
 
-  return (await get(index, contract, auth, id) as any)[0]
+  return (await get(type, index, contract, auth, id) as any)[0]
 }

@@ -20,8 +20,8 @@
       ]
     },
     {
-      "command": "npm run test:integration:kv",
-      "name": "Integration tests key-value",
+      "command": "npm run test:integration:worker",
+      "name": "Integration tests worker key-value",
       "request": "launch",
       "type": "node-terminal",
       "smartStep": true,

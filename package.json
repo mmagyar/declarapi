@@ -36,7 +36,8 @@
     "test:integration:dev": "npm run test:integration:elasticsearch:dev && npm run test:integration:kv",
     "test:integration:elasticsearch": "jest --no-cache --verbose --config integrationTests/setup/elastic/jest.json --colors --coverage=true",
     "test:integration:elasticsearch:dev": "export ELASTIC_KEEP=\"true\"; npm run test:integration; unset ELASTIC_KEEP",
-    "test:integration:kv": "jest --no-cache --verbose --config integrationTests/setup/kv/jest.json --colors --coverage=true",
+    "test:integration:memory": "jest --no-cache --verbose --config integrationTests/setup/kvMemory/jest.json --colors --coverage=true",
+    "test:integration:worker": "jest --no-cache --verbose --config integrationTests/setup/kvWorker/jest.json --colors --coverage=true",
     "generate": "node ./dist/bin/generate.js",
     "generate:dev": "npm run build && npm run generate"
   },
@@ -104,12 +105,16 @@
   "dependencies": {
     "@elastic/elasticsearch": "^7.8.0",
     "@types/commander": "^2.12.2",
+    "@types/form-data": "^2.5.0",
     "@types/fuse": "^2.6.0",
+    "@types/node-fetch": "^2.5.7",
     "@types/uuid": "^8.0.0",
     "ajv": "^6.12.3",
     "commander": "^6.0.0",
+    "form-data": "^3.0.0",
     "fuse.js": "^6.4.1",
     "microtil": "^1.1.4",
+    "node-fetch": "^2.6.0",
     "uuid": "^8.2.0",
     "yaschva": "^1.4.0"
   }

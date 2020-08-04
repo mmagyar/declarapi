@@ -2,11 +2,12 @@
 const path = require('path')
 const { kv, registerRestMethods, addValidationToContract } = require('../../../src/index')
 const { generateContract, getMethods } = require('../../src/common')
+require('util').inspect.defaultOptions = { depth: 15 }
 
 const schemaFilePath = path.join(__dirname, '../../../example/test_example.json')
 global.contract = {}
 
-const preferredImplementation = (index) => ({ type: 'key-value', index })
+const preferredImplementation = (index) => ({ type: 'key-value', index, backend: 'worker' })
 const allIdx = ({
   unauthenticated: preferredImplementation('test-unauth-' + Date.now()),
   authenticated: preferredImplementation('test-auth-' + Date.now()),
@@ -43,13 +44,21 @@ global.beforeTestCategory = {
   userAuthenticated: async () => {}
 
 }
-
+const delay = async (time = 100) => new Promise((resolve) => setTimeout(() => resolve(), time))
 global.afterTestCategory = {
-  unauthenticated: async () =>
-    kv.client().destroy((await kv.client().list(undefined, undefined, allIdx.unauthenticated.index)).result.map(x => x.name)),
-  authenticated: async () =>
-    kv.client().destroy((await kv.client().list(undefined, undefined, allIdx.authenticated.index)).result.map(x => x.name)),
-  userAuthenticated: async () =>
-    kv.client().destroy((await kv.client().list(undefined, undefined, allIdx.userAuthenticated.index)).result.map(x => x.name))
-
+  unauthenticated: async () => {
+    await delay()
+    await kv.client('worker').destroy((await kv.client('worker').list(undefined, undefined, allIdx.unauthenticated.index)).result.map(x => x.name))
+    return delay()
+  },
+  authenticated: async () => {
+    await delay()
+    await kv.client('worker').destroy((await kv.client('worker').list(undefined, undefined, allIdx.authenticated.index)).result.map(x => x.name))
+    return delay()
+  },
+  userAuthenticated: async () => {
+    await delay()
+    await kv.client('worker').destroy((await kv.client('worker').list(undefined, undefined, allIdx.userAuthenticated.index)).result.map(x => x.name))
+    return delay()
+  }
 }
