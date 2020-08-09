@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -10,19 +10,19 @@
     "json",
     "generation"
   ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "sideEffects": false,
   "prepublish": "tsc",
   "repository": {
     "type": "git",
     "url": "https://github.com/mmagyar/declarapi.git"
   },
-  "bin": "./dist/bin/generate.js",
+  "bin": "./lib/bin/generate.js",
   "scripts": {
-    "build": "tsc && chmod +x ./dist/bin/generate.js",
+    "build": "tsc && chmod +x ./lib/bin/generate.js",
     "watch": "tsc --watch",
-    "clean": "rm -rf ./dist && rm -rf ./test/*.ts",
+    "clean": "rm -rf ./lib && rm -rf ./test/*.ts",
     "test": "npm run standard && jest",
     "jest": "jest",
     "prepare": "npm run build",
@@ -39,7 +39,7 @@
     "test:integration:elasticsearch:dev": "export ELASTIC_KEEP=\"true\"; npm run test:integration; unset ELASTIC_KEEP",
     "test:integration:memory": "jest --no-cache --verbose --config integrationTests/setup/kvMemory/jest.json --colors --coverage=true",
     "test:integration:worker": "jest --no-cache --verbose --config integrationTests/setup/kvWorker/jest.json --colors --coverage=true -i",
-    "generate": "node ./dist/bin/generate.js",
+    "generate": "node ./lib/bin/generate.js",
     "generate:dev": "npm run build && npm run generate"
   },
   "standardx": {
