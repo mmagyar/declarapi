@@ -3,7 +3,6 @@ import { ArgumentVariations } from '../common'
 import { AuthInput } from '../../../src'
 
 const expectEmptyResponse = (response:HandleResponse) => {
-  // console.log(response)
   expect(response).toHaveProperty('code', 200)
   expect(response).toHaveProperty('response')
   expect(Array.isArray(response.response)).toBeTruthy()
