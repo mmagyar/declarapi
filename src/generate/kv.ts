@@ -1,14 +1,14 @@
 import { KeyValue } from '../DataDriverTypes'
 import { SearchTypes, HttpMethods } from '../globalTypes'
-export type ElasticInputGet = {
+export type KVInputGet = {
   method: 'get',
   search: SearchTypes
 }
-export type ElasticInputBase = { method: HttpMethods, search? :SearchTypes}
-export type ElasticInputType = ElasticInputBase & (ElasticInputGet | {
+export type KVInputBase = { method: HttpMethods, search? :SearchTypes}
+export type KVInputType = KVInputBase & (KVInputGet | {
   method: 'post' | 'put' | 'patch' | 'delete',
 })
-export const kvCodeGen = (driver: KeyValue, input: ElasticInputType):string => {
+export const kvCodeGen = (driver: KeyValue, input: KVInputType):string => {
   const { index, backend } = driver
   switch (input.method) {
     case 'get': {
