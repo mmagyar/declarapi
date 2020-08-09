@@ -14,7 +14,7 @@ import * as authDel from './authenticated/delete'
 
 let m:Contracts
 
-describe.skip('authenticated schema test', () => {
+describe('authenticated schema test', () => {
   const auth: AuthInput = { sub: 'user1', permissions: ['admin'] }
   const unAuthorized:AuthInput = { sub: 'user2', permissions: ['editor'] }
   beforeAll(async () => {

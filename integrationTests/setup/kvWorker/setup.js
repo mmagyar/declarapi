@@ -44,23 +44,18 @@ global.beforeTestCategory = {
   userAuthenticated: async () => {}
 
 }
-const delay = async (time = 100) => new Promise((resolve) => setTimeout(() => resolve(), time))
-global.afterTestCategory = {
-  unauthenticated: async () => {
-    const toDelete = (await kv.client('worker').list(undefined, undefined, allIdx.unauthenticated.index))
+
+const deletePrefix = (prefix) => {
+  return async () => {
+    const toDelete = (await kv.client('worker').list(undefined, undefined, prefix))
       .result.map(x => x.name)
-    if (!toDelete.length) {
-      await kv.client('worker').destroy().catch(x => console.log('Failed to clean up: ' + JSON.stringify(x)))
+    if (toDelete.length) {
+      await kv.client('worker').destroy(toDelete).catch(x => console.log('Failed to clean up: ' + JSON.stringify(x)))
     }
-  },
-  authenticated: async () => {
-    await delay()
-    await kv.client('worker').destroy((await kv.client('worker').list(undefined, undefined, allIdx.authenticated.index)).result.map(x => x.name))
-    return delay()
-  },
-  userAuthenticated: async () => {
-    await delay()
-    await kv.client('worker').destroy((await kv.client('worker').list(undefined, undefined, allIdx.userAuthenticated.index)).result.map(x => x.name))
-    return delay()
   }
+}
+global.afterTestCategory = {
+  unauthenticated: deletePrefix(allIdx.unauthenticated.index),
+  authenticated: deletePrefix(allIdx.authenticated.index),
+  userAuthenticated: deletePrefix(allIdx.userAuthenticated.index)
 }

@@ -29,7 +29,7 @@ describe('Unauthenticated schema test', () => {
     })
   })
 
-  describe.only('post', () => {
+  describe('post', () => {
     it('can post items and get all with empty arguments', async () => {
       await post.postAndGetRecordsByEmptyGet(m.post, m.get.handle, {})
     })

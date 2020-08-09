@@ -1,23 +1,25 @@
 import { KVList, ResponseMeta, KV, ValueType } from './abstractKv'
 import FormData from 'form-data'
-
 import fetch, { Response, RequestInfo, RequestInit } from 'node-fetch'
 import { RequestHandlingError } from '../RequestHandlingError'
-const minInterval = 100
-const delay = async (time = 100) => new Promise((resolve) => setTimeout(() => resolve(), time))
 
-let lastCall = Date.now()
+const delay = async (time = 1000) => new Promise((resolve) => setTimeout(() => resolve(), time))
 
 const fetchLimited = async (
   url: RequestInfo,
-  init?: RequestInit
+  init?: RequestInit,
+  nowOriginal? : number
 ): Promise<Response> => {
-  const now = Date.now()
-  if (lastCall + minInterval > now) {
-    await delay(lastCall + minInterval - now)
+  const now = nowOriginal || Date.now()
+  const fetched = await fetch(url, init)
+  if (fetched.status === 429) {
+    console.log('Rate Limited', Date.now() - now, fetched.headers, await fetched.json())
+    await delay()
+    return fetchLimited(url, init, now)
   }
-  lastCall = Date.now()
-  return fetch(url, init)
+  // const requestTook = Date.now() - now
+  // if (nowOriginal) console.log('REQUEST TOOK', requestTook)
+  return fetched
 }
 
 const fetchWithThrow = async (
@@ -81,9 +83,13 @@ const fetchWithThrow = async (
 //   10047: 'invalid metadata'
 // }
 export const workerKv = (): KV => {
-  const accountIdentifier = '0de581be8fc7411dc7c3d016e152b47c'
-  const namespaceIdentifier = 'bc9d1a4d70e1410f8d60a0393a39efd9'
-  const token = process.env.WORKER_VK_TOKEN
+  const accountIdentifier = process.env.WORKER_ACCOUNT
+  if (!accountIdentifier) throw new Error('Account id not set on WORKER_ACCOUNT')
+  const namespaceIdentifier = process.env.WORKER_KV_NAMESPACE
+  if (!namespaceIdentifier) throw new Error('Namespace id not set on WORKER_KV_NAMESPACE')
+  const token = process.env.WORKER_KV_TOKEN
+  if (!token) throw new Error('Auth token not set on WORKER_KV_TOKEN')
+
   const headers = ({
     Authorization: `Bearer ${token}`
   })
@@ -92,7 +98,7 @@ export const workerKv = (): KV => {
 
   const list = async (limit?: number, cursor?: string, prefix?: string):Promise<KVList> => {
     const params = []
-    if (limit)params.push(`limit=${limit}`)
+    if (limit)params.push(`limit=${limit < 10 ? 10 : limit}`)
     if (cursor)params.push(`cursor=${cursor}`)
     if (prefix)params.push(`prefix=${prefix}`)
 
@@ -129,7 +135,7 @@ export const workerKv = (): KV => {
 
   const destroy = async (key:string | string[]):Promise<ResponseMeta> => {
     if (Array.isArray(key)) {
-      return fetchWithThrow(`${namespaced}/bulk/`, {
+      return fetchWithThrow(`${namespaced}/bulk`, {
         headers: { ...headers, 'Content-Type': 'application/json' },
         method: 'DELETE',
         body: JSON.stringify(key)

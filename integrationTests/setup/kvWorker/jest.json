@@ -4,6 +4,7 @@
       "tsConfig": "<rootDir>/../../tsconfig.json"
     }
   },
+  "setupFiles": ["dotenv/config"],
   "setupFilesAfterEnv": ["./setup.js"],
   "roots": [
     "<rootDir>../../src"

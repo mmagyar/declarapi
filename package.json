@@ -37,7 +37,7 @@
     "test:integration:elasticsearch": "jest --no-cache --verbose --config integrationTests/setup/elastic/jest.json --colors --coverage=true",
     "test:integration:elasticsearch:dev": "export ELASTIC_KEEP=\"true\"; npm run test:integration; unset ELASTIC_KEEP",
     "test:integration:memory": "jest --no-cache --verbose --config integrationTests/setup/kvMemory/jest.json --colors --coverage=true",
-    "test:integration:worker": "jest --no-cache --verbose --config integrationTests/setup/kvWorker/jest.json --colors --coverage=true",
+    "test:integration:worker": "jest --no-cache --verbose --config integrationTests/setup/kvWorker/jest.json --colors --coverage=true -i",
     "generate": "node ./dist/bin/generate.js",
     "generate:dev": "npm run build && npm run generate"
   },

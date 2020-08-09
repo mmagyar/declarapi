@@ -129,8 +129,10 @@ Promise<T & any> => {
     newBody.createdBy = auth.sub
     metadata.createdBy = auth.sub
   }
-  if ((await client(type).get(keyId(index, id))
-    .catch(x => { if (x.code === 404) return []; else throw x }))?.length) {
+  // Maybe skip check if it is generated?
+  const got = (await client(type).get(keyId(index, id))
+    .catch(x => { if (x.code === 404) return undefined; else throw x }))
+  if (got) {
     throw new RequestHandlingError('Resource already exists', 409)
   }
   // TODO returned without the full id, that contains the index, or maybe always remove the index when returning?
