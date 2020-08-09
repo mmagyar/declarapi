@@ -11,12 +11,12 @@ export const canPut = async (post:Expressable, put:Expressable, get: HandleType,
   const postFirst:any = posted[0]
   const putting:any = removeManaged(generate(post.contract.returns), post.contract.manageFields)
   putting.id = postFirst.id
-  const patchResult = await put.handle(putting, postFirst.id, authInput)
-  expect(patchResult.code).toBe(200)
+  const putResult = await put.handle(putting, postFirst.id, authInput)
+  expect(putResult.code).toBe(200)
   if (post.contract.manageFields.createdBy) {
     putting.createdBy = authInput.sub
   }
-  expect(patchResult.response).toStrictEqual(putting)
+  expect(putResult.response).toStrictEqual(putting)
 
   const toExpectAll:any = [...posted]
   toExpectAll[0] = { ...putting }

@@ -88,7 +88,7 @@ With Authentication (just permissions, no userID field)
 - *DONE* Authenticated user, without permissions can get it's own posted items by text search
 - *DONE* Authenticated user, without permissions can't get records posted by another user, in either by id, by id array or text search
 - *DONE* Authorized user with permission can get all records posted by other users
-
+- Text search does not return records that the user should not access
 
 ### PATCH and PUT
  - *DONE* Same with plain authentication
@@ -111,6 +111,6 @@ With Authentication (just permissions, no userID field)
  - With userId based permission
 
 ## TODO:
- - Refactor tests to be usable with arbitrary schema
  - Test parametric search when it's implemented
  - Maybe define behavior for get when both and and search is specified
+ - Create more realistic scenarios and workflows

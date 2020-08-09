@@ -1,6 +1,6 @@
 import { Client, ClientOptions } from '@elastic/elasticsearch'
 import { v4 as uuid } from 'uuid'
-import { HandlerAuth } from '../globalTypes'
+import { HandlerAuth, ContractType } from '../globalTypes'
 import { RequestHandlingError } from '../RequestHandlingError'
 import { mapFilter } from 'microtil'
 import { ManageableFields } from '../transform/types'
@@ -43,15 +43,15 @@ const getUserIdFields = (fields:ManageableFields):string[] => Object.entries(fie
 const filterToAccess = (input:any[], auth:HandlerAuth, fields:ManageableFields):any[] =>
   authorizedByPermission(auth) ? input : input.filter((x:any) => getUserIdFields(fields).some(y => x[y] === auth.sub))
 
-export const get = async <T extends object>(
+export const get = async (
   indexName: string,
-  manageFields: ManageableFields,
+  contract: ContractType<any, any>,
   auth:HandlerAuth,
   id?: string | string[] | null,
   search?: string | null
-): Promise<T[]> => {
+): Promise<any> => {
   const index = indexName.toLocaleLowerCase()
-
+  const { manageFields } = contract
   const userIdFilter: any = {
     bool: {
       should: getUserIdFields(manageFields).map(userIdField => {
@@ -89,14 +89,15 @@ export const get = async <T extends object>(
   const result = new Array(all.body.hits.hits).flatMap((y: any) => y.map((x: any) => x._source))
   return result
 }
-export const post = async <T extends {[key: string]: any}>(index: string, manageFields: ManageableFields, auth:HandlerAuth, body: T):
+export const post = async <T extends {[key: string]: any}>(index: string, contract: ContractType<T, any>,
+  auth:HandlerAuth, body: T):
 Promise<T & any> => {
   if (!authorizedByPermission(auth)) throw new RequestHandlingError('User not authorized to POST', 403)
   const id = body.id || uuid()
   const newBody: any = { ...body }
   newBody.id = id
 
-  if (manageFields.createdBy === true) {
+  if (contract.manageFields.createdBy === true) {
     newBody.createdBy = auth.sub
   }
   await client().create({
@@ -109,9 +110,10 @@ Promise<T & any> => {
   return newBody
 }
 
-export const del = async (index: string, manageFields: ManageableFields, auth:HandlerAuth, id: string|string[]): Promise<any> => {
-  if (Array.isArray(id)) return (await Promise.all(id.map(x => del(index, manageFields, auth, x)))).map(x => x[0])
-  const result = await get(index, manageFields, auth, id)
+export const del = async (index: string, contract: ContractType<any, any>,
+  auth:HandlerAuth, id: string|string[]): Promise<any> => {
+  if (Array.isArray(id)) return (await Promise.all(id.map(x => del(index, contract, auth, x)))).map(x => x[0])
+  const result = await get(index, contract, auth, id)
   if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to delete this', 403)
   }
@@ -121,9 +123,10 @@ export const del = async (index: string, manageFields: ManageableFields, auth:Ha
   return result
 }
 
-export const patch = async <T extends object, K extends object>(index: string, manageFields: ManageableFields, auth:HandlerAuth, body: T, id: string
+export const patch = async <T extends object, K extends object>(index: string, contract: ContractType< T, K>,
+  auth:HandlerAuth, body: T, id: string
 ): Promise<K> => {
-  const result = await get(index, manageFields, auth, id)
+  const result = await get(index, contract, auth, id)
   if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to patch this', 403)
   }
@@ -134,17 +137,18 @@ export const patch = async <T extends object, K extends object>(index: string, m
       id,
       body: { doc: body }
     })
-  return (await get(index, manageFields, auth, id) as any)[0]
+  return (await get(index, contract, auth, id) as any)[0]
 }
 
-export const put = async <T extends object, K extends object>(index: string, manageFields: ManageableFields, auth:HandlerAuth, body: T, id: string
+export const put = async <T extends object, K extends object>(index: string, contract: ContractType<T, K>,
+  auth:HandlerAuth, body: T, id: string
 ): Promise<K> => {
-  const result: any[] = await get(index, manageFields, auth, id)
+  const result: any[] = await get(index, contract, auth, id)
   if (!result || result.length === 0) {
     throw new RequestHandlingError('User has no right to patch this', 403)
   }
   const newBody :any = { ...body }
-  if (manageFields.createdBy === true) {
+  if (contract.manageFields.createdBy === true) {
     newBody.createdBy = result[0].createdBy
   }
 
@@ -155,5 +159,5 @@ export const put = async <T extends object, K extends object>(index: string, man
       id,
       body: newBody
     })
-  return (await get(index, manageFields, auth, id) as any)[0]
+  return (await get(index, contract, auth, id) as any)[0]
 }

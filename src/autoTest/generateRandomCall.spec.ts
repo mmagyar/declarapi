@@ -26,7 +26,7 @@ describe('generateRandomCall', () => {
     expect.assertions(1)
     const data = input()
     await generateRandomCall(data.handle, data.contract, auth).catch(x => {
-      expect(x).toHaveProperty('message', 'Random data generation returned with error')
+      expect(x).toHaveProperty('message', 'Random data generation returned with error: undefined, undefined')
     })
   })
 
@@ -54,7 +54,7 @@ describe('generateRandomCall', () => {
     const data:any = input()
     data.handle = jest.fn(() => false)
     await generateRandomCall(data.handle, data.contract, auth).catch(x => {
-      expect(x).toHaveProperty('message', 'Random data generation returned with error')
+      expect(x).toHaveProperty('message', 'Random data generation returned with error: undefined, undefined')
     })
   })
 
@@ -63,7 +63,7 @@ describe('generateRandomCall', () => {
     const data:any = input()
     data.handle = jest.fn(() => ({ code: 401 }))
     await generateRandomCall(data.handle, data.contract, auth).catch(x => {
-      expect(x).toHaveProperty('message', 'Random data generation returned with error')
+      expect(x).toHaveProperty('message', 'Random data generation returned with error: 401, undefined')
     })
   })
 })

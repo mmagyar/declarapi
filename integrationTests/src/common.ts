@@ -7,6 +7,24 @@ import { generate, writeFile } from '../../src/bin/generate'
 import path from 'path'
 import { Validation, generate as validationGenerate } from 'yaschva'
 
+declare var contract: {
+    unauthenticated: any,
+    authenticated:any,
+    userAuthenticated:any
+  }
+
+declare var beforeTestCategory: {
+    unauthenticated: ()=> Promise<any>,
+    authenticated: ()=> Promise<any>,
+    userAuthenticated: ()=> Promise<any>
+  }
+
+declare var afterTestCategory: {
+    unauthenticated: ()=> Promise<any>,
+    authenticated: ()=> Promise<any>,
+    userAuthenticated: ()=> Promise<any>
+  }
+
 export type CallArgument =[{ [key: string]: any}, string?, AuthInput?]
 export type ArgumentVariations= { [key:string] :CallArgument}
 

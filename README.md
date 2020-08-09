@@ -15,6 +15,8 @@ Declarative API generation.
 - Automatically validate all requests
 - Automatically generate code to communicate with the database
 - - Elasticsearch (basic usage, full text search is done, more advanced search in-progress)
+- - Cloudflare Workers KV
+- - Redis
 - Generate fetch functions and type definitions for the client
 - [Permission based authentication / authorization support](AUTH.md).
 
@@ -28,11 +30,5 @@ Declarative API generation.
 - Generate the source in a way that allows to create a summary file, so in case of multiple api methods / endpoints, the user only needs to import a single file.
 - Generate automatic functional tests for the APIs
 - Generate automatic load / performance tests for the APIs
-- Additional Data connectors
-- - Cloudflare Workers KV
-- - Redis
-- - SQL
-- - Other data storage solutions
-- Add opaque types to validation, to better encode schema in typescript type
-- Add option to automatically add optional ordering to get requests
-- Example for serverless deployment
+- Add pagination to get requests
+- [Other TODO](TODO.md).

@@ -6,7 +6,22 @@
   "configurations": [
     {
       "command": "npm run test:integration:dev",
-      "name": "Integration tests",
+      "name": "Integration tests all",
+      "request": "launch",
+      "type": "node-terminal",
+      "smartStep": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "<node_internals>/**/*.js",
+        "**/async_hooks.js",
+        "**/inspector_async_hook.js"
+
+
+      ]
+    },
+    {
+      "command": "npm run test:integration:worker",
+      "name": "Integration tests worker key-value",
       "request": "launch",
       "type": "node-terminal",
       "smartStep": true,

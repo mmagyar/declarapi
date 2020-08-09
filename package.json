@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -32,8 +32,12 @@
     "test:watch": "jest --watch",
     "test:dev": "npm run standard:fix && jest --no-cache --coverage --detectOpenHandles --runInBand",
     "test:clearCache": "jest --clearCache",
-    "test:integration": "jest --no-cache --verbose --config integrationTests/jest.json --colors --coverage=true",
-    "test:integration:dev": "export ELASTIC_KEEP=\"true\"; npm run test:integration; unset ELASTIC_KEEP",
+    "test:integration": "npm run test:integration:elasticsearch && npm run test:integration:kv",
+    "test:integration:dev": "npm run test:integration:elasticsearch:dev && npm run test:integration:kv",
+    "test:integration:elasticsearch": "jest --no-cache --verbose --config integrationTests/setup/elastic/jest.json --colors --coverage=true",
+    "test:integration:elasticsearch:dev": "export ELASTIC_KEEP=\"true\"; npm run test:integration; unset ELASTIC_KEEP",
+    "test:integration:memory": "jest --no-cache --verbose --config integrationTests/setup/kvMemory/jest.json --colors --coverage=true",
+    "test:integration:worker": "jest --no-cache --verbose --config integrationTests/setup/kvWorker/jest.json --colors --coverage=true -i",
     "generate": "node ./dist/bin/generate.js",
     "generate:dev": "npm run build && npm run generate"
   },
@@ -101,10 +105,16 @@
   "dependencies": {
     "@elastic/elasticsearch": "^7.8.0",
     "@types/commander": "^2.12.2",
+    "@types/form-data": "^2.5.0",
+    "@types/fuse": "^2.6.0",
+    "@types/node-fetch": "^2.5.7",
     "@types/uuid": "^8.0.0",
     "ajv": "^6.12.3",
     "commander": "^6.0.0",
+    "form-data": "^3.0.0",
+    "fuse.js": "^6.4.1",
     "microtil": "^1.1.4",
+    "node-fetch": "^2.6.0",
     "uuid": "^8.2.0",
     "yaschva": "^1.4.0"
   }
