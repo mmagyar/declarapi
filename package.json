@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -12,6 +12,7 @@
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "type": "module",
   "sideEffects": false,
   "prepublish": "tsc",
   "repository": {
