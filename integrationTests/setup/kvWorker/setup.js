@@ -47,9 +47,11 @@ global.beforeTestCategory = {
 const delay = async (time = 100) => new Promise((resolve) => setTimeout(() => resolve(), time))
 global.afterTestCategory = {
   unauthenticated: async () => {
-    await delay()
-    await kv.client('worker').destroy((await kv.client('worker').list(undefined, undefined, allIdx.unauthenticated.index)).result.map(x => x.name))
-    return delay()
+    const toDelete = (await kv.client('worker').list(undefined, undefined, allIdx.unauthenticated.index))
+      .result.map(x => x.name)
+    if (!toDelete.length) {
+      await kv.client('worker').destroy().catch(x => console.log('Failed to clean up: ' + JSON.stringify(x)))
+    }
   },
   authenticated: async () => {
     await delay()

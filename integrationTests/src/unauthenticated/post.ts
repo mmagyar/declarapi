@@ -13,7 +13,7 @@ export const postRecords = async (post:Expressable, authInput:AuthInput, howMany
 }
 
 export const postAndGetRecordsByEmptyGet = async (post:Expressable, get: HandleType, authInput:AuthInput) => {
-  const posted = await postRecords(post, authInput)
+  const posted = await postRecords(post, authInput, 1)
   return expectGetToReturnRecords(posted, {}, get, authInput)
 }
 

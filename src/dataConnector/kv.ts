@@ -48,17 +48,19 @@ export const get = async (
 ): Promise<any> => {
   if (Array.isArray(id)) {
     if (id.length === 0) return []
-    const docs = (await Promise.all(id.map(x => client(type).get(keyId(index, x)))))
+    const docs = (await Promise.all(id.map(x => client(type).get(keyId(index, x))
+      .catch(x => { if (x.code === 404) return undefined; else throw x }))))
       .filter(x => x !== undefined)
     return filterToAccess(docs, auth, contract.manageFields)
   } else if (id) {
     const result = await client(type).get(keyId(index, id))
     if (!result) throw new RequestHandlingError('Key not found', 404)
+    /// Maybe check filtered and throw 403 when not found
     return filterToAccess([result], auth, contract.manageFields)
   } else if (search) {
     const cacheId = `${index}:$Al'kesh:${auth.sub}`
     let cached: object[]| string| undefined =
-    await client(type).get(cacheId).catch(x => { if (x.code === 404) return ''; else throw x })
+      await client(type).get(cacheId).catch(x => { if (x.code === 404) return ''; else throw x })
     if (!cached) {
       cached = await get(type, index, contract, auth)
       const value = JSON.stringify(cached)
@@ -127,7 +129,10 @@ Promise<T & any> => {
     newBody.createdBy = auth.sub
     metadata.createdBy = auth.sub
   }
-  if (await client(type).get(keyId(index, id))) throw new RequestHandlingError('Resource already exists', 409)
+  if ((await client(type).get(keyId(index, id))
+    .catch(x => { if (x.code === 404) return []; else throw x }))?.length) {
+    throw new RequestHandlingError('Resource already exists', 409)
+  }
   // TODO returned without the full id, that contains the index, or maybe always remove the index when returning?
   await client(type).put(keyId(index, id), { value: newBody, metadata })
 

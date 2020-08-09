@@ -24,12 +24,12 @@ describe('Unauthenticated schema test', () => {
       await get.expectEmptyWhenNoRecordsPresent(m.get.handle)
     })
 
-    it.only('will get empty sets when searching for text', async () => {
+    it('will get empty sets when searching for text', async () => {
       await get.expectEmptyWithTextSearch(m.get.handle)
     })
   })
 
-  describe('post', () => {
+  describe.only('post', () => {
     it('can post items and get all with empty arguments', async () => {
       await post.postAndGetRecordsByEmptyGet(m.post, m.get.handle, {})
     })

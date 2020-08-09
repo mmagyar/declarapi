@@ -5,7 +5,9 @@ import fetch, { Response, RequestInfo, RequestInit } from 'node-fetch'
 import { RequestHandlingError } from '../RequestHandlingError'
 const minInterval = 100
 const delay = async (time = 100) => new Promise((resolve) => setTimeout(() => resolve(), time))
+
 let lastCall = Date.now()
+
 const fetchLimited = async (
   url: RequestInfo,
   init?: RequestInit
@@ -27,12 +29,13 @@ const fetchWithThrow = async (
   const [errorCode, result]:[number, ResponseMeta & {result:ValueType}] =
   await fetched.then(async x => [x.status, await x.json()])
 
-  if (!result.success) {
-    console.log(result.errors, result, errorCode, url, init)
-    if (!throwOnKeyNotFound && errorCode === 404 && result.errors.find(x => x.code === 10009)) {
+  // console.log('RET', errorCode, result, init?.method, url)
+  if (errorCode !== 200 && !result.success) {
+    const errors = Array.isArray(result.errors) ? result.errors : [result]
+    if (!throwOnKeyNotFound && errorCode === 404 && errors.find(x => x.code === 10009)) {
       return undefined
     }
-    throw new RequestHandlingError(JSON.stringify(result?.errors?.length === 1 ? result.errors[0] : result.errors), errorCode)
+    throw new RequestHandlingError(JSON.stringify(errors?.length === 1 ? errors[0] : errors), errorCode)
   }
   return result
 }
@@ -80,8 +83,9 @@ const fetchWithThrow = async (
 export const workerKv = (): KV => {
   const accountIdentifier = '0de581be8fc7411dc7c3d016e152b47c'
   const namespaceIdentifier = 'bc9d1a4d70e1410f8d60a0393a39efd9'
+  const token = process.env.WORKER_VK_TOKEN
   const headers = ({
-    Authorization: 'Bearer UhwRdwQVOtfmf62UZE8R1cdSGDJpmPDrJOnK6l_r'
+    Authorization: `Bearer ${token}`
   })
   const baseUrl = 'https://api.cloudflare.com/client/v4'
   const namespaced = `${baseUrl}/accounts/${accountIdentifier}/storage/kv/namespaces/${namespaceIdentifier}`
@@ -98,16 +102,16 @@ export const workerKv = (): KV => {
   }
 
   const get = async (key:string) : Promise<ValueType | undefined> =>
-    fetchWithThrow(`${namespaced}/values/${key}`, { headers }).then(x => x.result)
+    fetchWithThrow(`${namespaced}/values/${key}`, { headers })
 
   const put = async (key:string, value:ValueType | {value:ValueType, metadata: any}, expiration?: number, expirationType: 'time' | 'ttl' = 'time'): Promise<ResponseMeta> => {
     const form = new FormData()
 
     if (typeof value === 'object') {
-      form.append('metadata', JSON.stringify(value.metadata))
-      form.append('value', value.value)
+      if (value.metadata) { form.append('metadata', JSON.stringify(value.metadata)) }
+      form.append('value', JSON.stringify(value.value))
     } else {
-      form.append('value', value)
+      form.append('value', JSON.stringify(value))
     }
 
     const params = []
