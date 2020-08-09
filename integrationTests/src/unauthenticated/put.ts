@@ -1,9 +1,9 @@
-import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
-import { postRecords } from './post'
-import { AuthInput } from '../../../src'
+import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods.js'
+import { postRecords } from './post.js'
+import { AuthInput } from '../../../src.js'
 import { generate } from 'yaschva'
-import { expectEmptyWhenNoRecordsPresent, expectGetToReturnRecords } from './get'
-import { generateForFirstTextField, removeManaged } from '../common'
+import { expectEmptyWhenNoRecordsPresent, expectGetToReturnRecords } from './get.js'
+import { generateForFirstTextField, removeManaged } from '../common.js'
 
 export const canPut = async (post:Expressable, put:Expressable, get: HandleType, authInput:AuthInput) => {
   const posted = await postRecords(post, authInput)

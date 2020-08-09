@@ -1,7 +1,9 @@
 import Ajv from 'ajv'
 import { ObjectType } from 'yaschva'
-import { Elastic, KeyValue } from '../DataDriverTypes'
-import { HttpMethods, SearchTypes } from '../globalTypes'
+import { Elastic, KeyValue } from '../DataDriverTypes.js'
+import { HttpMethods, SearchTypes } from '../globalTypes.js'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
 export type AuthType = (string | {createdBy: boolean})[] | boolean
 export type ManageableFields ={ createdBy?: boolean }
@@ -54,4 +56,4 @@ export type Output =
   | {type: 'result'; key: string; results: OutputSuccess[]; errors?: undefined;}
   | {type: 'error'; key?: undefined; errors: (Ajv.ErrorObject | string)[] | string; results?: undefined;};
 
-export const baseSchemaLocation = `${__dirname}/../../schema/`
+export const baseSchemaLocation = `${dirname(fileURLToPath(import.meta.url))}/../../schema/`

@@ -1,5 +1,5 @@
 import { ObjectType, Validation } from 'yaschva'
-import { ManageableFields, AuthType } from './transform/types'
+import { ManageableFields, AuthType } from './transform/types.js'
 
 export type HttpMethods = 'get' | 'post' | 'put' | 'patch' | 'delete';
 export type SearchTypes = 'textSearch' | 'full' | 'idOnly' | ObjectType;

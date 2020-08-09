@@ -1,8 +1,8 @@
-import { transform } from './transform'
-
+import { transform } from './transform.js'
+import { loadJSON } from '../util.js'
 describe('Generator', () => {
   it('generates basic example without error', async () => {
-    const result = await transform(require('../../example/single_example.json'))
+    const result = await transform(await loadJSON('../../example/single_example.json'))
     expect(result.errors).toBeUndefined()
     expect(result).toHaveProperty('type', 'result')
   })

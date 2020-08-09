@@ -1,5 +1,5 @@
-import { KeyValue } from '../DataDriverTypes'
-import { SearchTypes, HttpMethods } from '../globalTypes'
+import { KeyValue } from '../DataDriverTypes.js'
+import { SearchTypes, HttpMethods } from '../globalTypes.js'
 export type KVInputGet = {
   method: 'get',
   search: SearchTypes

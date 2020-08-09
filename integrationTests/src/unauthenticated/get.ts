@@ -1,6 +1,6 @@
-import { HandleType, HandleResponse, Expressable } from '../../../src/runtime/registerRestMethods'
-import { ArgumentVariations } from '../common'
-import { AuthInput } from '../../../src'
+import { HandleType, HandleResponse, Expressable } from '../../../src/runtime/registerRestMethods.js'
+import { ArgumentVariations } from '../common.js'
+import { AuthInput } from '../../../src.js'
 
 const expectEmptyResponse = (response:HandleResponse) => {
   expect(response).toHaveProperty('code', 200)

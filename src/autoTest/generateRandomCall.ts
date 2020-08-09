@@ -1,6 +1,6 @@
-import { AuthInput, ContractType } from '../globalTypes'
+import { AuthInput, ContractType } from '../globalTypes.js'
 import { generate } from 'yaschva'
-import { HandleType } from '../runtime/registerRestMethods'
+import { HandleType } from '../runtime/registerRestMethods.js'
 
 export const generateRandomCall =
  async <Input, Output>(handle:HandleType, contract:ContractType<any, any>, auth: AuthInput):

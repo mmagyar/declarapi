@@ -1,6 +1,6 @@
-import { argumentForEmpty, argumentFor404 } from '../unauthenticated/get'
-import { HandleResponse, HandleType } from '../../../src/runtime/registerRestMethods'
-import { AuthInput } from '../../../src'
+import { argumentForEmpty, argumentFor404 } from '../unauthenticated/get.js'
+import { HandleResponse, HandleType } from '../../../src/runtime/registerRestMethods.js'
+import { AuthInput } from '../../../src.js'
 
 const expect401 = (response:HandleResponse) => {
   expect(response).toHaveProperty('code', 401)

@@ -1,8 +1,8 @@
-import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
+import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods.js'
 import { AuthInput } from 'declarapi'
-import { checkedGenerate, removeManaged } from '../common'
+import { checkedGenerate, removeManaged } from '../common.js'
 import { generate } from 'yaschva'
-import { expectGetToReturnRecords, expectFirstRecordToEqual, findFirstTextFieldContent } from './get'
+import { expectGetToReturnRecords, expectFirstRecordToEqual, findFirstTextFieldContent } from './get.js'
 
 export const postRecords = async (post:Expressable, authInput:AuthInput, howMany:number = 20) => {
   const posted = (await Promise.all(

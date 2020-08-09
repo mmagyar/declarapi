@@ -1,6 +1,6 @@
-import { Output, CrudContract, Contract } from './types'
-import { transform as crudTransform } from './crud'
-import { transform as singleTransform } from './single'
+import { Output, CrudContract, Contract } from './types.js'
+import { transform as crudTransform } from './crud.js'
+import { transform as singleTransform } from './single.js'
 
 export const transform = async (contract: CrudContract | Contract | object): Promise<Output> => {
   const data: any = contract

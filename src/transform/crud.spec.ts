@@ -1,5 +1,5 @@
-import { transform } from './crud'
-import { CrudContract, CrudAuthAll, CrudAuthSome, AuthType, Output } from './types'
+import { transform } from './crud.js'
+import { CrudContract, CrudAuthAll, CrudAuthSome, AuthType, Output } from './types.js'
 describe('transform crud', () => {
   const getArgs = (result: Output, method:string) => {
     const res = result.results?.find(x => x.method === method)?.arguments

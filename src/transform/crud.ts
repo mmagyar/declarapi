@@ -1,16 +1,12 @@
 import { ValueType, ObjectType, StringType } from 'yaschva'
-import { map } from 'microtil'
-import { validate, isValidationError } from './jsonSchema'
+import microtil from 'microtil'
+import { validate, isValidationError } from './jsonSchema.js'
 import {
-  CrudContract,
-
-  CrudAuthAll,
-  CrudAuthSome, OutputSuccess, Output, baseSchemaLocation, ManageableFields
-} from './types'
-import {
-  HttpMethods,
-  SearchTypes
-} from '../globalTypes'
+  CrudContract, CrudAuthAll, CrudAuthSome,
+  OutputSuccess, Output, baseSchemaLocation, ManageableFields
+} from './types.js'
+import { HttpMethods, SearchTypes } from '../globalTypes.js'
+import { loadJSON } from '../util.js'
 
 const contractOptions = (input: ValueType | ValueType[]): ValueType[] => {
   if (Array.isArray(input)) {
@@ -28,7 +24,7 @@ const searchToType =
     } else if (search === 'textSearch') {
       return { search: ['string', '?'], id: [idType, { $array: idType }, '?'] }
     } else if (search === 'full') {
-      return map(dataType, value => contractOptions(value))
+      return microtil.map(dataType, value => contractOptions(value))
     } else if (!search) {
       return {}
     }
@@ -91,7 +87,7 @@ const isCrudAuth = (tbd: any): tbd is CrudAuthAll => tbd.post !== undefined
 const isCrudAuthSome = (tbd: any): tbd is CrudAuthSome => tbd.modify !== undefined
 const transformForPost = (tbd: any) => Array.isArray(tbd) && tbd.find(x => x.createdBy) ? true : tbd
 export const transform = async (data:CrudContract | any): Promise<Output> => {
-  const valid = await validate(require(`${baseSchemaLocation}crudContractSchema.json`), data)
+  const valid = await validate(await loadJSON(`${baseSchemaLocation}crudContractSchema.json`), data)
   if (isValidationError(valid)) return valid
 
   const contractData: CrudContract = data
@@ -145,7 +141,7 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
 
   if (contractData.methods?.patch !== false) {
     const patch: {[s: string]: ValueType | ValueType[];} =
-    { ...map(contractData.dataType, contractOptions), id: idType }
+    { ...microtil.map(contractData.dataType, contractOptions), id: idType }
     output.push(createOutput('patch', removeManaged(patch, contractData.manageFields)))
   }
 

@@ -1,5 +1,5 @@
-import { OutputSuccess } from '../transform/types'
-import { typeDef, name } from './common'
+import { OutputSuccess } from '../transform/types.js'
+import { typeDef, name } from './common.js'
 import { Validation } from 'yaschva'
 
 const getTokenDefaultPath = '../getToken'

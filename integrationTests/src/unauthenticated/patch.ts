@@ -1,9 +1,9 @@
-import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
-import { AuthInput } from '../../../src'
-import { postRecords } from './post'
-import { getFirstStringFieldName, generateForFirstTextField, removeManaged } from '../common'
+import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods.js'
+import { AuthInput } from '../../../src.js'
+import { postRecords } from './post.js'
+import { getFirstStringFieldName, generateForFirstTextField, removeManaged } from '../common.js'
 import { generate } from 'yaschva'
-import { expectGetToReturnRecords, expectEmptyWhenNoRecordsPresent } from './get'
+import { expectGetToReturnRecords, expectEmptyWhenNoRecordsPresent } from './get.js'
 
 export const canPatch = async (post:Expressable, patch:Expressable, get: HandleType, postAuth:AuthInput, patchAuth?:AuthInput) => {
   const posted = await postRecords(post, postAuth)

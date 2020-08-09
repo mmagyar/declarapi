@@ -1,9 +1,9 @@
 import { Client, ClientOptions } from '@elastic/elasticsearch'
 import { v4 as uuid } from 'uuid'
-import { HandlerAuth, ContractType } from '../globalTypes'
-import { RequestHandlingError } from '../RequestHandlingError'
+import { HandlerAuth, ContractType } from '../globalTypes.js'
+import { RequestHandlingError } from '../RequestHandlingError.js'
 import { mapFilter } from 'microtil'
-import { ManageableFields } from '../transform/types'
+import { ManageableFields } from '../transform/types.js'
 
 let clientInstance: Client | undefined
 export const client = () => clientInstance || init()

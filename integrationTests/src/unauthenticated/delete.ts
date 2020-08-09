@@ -1,7 +1,7 @@
-import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
-import { AuthInput } from '../../../src'
-import { postRecords } from './post'
-import { expectGetToReturnRecords } from './get'
+import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods.js'
+import { AuthInput } from '../../../src.js'
+import { postRecords } from './post.js'
+import { expectGetToReturnRecords } from './get.js'
 
 export const canDeleteOneOfMany = async (post:Expressable, del:Expressable, get: HandleType, authInput:AuthInput = {}) => {
   const record:any[] = await postRecords(post, authInput, 20)

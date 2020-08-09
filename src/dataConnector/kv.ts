@@ -1,12 +1,12 @@
 import { v4 as uuid } from 'uuid'
-import { HandlerAuth, ContractType } from '../globalTypes'
-import { RequestHandlingError } from '../RequestHandlingError'
-import { ManageableFields } from '../transform/types'
-import { memoryKV } from './memoryKv'
-import { KV, KVList, SuperMetaData } from './abstractKv'
+import { HandlerAuth, ContractType } from '../globalTypes.js'
+import { RequestHandlingError } from '../RequestHandlingError.js'
+import { ManageableFields } from '../transform/types.js'
+import { memoryKV } from './memoryKv.js'
+import { KV, KVList, SuperMetaData } from './abstractKv.js'
 import Fuse from 'fuse.js'
 import { ValueTypes, ObjectType, isObj, isObjectMeta, isArray } from 'yaschva'
-import workerKv from './workerKv'
+import workerKv from './workerKv.js'
 
 type WorkerCache ={memory? :KV, worker?: KV}
 type WorkerTypes = keyof WorkerCache

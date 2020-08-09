@@ -1,8 +1,9 @@
-import { validate, isValidationError } from './jsonSchema'
-import { Contract, Output, baseSchemaLocation } from './types'
+import { validate, isValidationError } from './jsonSchema.js'
+import { Contract, Output, baseSchemaLocation } from './types.js'
+import { loadJSON } from '../util.js'
 
 export const transform = async (data:Contract | any): Promise<Output> => {
-  const valid = await validate(require(`${baseSchemaLocation}singleContractSchema.json`), data)
+  const valid = await validate(await loadJSON(`${baseSchemaLocation}singleContractSchema.json`), data)
   if (isValidationError(valid)) return valid
   const contractData: Contract = data
   return {

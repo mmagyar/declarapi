@@ -1,7 +1,7 @@
-import { KVList, ResponseMeta, KV, ValueType } from './abstractKv'
+import { KVList, ResponseMeta, KV, ValueType } from './abstractKv.js'
 import FormData from 'form-data'
 import fetch, { Response, RequestInfo, RequestInit } from 'node-fetch'
-import { RequestHandlingError } from '../RequestHandlingError'
+import { RequestHandlingError } from '../RequestHandlingError.js'
 
 const delay = async (time = 1000) => new Promise((resolve) => setTimeout(() => resolve(), time))
 

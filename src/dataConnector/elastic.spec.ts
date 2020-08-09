@@ -1,6 +1,6 @@
-import { init, post, del, client, patch, get, defaultSize, destroyClient, info } from './elastic'
+import { init, post, del, client, patch, get, defaultSize, destroyClient, info } from './elastic.js'
 import { Client } from '@elastic/elasticsearch'
-import { ContractType } from '../globalTypes'
+import { ContractType } from '../globalTypes.js'
 jest.mock('@elastic/elasticsearch', () => {
   class ClientMock {
     update = jest.fn()

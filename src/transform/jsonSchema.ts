@@ -1,7 +1,8 @@
 import Ajv, { ErrorObject } from 'ajv'
+import { loadJSON } from '../util.js'
 export const jsonValidatorInit = () => {
   return new Ajv({
-    loadSchema: async (uri: any) => require(uri.replace('node_modules/', ''))
+    loadSchema: async (uri: any) => loadJSON(uri) // uri.replace('node_modules/', ''))
   })
 }
 

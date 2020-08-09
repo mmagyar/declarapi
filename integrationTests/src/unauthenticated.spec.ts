@@ -1,9 +1,9 @@
-import * as get from './unauthenticated/get'
-import * as post from './unauthenticated/post'
-import * as put from './unauthenticated/put'
-import * as patch from './unauthenticated/patch'
-import * as uaDel from './unauthenticated/delete'
-import { Contracts } from './common'
+import * as get from './unauthenticated/get.js'
+import * as post from './unauthenticated/post.js'
+import * as put from './unauthenticated/put.js'
+import * as patch from './unauthenticated/patch.js'
+import * as uaDel from './unauthenticated/delete.js'
+import { Contracts } from './common.js'
 
 let m:Contracts
 

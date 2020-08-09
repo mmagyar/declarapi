@@ -1,6 +1,6 @@
-import registerRestMethods, { reqType } from './registerRestMethods'
-import { ContractWithValidatedHandler, ContractResult, ContractResultError, ContractResultSuccess } from './contractValidation'
-import { AuthInput } from '../globalTypes'
+import registerRestMethods, { reqType } from './registerRestMethods.js'
+import { ContractWithValidatedHandler, ContractResult, ContractResultError, ContractResultSuccess } from './contractValidation.js'
+import { AuthInput } from '../globalTypes.js'
 describe('registerRestMethods', () => {
   const input = ():ContractWithValidatedHandler => ({
     test: {

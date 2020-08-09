@@ -1,5 +1,5 @@
-import server from './server'
-import { OutputSuccess } from '../transform/types'
+import server from './server.js'
+import { OutputSuccess } from '../transform/types.js'
 describe('Generate typing and fetch function for server', () => {
   const singleExample = (): OutputSuccess[] => [
     {

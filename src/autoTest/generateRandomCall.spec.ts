@@ -1,7 +1,7 @@
-import { generateRandomCall } from './generateRandomCall'
-import { } from '../globalTypes'
+import { generateRandomCall } from './generateRandomCall.js'
+import { } from '../globalTypes.js'
 import { validate } from 'yaschva'
-import { Expressable } from '../runtime/registerRestMethods'
+import { Expressable } from '../runtime/registerRestMethods.js'
 describe('generateRandomCall', () => {
   const auth = { }
   const input = ():Expressable => ({

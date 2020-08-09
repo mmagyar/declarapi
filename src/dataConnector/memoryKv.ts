@@ -1,4 +1,4 @@
-import { KVList, ResponseMeta, SuperMetaData, KV, ValueType } from './abstractKv'
+import { KVList, ResponseMeta, SuperMetaData, KV, ValueType } from './abstractKv.js'
 
 export const memoryKV = (): KV => {
   const db = new Map<string, string>()

@@ -1,5 +1,5 @@
-import { addValidationToContract, isContractInError } from './contractValidation'
-import { ContractType } from '../globalTypes'
+import { addValidationToContract, isContractInError } from './contractValidation.js'
+import { ContractType } from '../globalTypes.js'
 describe('contractProcessor', () => {
   const auth = { authentication: false }
   const input: ()=>{test: ContractType<{a:string}, {b:string}>} = () => ({

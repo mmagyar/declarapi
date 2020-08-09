@@ -1,7 +1,7 @@
-import { ContractResult, ContractWithValidatedHandler, isContractInError } from './contractValidation'
+import { ContractResult, ContractWithValidatedHandler, isContractInError } from './contractValidation.js'
 import { ValidationResult } from 'yaschva'
 import { map } from 'microtil'
-import { HttpMethods, AuthInput, ContractType } from '../globalTypes'
+import { HttpMethods, AuthInput, ContractType } from '../globalTypes.js'
 
 export type ErrorResponse ={
   errorType: string; data: any; code: number; errors: ValidationResult| string[];}

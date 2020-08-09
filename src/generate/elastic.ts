@@ -1,5 +1,5 @@
-import { Elastic } from '../DataDriverTypes'
-import { SearchTypes, HttpMethods } from '../globalTypes'
+import { Elastic } from '../DataDriverTypes.js'
+import { SearchTypes, HttpMethods } from '../globalTypes.js'
 export type ElasticInputGet = {
   method: 'get',
   search: SearchTypes

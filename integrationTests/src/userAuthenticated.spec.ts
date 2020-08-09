@@ -1,16 +1,16 @@
-import { AuthInput } from '../../src/globalTypes'
-import { Contracts } from './common'
+import { AuthInput } from '../../src/globalTypes.js'
+import { Contracts } from './common.js'
 
-import * as get from './unauthenticated/get'
-import * as post from './unauthenticated/post'
-import * as put from './unauthenticated/put'
-import * as patch from './unauthenticated/patch'
-import * as uaDel from './unauthenticated/delete'
+import * as get from './unauthenticated/get.js'
+import * as post from './unauthenticated/post.js'
+import * as put from './unauthenticated/put.js'
+import * as patch from './unauthenticated/patch.js'
+import * as uaDel from './unauthenticated/delete.js'
 
-import * as authGet from './authenticated/get'
-import * as authPatch from './authenticated/patch'
-import * as authPut from './authenticated/put'
-import * as authDel from './authenticated/delete'
+import * as authGet from './authenticated/get.js'
+import * as authPatch from './authenticated/patch.js'
+import * as authPut from './authenticated/put.js'
+import * as authDel from './authenticated/delete.js'
 
 let m:Contracts
 

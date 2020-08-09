@@ -1,7 +1,7 @@
-import { OutputSuccess } from '../transform/types'
-import elasticCodeGen, { ElasticInputType } from './elastic'
-import { name, typeDef } from './common'
-import { kvCodeGen } from './kv'
+import { OutputSuccess } from '../transform/types.js'
+import elasticCodeGen, { ElasticInputType } from './elastic.js'
+import { name, typeDef } from './common.js'
+import { kvCodeGen } from './kv.js'
 
 export const server = (contracts: OutputSuccess[]): string => {
   const valueDef = contracts.map(x => {
