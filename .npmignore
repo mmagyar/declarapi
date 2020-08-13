@@ -1,0 +1,9 @@
+CNAME
+.editorconfig
+_config.yml
+node_modules
+.vscode
+.github
+*.tgz
+.gitignore
+.npmignore
