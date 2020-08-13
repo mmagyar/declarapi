@@ -8,7 +8,7 @@ Object {
       "arguments": Object {},
       "authentication": false,
       "manageFields": Object {},
-      "method": "get",
+      "method": "GET",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -31,7 +31,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "post",
+      "method": "POST",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -49,7 +49,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "put",
+      "method": "PUT",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -73,7 +73,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "patch",
+      "method": "PATCH",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -94,7 +94,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "delete",
+      "method": "DELETE",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -121,7 +121,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "get",
+      "method": "GET",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -146,7 +146,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "post",
+      "method": "POST",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -166,7 +166,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "put",
+      "method": "PUT",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -192,7 +192,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "patch",
+      "method": "PATCH",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -215,7 +215,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "delete",
+      "method": "DELETE",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -254,7 +254,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "get",
+      "method": "GET",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -277,7 +277,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "post",
+      "method": "POST",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -295,7 +295,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "put",
+      "method": "PUT",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -319,7 +319,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "patch",
+      "method": "PATCH",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -340,7 +340,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "delete",
+      "method": "DELETE",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -373,7 +373,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "get",
+      "method": "GET",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -396,7 +396,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "post",
+      "method": "POST",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -414,7 +414,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "put",
+      "method": "PUT",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -438,7 +438,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "patch",
+      "method": "PATCH",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -459,7 +459,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "delete",
+      "method": "DELETE",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -497,7 +497,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "get",
+      "method": "GET",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -520,7 +520,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "post",
+      "method": "POST",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -538,7 +538,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "put",
+      "method": "PUT",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -562,7 +562,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "patch",
+      "method": "PATCH",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {
@@ -583,7 +583,7 @@ Object {
       },
       "authentication": false,
       "manageFields": Object {},
-      "method": "delete",
+      "method": "DELETE",
       "name": "test",
       "preferredImplementation": undefined,
       "returns": Object {

@@ -1,17 +1,17 @@
 import { Elastic } from '../DataDriverTypes'
-import { SearchTypes, HttpMethods } from '../globalTypes'
+import { SearchTypes, HttpMethods } from 'declarapi-runtime'
 export type ElasticInputGet = {
-  method: 'get',
+  method: 'GET',
   search: SearchTypes
 }
 export type ElasticInputBase = { method: HttpMethods, search? :SearchTypes}
 export type ElasticInputType = ElasticInputBase & (ElasticInputGet | {
-  method: 'post' | 'put' | 'patch' | 'delete',
+  method: 'POST' | 'PUT' | 'PATCH' | 'DELETE',
 })
 export const elasticCodeGen = (driver: Elastic, input: ElasticInputType):string => {
   const { index } = driver
   switch (input.method) {
-    case 'get': {
+    case 'GET': {
       if (input.search === 'textSearch') {
         return `(input, auth, contract) => elastic.get("${index}", contract, auth, input && input.id, input && input.search)`
       } else if (input.search === 'idOnly') {
@@ -21,10 +21,10 @@ export const elasticCodeGen = (driver: Elastic, input: ElasticInputType):string 
       }
       throw new Error(`Unsupported automatic elasticsearch methods: ${JSON.stringify(input.search)}`)
     }
-    case 'post': return `(input, auth, contract) => elastic.post("${index}", contract, auth, input)`
-    case 'patch': return `(input, auth, contract) => elastic.patch("${index}", contract, auth, input, input.id)`
-    case 'put': return `(input, auth, contract) => elastic.put("${index}", contract, auth, input, input.id)`
-    case 'delete': return `(input, auth, contract) => elastic.del("${index}", contract, auth, input.id)`
+    case 'POST': return `(input, auth, contract) => elastic.post("${index}", contract, auth, input)`
+    case 'PATCH': return `(input, auth, contract) => elastic.patch("${index}", contract, auth, input, input.id)`
+    case 'PUT': return `(input, auth, contract) => elastic.put("${index}", contract, auth, input, input.id)`
+    case 'DELETE': return `(input, auth, contract) => elastic.del("${index}", contract, auth, input.id)`
   }
 }
 

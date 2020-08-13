@@ -1,5 +1,5 @@
-import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
-import { AuthInput } from '../../../src'
+import { Expressable, HandleType } from 'declarapi-runtime/registerRestMethods'
+import { AuthInput } from 'declarapi-runtime'
 import { postRecords } from './post'
 import { expectGetToReturnRecords } from './get'
 

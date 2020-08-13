@@ -1,6 +1,6 @@
 
 const path = require('path')
-const { kv, registerRestMethods, addValidationToContract } = require('../../../src/index')
+const { kv, registerRestMethods, addValidationToContract } = require('declarapi-runtime')
 const { generateContract, getMethods } = require('../../src/common')
 require('util').inspect.defaultOptions = { depth: 15 }
 
@@ -18,6 +18,7 @@ const methodsFor = (fileName) => getMethods(
   registerRestMethods(
     addValidationToContract(
       require('../../temp/' + fileName).contracts)))
+
 global.beforeAll(async () => {
   await generateContract(schemaFilePath, 'test-elastic', (input) =>
     ({ ...input, preferredImplementation: allIdx.unauthenticated }))

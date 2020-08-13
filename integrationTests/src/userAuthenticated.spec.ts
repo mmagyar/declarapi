@@ -1,4 +1,4 @@
-import { AuthInput } from '../../src/globalTypes'
+import { AuthInput } from 'declarapi-runtime'
 import { Contracts } from './common'
 
 import * as get from './unauthenticated/get'
@@ -41,7 +41,7 @@ describe('user authentication schema test', () => {
       })
     })
 
-    describe('post', () => {
+    describe('POST', () => {
       it('can post items and get all with empty arguments', async () => {
         await post.postAndGetRecordsByEmptyGet(m.post, m.get.handle, auth)
       })
@@ -84,7 +84,7 @@ describe('user authentication schema test', () => {
       })
     })
 
-    describe('patch', () => {
+    describe('PATCH', () => {
       it('can patch item and verify that only that one record changed', async () => {
         await patch.canPatch(m.post, m.patch, m.get.handle, auth)
       })
@@ -102,7 +102,7 @@ describe('user authentication schema test', () => {
       })
     })
 
-    describe('put', () => {
+    describe('PUT', () => {
       it('can put item and verify that only that one record changed', async () => {
         await put.canPut(m.post, m.put, m.get.handle, auth)
       })
@@ -124,7 +124,7 @@ describe('user authentication schema test', () => {
       })
     })
 
-    describe('delete', () => {
+    describe('DELETE', () => {
       it('can delete one of many', async () => {
         await uaDel.canDeleteOneOfMany(m.post, m.del, m.get.handle, auth)
       })
@@ -145,7 +145,7 @@ describe('user authentication schema test', () => {
       })
     })
 
-    describe('post', () => {
+    describe('POST', () => {
       it('Unauthenticated user can\'t access the post endpoint, error 401', async () => {
         let err:any
         try { await post.postRecords(m.post, {}) } catch (e) {
@@ -176,7 +176,7 @@ describe('user authentication schema test', () => {
       })
     })
 
-    describe('patch', () => {
+    describe('PATCH', () => {
       it('Authenticated but not authorized user gets 403', async () => {
         await authPatch.cantPatch(m.post, m.patch, m.get.handle, auth, unAuthorized)
       })
@@ -185,7 +185,7 @@ describe('user authentication schema test', () => {
       })
     })
 
-    describe('put', () => {
+    describe('PUT', () => {
       it('Authenticated but not authorized user gets 403', async () => {
         await authPut.cantPut(m.post, m.put, m.get.handle, auth, unAuthorized)
       })
@@ -195,7 +195,7 @@ describe('user authentication schema test', () => {
       })
     })
 
-    describe('delete', () => {
+    describe('DELETE', () => {
       it('can not delete other users records', async () => {
         await authDel.cantDeleteOneOfMany(m.post, m.del, m.get.handle, auth, unAuthorized)
       })

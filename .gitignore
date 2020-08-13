@@ -3,7 +3,8 @@ node_modules
 integrationTests/dist
 integrationTests/coverage
 integrationTests/temp/*.ts
-
+/dist
+/lib
 /node_modules
 /.pnp
 .pnp.js

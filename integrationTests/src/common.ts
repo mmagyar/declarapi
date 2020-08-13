@@ -1,6 +1,6 @@
-import { AuthInput } from '../../src/globalTypes'
-import { generateRandomCall } from '../../src/index'
-import { Expressable } from '../../src/runtime/registerRestMethods'
+import { AuthInput } from 'declarapi-runtime'
+import { generateRandomCall } from '../../src/autoTest/generateRandomCall'
+import { Expressable } from 'declarapi-runtime/registerRestMethods'
 import { CrudContract, ManageableFields } from '../../src/transform/types'
 import { promises as fs } from 'fs'
 import { generate, writeFile } from '../../src/bin/generate'
@@ -82,11 +82,11 @@ export const generateForFirstTextField = (record:any, validation:Validation) => 
 
 export type Contracts = {get:Expressable, post:Expressable, patch:Expressable, put:Expressable, del:Expressable}
 export const getMethods = (contract:any):Contracts => ({
-  get: contract.find((x:Expressable) => x.method === 'get'),
-  post: contract.find((x:Expressable) => x.method === 'post'),
-  patch: contract.find((x:Expressable) => x.method === 'patch'),
-  put: contract.find((x:Expressable) => x.method === 'put'),
-  del: contract.find((x:Expressable) => x.method === 'delete')
+  get: contract.find((x:Expressable) => x.method === 'GET'),
+  post: contract.find((x:Expressable) => x.method === 'POST'),
+  patch: contract.find((x:Expressable) => x.method === 'PATCH'),
+  put: contract.find((x:Expressable) => x.method === 'PUT'),
+  del: contract.find((x:Expressable) => x.method === 'DELETE')
 })
 
 export const removeManaged = <T extends object>(removeFrom:T, manageFields:ManageableFields):T => {

@@ -8,9 +8,11 @@
   "roots": [
     "<rootDir>../../src"
   ],
-  "moduleNameMapper": {
-    "declarapi$": "<rootDir>/../../../src"
-  },
+    "moduleNameMapper": {
+      "yaschva$": "yaschva/cjs",
+      "microtil$": "microtil/cjs",
+      "declarapi-runtime$": "declarapi-runtime/cjs"
+    }  ,
   "transform": {
     "^.+\\.tsx?$": "ts-jest"
   },

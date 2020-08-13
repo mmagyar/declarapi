@@ -6,7 +6,7 @@ describe('Generate typing and fetch function for client', () => {
       name: 'test',
       authentication: false,
       manageFields: {},
-      method: 'get',
+      method: 'GET',
       arguments: { myNumber: 'number' },
       returns: {}
     }
@@ -14,7 +14,7 @@ describe('Generate typing and fetch function for client', () => {
 
   const crudExample = (): OutputSuccess[] => [
     {
-      method: 'get',
+      method: 'GET',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -22,7 +22,7 @@ describe('Generate typing and fetch function for client', () => {
       returns: { $array: { id: 'string', myNumber: 'number' } }
     },
     {
-      method: 'post',
+      method: 'POST',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -30,7 +30,7 @@ describe('Generate typing and fetch function for client', () => {
       returns: { id: 'string', myNumber: 'number' }
     },
     {
-      method: 'put',
+      method: 'PUT',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -38,7 +38,7 @@ describe('Generate typing and fetch function for client', () => {
       returns: { id: 'string', myNumber: 'number' }
     },
     {
-      method: 'patch',
+      method: 'PATCH',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -46,7 +46,7 @@ describe('Generate typing and fetch function for client', () => {
       returns: { id: 'string', myNumber: 'number' }
     },
     {
-      method: 'delete',
+      method: 'DELETE',
       name: 'test',
       authentication: false,
       manageFields: {},

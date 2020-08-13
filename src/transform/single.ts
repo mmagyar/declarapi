@@ -13,7 +13,7 @@ export const transform = async (data:Contract | any): Promise<Output> => {
         name: contractData.name,
         authentication: contractData.authentication,
         manageFields: {},
-        method: contractData.type || 'get',
+        method: contractData.type || 'GET',
         arguments: data.arguments,
         returns: data.returns
       }

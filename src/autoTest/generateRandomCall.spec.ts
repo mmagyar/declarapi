@@ -1,17 +1,17 @@
 import { generateRandomCall } from './generateRandomCall'
-import { } from '../globalTypes'
+import { } from 'declarapi-runtime'
 import { validate } from 'yaschva'
-import { Expressable } from '../runtime/registerRestMethods'
+import { Expressable } from 'declarapi-runtime/registerRestMethods'
 describe('generateRandomCall', () => {
   const auth = { }
   const input = ():Expressable => ({
-    method: 'post',
+    method: 'POST',
     route: '/',
     handle: jest.fn(),
     handler: jest.fn(),
     contract: {
       name: 'test',
-      type: 'post',
+      type: 'POST',
       authentication: false,
       manageFields: {},
       arguments: {

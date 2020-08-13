@@ -24,37 +24,37 @@ exports[`Generate typing and fetch function for client Can set the import path f
     export const contracts: {[key:string]:{
       name:string, type:string, authentication:any,
       arguments: Validation, returns:Validation}} =
-        deepFreeze({testGet: {
+        deepFreeze({testGET: {
     name: \\"test\\",
     authentication: false,
-    type: \\"get\\",
+    type: \\"GET\\",
     arguments: {\\"myNumber\\":\\"number\\"},
     returns: {}}});
 
-    /** test types for get method **/
-export type testGetArgument = { myNumber: number }
-export type testGetReturns = {  } | undefined
+    /** test types for GET method **/
+export type testGETArgument = { myNumber: number }
+export type testGETReturns = {  } | undefined
 
-    export const testGet =
-      async (input: testGetArgument,
+    export const testGET =
+      async (input: testGETArgument,
         signal: AbortSignal | undefined = undefined):
-       Promise<testGetReturns> => {
+       Promise<testGETReturns> => {
 
-    const valid = validate(contracts.testGet.arguments, input);
+    const valid = validate(contracts.testGET.arguments, input);
       if (valid.result === \\"fail\\") throw valid;
     return fetch(\`/api/test?\${serialize(input || {})}\`, {
-      method: \\"get\\",
+      method: \\"GET\\",
       headers: await defaultHeader(),
       body: undefined,
       signal
     }).then(x=> x.json())
     .then(x=> {
       if(x.errorType){throw x}
-      const r = validate(contracts.testGet.returns, x);
+      const r = validate(contracts.testGET.returns, x);
       if(r.result ===\\"fail\\") throw r; return x})
 };
 
-    export const functions = {testGet: testGet}
+    export const functions = {testGET: testGET}
   "
 `;
 
@@ -82,149 +82,149 @@ exports[`Generate typing and fetch function for client Generates crud example wi
     export const contracts: {[key:string]:{
       name:string, type:string, authentication:any,
       arguments: Validation, returns:Validation}} =
-        deepFreeze({testGet: {
+        deepFreeze({testGET: {
     name: \\"test\\",
     authentication: false,
-    type: \\"get\\",
+    type: \\"GET\\",
     arguments: {\\"search\\":[\\"string\\",\\"?\\"],\\"id\\":[\\"string\\",{\\"$array\\":\\"string\\"},\\"?\\"]},
-    returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}},testPost: {
+    returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}},testPOST: {
     name: \\"test\\",
     authentication: false,
-    type: \\"post\\",
+    type: \\"POST\\",
     arguments: {\\"id\\":[\\"string\\",\\"?\\"],\\"myNumber\\":\\"number\\"},
-    returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},testPut: {
+    returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},testPUT: {
     name: \\"test\\",
     authentication: false,
-    type: \\"put\\",
+    type: \\"PUT\\",
     arguments: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"},
-    returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},testPatch: {
+    returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},testPATCH: {
     name: \\"test\\",
     authentication: false,
-    type: \\"patch\\",
+    type: \\"PATCH\\",
     arguments: {\\"id\\":\\"string\\",\\"myNumber\\":[\\"number\\",\\"?\\"]},
-    returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},testDelete: {
+    returns: {\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}},testDELETE: {
     name: \\"test\\",
     authentication: false,
-    type: \\"delete\\",
+    type: \\"DELETE\\",
     arguments: {\\"id\\":[\\"string\\",{\\"$array\\":\\"string\\"}]},
     returns: {\\"$array\\":{\\"id\\":\\"string\\",\\"myNumber\\":\\"number\\"}}}});
 
-    /** test types for get method **/
-export type testGetArgument = { search?: string | undefined; id?: string | string[] | undefined } | undefined
-export type testGetReturns = { id: string; myNumber: number }[]
+    /** test types for GET method **/
+export type testGETArgument = { search?: string | undefined; id?: string | string[] | undefined } | undefined
+export type testGETReturns = { id: string; myNumber: number }[]
 
-/** test types for post method **/
-export type testPostArgument = { id?: string | undefined; myNumber: number }
-export type testPostReturns = { id: string; myNumber: number }
+/** test types for POST method **/
+export type testPOSTArgument = { id?: string | undefined; myNumber: number }
+export type testPOSTReturns = { id: string; myNumber: number }
 
-/** test types for put method **/
-export type testPutArgument = { id: string; myNumber: number }
-export type testPutReturns = { id: string; myNumber: number }
+/** test types for PUT method **/
+export type testPUTArgument = { id: string; myNumber: number }
+export type testPUTReturns = { id: string; myNumber: number }
 
-/** test types for patch method **/
-export type testPatchArgument = { id: string; myNumber?: number | undefined }
-export type testPatchReturns = { id: string; myNumber: number }
+/** test types for PATCH method **/
+export type testPATCHArgument = { id: string; myNumber?: number | undefined }
+export type testPATCHReturns = { id: string; myNumber: number }
 
-/** test types for delete method **/
-export type testDeleteArgument = { id: string | string[] }
-export type testDeleteReturns = { id: string; myNumber: number }[]
+/** test types for DELETE method **/
+export type testDELETEArgument = { id: string | string[] }
+export type testDELETEReturns = { id: string; myNumber: number }[]
 
-    export const testGet =
-      async (input: testGetArgument = {},
+    export const testGET =
+      async (input: testGETArgument = {},
         signal: AbortSignal | undefined = undefined):
-       Promise<testGetReturns> => {
+       Promise<testGETReturns> => {
 
-    const valid = validate(contracts.testGet.arguments, input);
+    const valid = validate(contracts.testGET.arguments, input);
       if (valid.result === \\"fail\\") throw valid;
     return fetch(\`/api/test?\${serialize(input || {})}\`, {
-      method: \\"get\\",
+      method: \\"GET\\",
       headers: await defaultHeader(),
       body: undefined,
       signal
     }).then(x=> x.json())
     .then(x=> {
       if(x.errorType){throw x}
-      const r = validate(contracts.testGet.returns, x);
+      const r = validate(contracts.testGET.returns, x);
       if(r.result ===\\"fail\\") throw r; return x})
 };
 
-export const testPost =
-      async (input: testPostArgument,
+export const testPOST =
+      async (input: testPOSTArgument,
         signal: AbortSignal | undefined = undefined):
-       Promise<testPostReturns> => {
+       Promise<testPOSTReturns> => {
 
-    const valid = validate(contracts.testPost.arguments, input);
+    const valid = validate(contracts.testPOST.arguments, input);
       if (valid.result === \\"fail\\") throw valid;
     return fetch(\\"/api/test\\", {
-      method: \\"post\\",
+      method: \\"POST\\",
       headers: await defaultHeader(),
       body: JSON.stringify(input),
       signal
     }).then(x=> x.json())
     .then(x=> {
       if(x.errorType){throw x}
-      const r = validate(contracts.testPost.returns, x);
+      const r = validate(contracts.testPOST.returns, x);
       if(r.result ===\\"fail\\") throw r; return x})
 };
 
-export const testPut =
-      async (input: testPutArgument,
+export const testPUT =
+      async (input: testPUTArgument,
         signal: AbortSignal | undefined = undefined):
-       Promise<testPutReturns> => {
+       Promise<testPUTReturns> => {
 
-    const valid = validate(contracts.testPut.arguments, input);
+    const valid = validate(contracts.testPUT.arguments, input);
       if (valid.result === \\"fail\\") throw valid;
     return fetch(\\"/api/test\\", {
-      method: \\"put\\",
+      method: \\"PUT\\",
       headers: await defaultHeader(),
       body: JSON.stringify(input),
       signal
     }).then(x=> x.json())
     .then(x=> {
       if(x.errorType){throw x}
-      const r = validate(contracts.testPut.returns, x);
+      const r = validate(contracts.testPUT.returns, x);
       if(r.result ===\\"fail\\") throw r; return x})
 };
 
-export const testPatch =
-      async (input: testPatchArgument,
+export const testPATCH =
+      async (input: testPATCHArgument,
         signal: AbortSignal | undefined = undefined):
-       Promise<testPatchReturns> => {
+       Promise<testPATCHReturns> => {
 
-    const valid = validate(contracts.testPatch.arguments, input);
+    const valid = validate(contracts.testPATCH.arguments, input);
       if (valid.result === \\"fail\\") throw valid;
     return fetch(\\"/api/test\\", {
-      method: \\"patch\\",
+      method: \\"PATCH\\",
       headers: await defaultHeader(),
       body: JSON.stringify(input),
       signal
     }).then(x=> x.json())
     .then(x=> {
       if(x.errorType){throw x}
-      const r = validate(contracts.testPatch.returns, x);
+      const r = validate(contracts.testPATCH.returns, x);
       if(r.result ===\\"fail\\") throw r; return x})
 };
 
-export const testDelete =
-      async (input: testDeleteArgument,
+export const testDELETE =
+      async (input: testDELETEArgument,
         signal: AbortSignal | undefined = undefined):
-       Promise<testDeleteReturns> => {
+       Promise<testDELETEReturns> => {
 
-    const valid = validate(contracts.testDelete.arguments, input);
+    const valid = validate(contracts.testDELETE.arguments, input);
       if (valid.result === \\"fail\\") throw valid;
     return fetch(\\"/api/test\\", {
-      method: \\"delete\\",
+      method: \\"DELETE\\",
       headers: await defaultHeader(),
       body: JSON.stringify(input),
       signal
     }).then(x=> x.json())
     .then(x=> {
       if(x.errorType){throw x}
-      const r = validate(contracts.testDelete.returns, x);
+      const r = validate(contracts.testDELETE.returns, x);
       if(r.result ===\\"fail\\") throw r; return x})
 };
 
-    export const functions = {testGet: testGet,testPost: testPost,testPut: testPut,testPatch: testPatch,testDelete: testDelete}
+    export const functions = {testGET: testGET,testPOST: testPOST,testPUT: testPUT,testPATCH: testPATCH,testDELETE: testDELETE}
   "
 `;
 
@@ -252,36 +252,36 @@ exports[`Generate typing and fetch function for client Generates single example 
     export const contracts: {[key:string]:{
       name:string, type:string, authentication:any,
       arguments: Validation, returns:Validation}} =
-        deepFreeze({testGet: {
+        deepFreeze({testGET: {
     name: \\"test\\",
     authentication: false,
-    type: \\"get\\",
+    type: \\"GET\\",
     arguments: {\\"myNumber\\":\\"number\\"},
     returns: {}}});
 
-    /** test types for get method **/
-export type testGetArgument = { myNumber: number }
-export type testGetReturns = {  } | undefined
+    /** test types for GET method **/
+export type testGETArgument = { myNumber: number }
+export type testGETReturns = {  } | undefined
 
-    export const testGet =
-      async (input: testGetArgument,
+    export const testGET =
+      async (input: testGETArgument,
         signal: AbortSignal | undefined = undefined):
-       Promise<testGetReturns> => {
+       Promise<testGETReturns> => {
 
-    const valid = validate(contracts.testGet.arguments, input);
+    const valid = validate(contracts.testGET.arguments, input);
       if (valid.result === \\"fail\\") throw valid;
     return fetch(\`/api/test?\${serialize(input || {})}\`, {
-      method: \\"get\\",
+      method: \\"GET\\",
       headers: await defaultHeader(),
       body: undefined,
       signal
     }).then(x=> x.json())
     .then(x=> {
       if(x.errorType){throw x}
-      const r = validate(contracts.testGet.returns, x);
+      const r = validate(contracts.testGET.returns, x);
       if(r.result ===\\"fail\\") throw r; return x})
 };
 
-    export const functions = {testGet: testGet}
+    export const functions = {testGET: testGET}
   "
 `;
