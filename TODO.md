@@ -2,6 +2,7 @@
 - Enable schema to be defined in ts or js file
 - Example for serverless deployment
 - Add option to automatically add optional ordering to get requests
+- Pagination
 - Additional Data connectors
 - - SQL
 - - Other data storage solutions
