@@ -26,7 +26,7 @@ describe('Generator', () => {
           name: 'test',
           authentication: false,
           manageFields: {},
-          method: 'get',
+          method: 'GET',
           arguments: {
             myNumber: 'number'
           },

@@ -1,10 +1,10 @@
 import registerRestMethods, { reqType } from './registerRestMethods'
 import { ContractWithValidatedHandler, ContractResult, ContractResultError, ContractResultSuccess } from './contractValidation'
-import { AuthInput } from '../globalTypes'
+import { AuthInput } from 'declarapi-runtime'
 describe('registerRestMethods', () => {
   const input = ():ContractWithValidatedHandler => ({
     test: {
-      contract: { name: 'test', authentication: false, manageFields: {}, arguments: {}, returns: {}, type: 'get' },
+      contract: { name: 'test', authentication: false, manageFields: {}, arguments: {}, returns: {}, type: 'GET' },
       handle: async (data: { a: string }): Promise<ContractResult> =>
         ({ result: { ...data } })
     }
@@ -12,7 +12,7 @@ describe('registerRestMethods', () => {
   it('transforms correctly', () => {
     const result = registerRestMethods(input())
     expect(result[0].route).toBe('/api/test/:id?')
-    expect(result[0].method).toBe('get')
+    expect(result[0].method).toBe('GET')
     expect(typeof result[0].handler).toBe('function')
   })
 
@@ -149,7 +149,7 @@ describe('registerRestMethods', () => {
 
   it('uses req.body for it\'s arguments on non get methods (post)', async () => {
     const data = input()
-    data.test.contract.type = 'post'
+    data.test.contract.type = 'POST'
     const result = registerRestMethods(data)
     const res = resMock()
     await result[0].handler(reqMock(undefined, { a: 'sadf' }), res.chainedMock)

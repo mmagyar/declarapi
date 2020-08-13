@@ -1,6 +1,6 @@
 import { Client, ClientOptions } from '@elastic/elasticsearch'
 import { v4 as uuid } from 'uuid'
-import { HandlerAuth, ContractType } from '../globalTypes'
+import { HandlerAuth, ContractType } from 'declarapi-runtime'
 import { RequestHandlingError } from '../RequestHandlingError'
 import { mapFilter } from 'microtil'
 import { ManageableFields } from '../transform/types'

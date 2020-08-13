@@ -29,7 +29,7 @@ describe('Unauthenticated schema test', () => {
     })
   })
 
-  describe('post', () => {
+  describe('POST', () => {
     it('can post items and get all with empty arguments', async () => {
       await post.postAndGetRecordsByEmptyGet(m.post, m.get.handle, {})
     })
@@ -72,7 +72,7 @@ describe('Unauthenticated schema test', () => {
     })
   })
 
-  describe('patch', () => {
+  describe('PATCH', () => {
     it('can patch item and verify that only that one record changed', async () => {
       await patch.canPatch(m.post, m.patch, m.get.handle, {})
     })
@@ -90,7 +90,7 @@ describe('Unauthenticated schema test', () => {
     })
   })
 
-  describe('put', () => {
+  describe('PUT', () => {
     it('can put item and verify that only that one record changed', async () => {
       await put.canPut(m.post, m.put, m.get.handle, {})
     })
@@ -112,7 +112,7 @@ describe('Unauthenticated schema test', () => {
     })
   })
 
-  describe('delete', () => {
+  describe('DELETE', () => {
     it('can delete one of many', async () => {
       await uaDel.canDeleteOneOfMany(m.post, m.del, m.get.handle)
     })

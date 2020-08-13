@@ -10,7 +10,7 @@ import {
 import {
   HttpMethods,
   SearchTypes
-} from '../globalTypes'
+} from 'declarapi-runtime'
 
 const contractOptions = (input: ValueType | ValueType[]): ValueType[] => {
   if (Array.isArray(input)) {
@@ -99,11 +99,11 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
   const au = contractData.authentication
 
   const auth = {
-    get: isCrudAuth(au) ? au.get : (isCrudAuthSome(au) ? au.get : au),
-    post: isCrudAuth(au) ? au.post : transformForPost((isCrudAuthSome(au) ? au.modify : au)),
-    put: isCrudAuth(au) ? au.put : (isCrudAuthSome(au) ? au.modify : au),
-    patch: isCrudAuth(au) ? au.put : (isCrudAuthSome(au) ? au.modify : au),
-    delete: isCrudAuth(au) ? au.delete : (isCrudAuthSome(au) ? au.delete || au.modify : au)
+    GET: isCrudAuth(au) ? au.get : (isCrudAuthSome(au) ? au.get : au),
+    POST: isCrudAuth(au) ? au.post : transformForPost((isCrudAuthSome(au) ? au.modify : au)),
+    PUT: isCrudAuth(au) ? au.put : (isCrudAuthSome(au) ? au.modify : au),
+    PATCH: isCrudAuth(au) ? au.put : (isCrudAuthSome(au) ? au.modify : au),
+    DELETE: isCrudAuth(au) ? au.delete : (isCrudAuthSome(au) ? au.delete || au.modify : au)
   }
 
   const createOutput = (method: HttpMethods, args: ObjectType,
@@ -130,28 +130,28 @@ export const transform = async (data:CrudContract | any): Promise<Output> => {
   const idType: any = contractData.dataType.id
   if (contractData.methods?.get !== false) {
     const search = contractData.search
-    output.push(createOutput('get',
+    output.push(createOutput('GET',
       searchToType(idType, contractData.dataType, search), returnArray))
   }
 
   if (contractData.methods?.post !== false) {
     const post = { ...contractData.dataType, id: [idType, '?'] }
-    output.push(createOutput('post', removeManaged(post, contractData.manageFields)))
+    output.push(createOutput('POST', removeManaged(post, contractData.manageFields)))
   }
 
   if (contractData.methods?.put !== false) {
-    output.push(createOutput('put', removeManaged(contractData.dataType, contractData.manageFields)))
+    output.push(createOutput('PUT', removeManaged(contractData.dataType, contractData.manageFields)))
   }
 
   if (contractData.methods?.patch !== false) {
     const patch: {[s: string]: ValueType | ValueType[];} =
     { ...map(contractData.dataType, contractOptions), id: idType }
-    output.push(createOutput('patch', removeManaged(patch, contractData.manageFields)))
+    output.push(createOutput('PATCH', removeManaged(patch, contractData.manageFields)))
   }
 
   if (contractData.methods?.delete !== false) {
     const deleteIds: {[s: string]: ValueType[];} = { id: [idType, { $array: idType }] }
-    output.push(createOutput('delete', deleteIds, returnArray))
+    output.push(createOutput('DELETE', deleteIds, returnArray))
   }
 
   return { type: 'result', key: contractData.name, results: output }

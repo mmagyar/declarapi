@@ -6,7 +6,7 @@ describe('Generate typing and fetch function for server', () => {
       name: 'test',
       authentication: false,
       manageFields: {},
-      method: 'get',
+      method: 'GET',
       arguments: {
         myNumber: 'number'
       },
@@ -16,7 +16,7 @@ describe('Generate typing and fetch function for server', () => {
 
   const crudExample = (): OutputSuccess[] => [
     {
-      method: 'get',
+      method: 'GET',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -24,7 +24,7 @@ describe('Generate typing and fetch function for server', () => {
       returns: { $array: { id: 'string', myNumber: 'number' } }
     },
     {
-      method: 'post',
+      method: 'POST',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -32,7 +32,7 @@ describe('Generate typing and fetch function for server', () => {
       returns: { id: 'string', myNumber: 'number' }
     },
     {
-      method: 'put',
+      method: 'PUT',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -40,7 +40,7 @@ describe('Generate typing and fetch function for server', () => {
       returns: { id: 'string', myNumber: 'number' }
     },
     {
-      method: 'patch',
+      method: 'PATCH',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -48,7 +48,7 @@ describe('Generate typing and fetch function for server', () => {
       returns: { id: 'string', myNumber: 'number' }
     },
     {
-      method: 'delete',
+      method: 'DELETE',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -68,7 +68,7 @@ describe('Generate typing and fetch function for server', () => {
 
   const crudElasticExample = (): OutputSuccess[] => [
     {
-      method: 'get',
+      method: 'GET',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -81,7 +81,7 @@ describe('Generate typing and fetch function for server', () => {
       returns: { $array: { id: 'string', myNumber: 'number' } }
     },
     {
-      method: 'post',
+      method: 'POST',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -91,7 +91,7 @@ describe('Generate typing and fetch function for server', () => {
       returns: { id: 'string', myNumber: 'number' }
     },
     {
-      method: 'put',
+      method: 'PUT',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -101,7 +101,7 @@ describe('Generate typing and fetch function for server', () => {
       returns: { id: 'string', myNumber: 'number' }
     },
     {
-      method: 'patch',
+      method: 'PATCH',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -111,7 +111,7 @@ describe('Generate typing and fetch function for server', () => {
       returns: { id: 'string', myNumber: 'number' }
     },
     {
-      method: 'delete',
+      method: 'DELETE',
       name: 'test',
       authentication: false,
       manageFields: {},
@@ -132,7 +132,7 @@ describe('Generate typing and fetch function for server', () => {
       name: 'test',
       authentication: false,
       manageFields: {},
-      method: 'get',
+      method: 'GET',
       preferredImplementation: { type: 'elasticsearch', index: 'test' },
       arguments: {
         myNumber: 'number'

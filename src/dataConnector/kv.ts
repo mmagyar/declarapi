@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import { HandlerAuth, ContractType } from '../globalTypes'
+import { HandlerAuth, ContractType } from 'declarapi-runtime'
 import { RequestHandlingError } from '../RequestHandlingError'
 import { ManageableFields } from '../transform/types'
 import { memoryKV } from './memoryKv'

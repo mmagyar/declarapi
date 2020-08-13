@@ -1,6 +1,6 @@
 import { validate, ValidationResult } from 'yaschva'
 import { map } from 'microtil'
-import { ContractType, AuthInput, HandlerAuth } from '../globalTypes'
+import { ContractType, AuthInput, HandlerAuth } from 'declarapi-runtime'
 
 export type ContractResultError = {
   errorType: string; data: any; code: number; errors: ValidationResult|string[];

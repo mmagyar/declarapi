@@ -43,7 +43,7 @@ describe('transform crud', () => {
 
     const output = await transform(input)
     expect(output.results?.[0]?.arguments).toStrictEqual({})
-    expect(output.results?.[0]?.method).toBe('get')
+    expect(output.results?.[0]?.method).toBe('GET')
     expect(output).toMatchSnapshot()
   })
 
@@ -78,7 +78,7 @@ describe('transform crud', () => {
       id: ['string', { $array: 'string' }, '?'],
       search: ['string', '?']
     })
-    expect(output.results?.[0]?.method).toBe('get')
+    expect(output.results?.[0]?.method).toBe('GET')
     expect(output).toMatchSnapshot()
   })
 
@@ -115,11 +115,11 @@ describe('transform crud', () => {
 
     const result = await transform(input)
     expect(result.results).toHaveLength(3)
-    expect(result.results?.find(x => x.method === 'put')).toBeUndefined()
-    expect(result.results?.find(x => x.method === 'patch')).toBeUndefined()
-    expect(result.results?.find(x => x.method === 'get')).toBeTruthy()
-    expect(result.results?.find(x => x.method === 'post')).toBeTruthy()
-    expect(result.results?.find(x => x.method === 'delete')).toBeTruthy()
+    expect(result.results?.find(x => x.method === 'PUT')).toBeUndefined()
+    expect(result.results?.find(x => x.method === 'PATCH')).toBeUndefined()
+    expect(result.results?.find(x => x.method === 'GET')).toBeTruthy()
+    expect(result.results?.find(x => x.method === 'POST')).toBeTruthy()
+    expect(result.results?.find(x => x.method === 'DELETE')).toBeTruthy()
   })
 
   it('does not generate methods that are disabled ver 2', async () => {
@@ -141,11 +141,11 @@ describe('transform crud', () => {
 
     const result = await transform(input)
     expect(result.results).toHaveLength(2)
-    expect(result.results?.find(x => x.method === 'put')).toBeTruthy()
-    expect(result.results?.find(x => x.method === 'patch')).toBeTruthy()
-    expect(result.results?.find(x => x.method === 'get')).toBeUndefined()
-    expect(result.results?.find(x => x.method === 'post')).toBeUndefined()
-    expect(result.results?.find(x => x.method === 'delete')).toBeUndefined()
+    expect(result.results?.find(x => x.method === 'PUT')).toBeTruthy()
+    expect(result.results?.find(x => x.method === 'PATCH')).toBeTruthy()
+    expect(result.results?.find(x => x.method === 'GET')).toBeUndefined()
+    expect(result.results?.find(x => x.method === 'POST')).toBeUndefined()
+    expect(result.results?.find(x => x.method === 'DELETE')).toBeUndefined()
   })
 
   it('generates a custom arguments parameters for get ', async () => {
@@ -228,7 +228,7 @@ describe('transform crud', () => {
       }
     }
     const result = await transform(input)
-    expect(result.results?.find(x => x.method === 'patch')?.arguments).toStrictEqual({
+    expect(result.results?.find(x => x.method === 'PATCH')?.arguments).toStrictEqual({
       id: 'string',
       notAnId: ['boolean', '?'],
       singleElementArrayType: ['string', '?'],
@@ -257,16 +257,16 @@ describe('transform crud', () => {
     stringAllRole.forEach(x => expect(x.authentication).toStrictEqual(['aUserRole']))
 
     const resultAuthSome = await transform(withAuth({ get: false, modify: ['admin'] }))
-    expect(resultAuthSome.results?.find(x => x.method === 'get')?.authentication).toStrictEqual(false)
-    const authSomeOtherMethods = resultAuthSome.results?.filter(x => x.method !== 'get') || []
+    expect(resultAuthSome.results?.find(x => x.method === 'GET')?.authentication).toStrictEqual(false)
+    const authSomeOtherMethods = resultAuthSome.results?.filter(x => x.method !== 'GET') || []
     expect(authSomeOtherMethods).toHaveLength(4)
     authSomeOtherMethods.forEach(x => expect(x.authentication).toStrictEqual(['admin']))
 
     const resultAuth = await transform(withAuth({ get: false, post: true, put: ['owner'], delete: ['admin'] }))
-    expect(resultAuth.results?.find(x => x.method === 'get')?.authentication).toStrictEqual(false)
-    expect(resultAuth.results?.find(x => x.method === 'post')?.authentication).toStrictEqual(true)
-    expect(resultAuth.results?.find(x => x.method === 'put')?.authentication).toStrictEqual(['owner'])
-    expect(resultAuth.results?.find(x => x.method === 'delete')?.authentication).toStrictEqual(['admin'])
+    expect(resultAuth.results?.find(x => x.method === 'GET')?.authentication).toStrictEqual(false)
+    expect(resultAuth.results?.find(x => x.method === 'POST')?.authentication).toStrictEqual(true)
+    expect(resultAuth.results?.find(x => x.method === 'PUT')?.authentication).toStrictEqual(['owner'])
+    expect(resultAuth.results?.find(x => x.method === 'DELETE')?.authentication).toStrictEqual(['admin'])
   })
 
   it('does not required user to post when user auth is set globally', async () => {
@@ -291,10 +291,10 @@ describe('transform crud', () => {
     boolAll.forEach(x => expect(x.authentication).toStrictEqual(true))
 
     const resultAuth = await transform(withAuth(auth))
-    expect(resultAuth.results?.find(x => x.method === 'get')?.authentication).toStrictEqual(auth)
-    expect(resultAuth.results?.find(x => x.method === 'post')?.authentication).toStrictEqual(true)
-    expect(resultAuth.results?.find(x => x.method === 'put')?.authentication).toStrictEqual(auth)
-    expect(resultAuth.results?.find(x => x.method === 'delete')?.authentication).toStrictEqual(auth)
+    expect(resultAuth.results?.find(x => x.method === 'GET')?.authentication).toStrictEqual(auth)
+    expect(resultAuth.results?.find(x => x.method === 'POST')?.authentication).toStrictEqual(true)
+    expect(resultAuth.results?.find(x => x.method === 'PUT')?.authentication).toStrictEqual(auth)
+    expect(resultAuth.results?.find(x => x.method === 'DELETE')?.authentication).toStrictEqual(auth)
   })
 
   describe('manageFields', () => {
@@ -347,19 +347,19 @@ describe('transform crud', () => {
       const result = await transform(input)
       expect(result).toHaveProperty('type', 'result')
 
-      expect(getReturns(result, 'get').$array).toHaveProperty('createdBy', 'string')
+      expect(getReturns(result, 'GET').$array).toHaveProperty('createdBy', 'string')
 
-      expect(getArgs(result, 'post')).not.toHaveProperty('createdBy')
-      expect(getReturns(result, 'post')).toHaveProperty('createdBy', 'string')
+      expect(getArgs(result, 'POST')).not.toHaveProperty('createdBy')
+      expect(getReturns(result, 'POST')).toHaveProperty('createdBy', 'string')
 
-      expect(getArgs(result, 'put')).not.toHaveProperty('createdBy')
-      expect(getReturns(result, 'put')).toHaveProperty('createdBy', 'string')
+      expect(getArgs(result, 'PUT')).not.toHaveProperty('createdBy')
+      expect(getReturns(result, 'PUT')).toHaveProperty('createdBy', 'string')
 
-      expect(getArgs(result, 'patch')).not.toHaveProperty('createdBy')
-      expect(getReturns(result, 'patch')).toHaveProperty('createdBy', 'string')
+      expect(getArgs(result, 'PATCH')).not.toHaveProperty('createdBy')
+      expect(getReturns(result, 'PATCH')).toHaveProperty('createdBy', 'string')
 
-      expect(getArgs(result, 'delete')).not.toHaveProperty('createdBy')
-      expect(getReturns(result, 'delete').$array).toHaveProperty('createdBy', 'string')
+      expect(getArgs(result, 'DELETE')).not.toHaveProperty('createdBy')
+      expect(getReturns(result, 'DELETE').$array).toHaveProperty('createdBy', 'string')
     })
   })
 })

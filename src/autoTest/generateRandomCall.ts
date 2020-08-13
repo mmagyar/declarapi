@@ -1,4 +1,4 @@
-import { AuthInput, ContractType } from '../globalTypes'
+import { AuthInput, ContractType } from 'declarapi-runtime'
 import { generate } from 'yaschva'
 import { HandleType } from '../runtime/registerRestMethods'
 

@@ -13,14 +13,14 @@ const allOptional = (input: Validation) =>
 export const client = (input: OutputSuccess[], getTokenPath?:string): string => {
   const functions = input.map(x => {
     const url =
-      x.method === 'get' ? `\`/api/${x.name}?\${serialize(input || {})}\`` : `"/api/${x.name}"`
+      x.method === 'GET' ? `\`/api/${x.name}?\${serialize(input || {})}\`` : `"/api/${x.name}"`
     const fn = `
     const valid = validate(contracts.${name(x)}.arguments, input);
       if (valid.result === "fail") throw valid;
     return fetch(${url}, {
       method: "${x.method}",
       headers: await defaultHeader(),
-      body: ${x.method === 'get' ? 'undefined' : 'JSON.stringify(input)'},
+      body: ${x.method === 'GET' ? 'undefined' : 'JSON.stringify(input)'},
       signal
     }).then(x=> x.json())
     .then(x=> {

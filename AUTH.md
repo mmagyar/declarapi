@@ -69,6 +69,8 @@ The referred field can be either a single id or an array of ids.
 ```
 In the example above, either the user who has their id in `createdBy` OR they have `admin` permissions.
 
+> For this to work, `manageFields: { "createdBy": true }` must be set, this makes sure that the createdBy field is automatically filled and checked.
+
 
 ### This is checked in the data connectors, if you implement handle manually, you need to take care of this.
 

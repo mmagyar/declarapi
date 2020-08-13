@@ -18,6 +18,7 @@ const methodsFor = (fileName) => getMethods(
   registerRestMethods(
     addValidationToContract(
       require('../../temp/' + fileName).contracts)))
+
 global.beforeAll(async () => {
   await generateContract(schemaFilePath, 'test-elastic', (input) =>
     ({ ...input, preferredImplementation: allIdx.unauthenticated }))

@@ -1,6 +1,6 @@
 import { init, post, del, client, patch, get, defaultSize, destroyClient, info } from './elastic'
 import { Client } from '@elastic/elasticsearch'
-import { ContractType } from '../globalTypes'
+import { ContractType } from 'declarapi-runtime'
 jest.mock('@elastic/elasticsearch', () => {
   class ClientMock {
     update = jest.fn()
@@ -45,7 +45,7 @@ describe('elasticsearch data connector', () => {
     name: 'test',
     returns: { b: 'string' },
     handle: async (obj) => ({ b: obj.value }),
-    type: 'get',
+    type: 'GET',
     authentication: false
   })
 
@@ -108,7 +108,7 @@ describe('elasticsearch data connector', () => {
     expect(client().info).toBeCalled()
   })
 
-  describe('get', () => {
+  describe('GET', () => {
     it('gets all when no id or search is provided', async () => {
       expect(await get('test', input(), { authentication: false })).toStrictEqual([{ id: '3', value: 'searchResult' }, { id: '4', value: 'searchResultX' }])
       expect(client().search).toHaveBeenCalledTimes(1)
@@ -148,7 +148,7 @@ describe('elasticsearch data connector', () => {
     })
   })
 
-  describe('post', () => {
+  describe('POST', () => {
     it('post returns the saved value', async () => {
       expect(await post('test', input(), { authentication: false }, { id: '1', value: 'abc' }))
         .toStrictEqual({ id: '1', value: 'abc' })

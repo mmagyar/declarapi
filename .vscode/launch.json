@@ -30,8 +30,20 @@
         "<node_internals>/**/*.js",
         "**/async_hooks.js",
         "**/inspector_async_hook.js"
+      ]
+    },
 
-
+    {
+      "command": "npm run test:integration:memory",
+      "name": "Integration tests memory key-value",
+      "request": "launch",
+      "type": "node-terminal",
+      "smartStep": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "<node_internals>/**/*.js",
+        "**/async_hooks.js",
+        "**/inspector_async_hook.js"
       ]
     },
     {

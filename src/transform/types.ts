@@ -1,7 +1,7 @@
 import Ajv from 'ajv'
 import { ObjectType } from 'yaschva'
 import { Elastic, KeyValue } from '../DataDriverTypes'
-import { HttpMethods, SearchTypes } from '../globalTypes'
+import { HttpMethods, SearchTypes } from 'declarapi-runtime'
 
 export type AuthType = (string | {createdBy: boolean})[] | boolean
 export type ManageableFields ={ createdBy?: boolean }
