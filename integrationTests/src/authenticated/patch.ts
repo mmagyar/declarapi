@@ -1,9 +1,9 @@
-import { Expressable, HandleType } from 'declarapi-runtime/registerRestMethods'
+import { Expressable, HandleType } from 'declarapi-runtime/registerRestMethods.js'
 import { AuthInput } from 'declarapi-runtime'
-import { getFirstStringFieldName, removeManaged } from '../common'
-import { postRecords } from '../unauthenticated/post'
+import { getFirstStringFieldName, removeManaged } from '../common.js'
+import { postRecords } from '../unauthenticated/post.js'
 import { generate } from 'yaschva'
-import { expectGetToReturnRecords } from '../unauthenticated/get'
+import { expectGetToReturnRecords } from '../unauthenticated/get.js'
 
 export const cantPatch = async (post:Expressable, patch:Expressable, get: HandleType, authInput:AuthInput, unAuthorized:AuthInput) => {
   const posted = await postRecords(post, authInput)

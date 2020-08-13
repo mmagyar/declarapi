@@ -1,4 +1,4 @@
-import { KeyValue } from '../DataDriverTypes'
+import { KeyValue } from '../DataDriverTypes.js'
 import { SearchTypes, HttpMethods } from 'declarapi-runtime'
 export type KVInputGet = {
   method: 'GET',

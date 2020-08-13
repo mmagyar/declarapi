@@ -1,6 +1,6 @@
 import Ajv from 'ajv'
 import { ObjectType } from 'yaschva'
-import { Elastic, KeyValue } from '../DataDriverTypes'
+import { Elastic, KeyValue } from '../DataDriverTypes.js'
 import { HttpMethods, SearchTypes } from 'declarapi-runtime'
 
 export type AuthType = (string | {createdBy: boolean})[] | boolean
@@ -53,5 +53,3 @@ export type OutputSuccess = {
 export type Output =
   | {type: 'result'; key: string; results: OutputSuccess[]; errors?: undefined;}
   | {type: 'error'; key?: undefined; errors: (Ajv.ErrorObject | string)[] | string; results?: undefined;};
-
-export const baseSchemaLocation = `${__dirname}/../../schema/`

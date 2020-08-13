@@ -1,9 +1,9 @@
 import { AuthInput } from 'declarapi-runtime'
-import { generateRandomCall } from '../../src/autoTest/generateRandomCall'
-import { Expressable } from 'declarapi-runtime/registerRestMethods'
-import { CrudContract, ManageableFields } from '../../src/transform/types'
+import { generateRandomCall } from '../../src/autoTest/generateRandomCall.js'
+import { Expressable } from 'declarapi-runtime/registerRestMethods.js'
+import { CrudContract, ManageableFields } from '../../src/transform/types.js'
 import { promises as fs } from 'fs'
-import { generate, writeFile } from '../../src/bin/generate'
+import { generate, writeFile } from '../../src/bin/generate.js'
 import path from 'path'
 import { Validation, generate as validationGenerate } from 'yaschva'
 

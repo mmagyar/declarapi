@@ -1,8 +1,12 @@
 node_modules
 # dependencies
 integrationTests/dist
+!integrationTests/**/*.js
 integrationTests/coverage
 integrationTests/temp/*.ts
+*.js
+*.js.map
+*.d.ts
 /dist
 /lib
 /node_modules

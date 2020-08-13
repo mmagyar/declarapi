@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -10,8 +10,8 @@
     "json",
     "generation"
   ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "type": "module",
   "sideEffects": false,
   "prepublish": "tsc",
@@ -19,19 +19,19 @@
     "type": "git",
     "url": "https://github.com/mmagyar/declarapi.git"
   },
-  "bin": "./dist/bin/generate.js",
+  "bin": "./bin/generate.js",
   "scripts": {
-    "build": "tsc && chmod +x ./dist/bin/generate.js",
+    "build": "tsc && chmod +x ./bin/generate.js",
     "watch": "tsc --watch",
-    "clean": "rm -rf ./dist && rm -rf ./test/*.ts",
-    "test": "npm run standard && jest",
+    "prepack": "npm run build && npm run build:commonjs",
+    "build:commonjs": "tsc --module \"CommonJS\" -t \"es6\" --outDir \"./cjs\"",
+    "test": "npm run build:commonjs && jest --colors",
+    "test:clean": "jest --clearCache",
+    "standard": "standardx **/*.ts",
+    "standard:fix": "standardx --fix **/*.ts",
+    "test:coverage": "npm run build:commonjs && npm run standard && jest --coverage",
     "jest": "jest",
     "prepare": "npm run build",
-    "standard": "standardx src/**/*.ts",
-    "standard:fix": "standardx --fix src/**/*.ts",
-    "standard:fix2": "standardx --fix src/**/example-server.ts",
-    "test:coverage": "npm run standard && jest --coverage=true  --no-cache",
-    "test:watch": "jest --watch",
     "test:dev": "npm run standard:fix && jest --no-cache --coverage --detectOpenHandles --runInBand",
     "test:clearCache": "jest --clearCache",
     "test:integration": "npm run test:integration:elasticsearch && npm run test:integration:kv",
@@ -40,7 +40,7 @@
     "test:integration:elasticsearch:dev": "export ELASTIC_KEEP=\"true\"; npm run test:integration; unset ELASTIC_KEEP",
     "test:integration:memory": "jest --no-cache --verbose --config integrationTests/setup/kvMemory/jest.json --colors --coverage=true",
     "test:integration:worker": "jest --no-cache --verbose --config integrationTests/setup/kvWorker/jest.json --colors --coverage=true -i",
-    "generate": "node ./dist/bin/generate.js",
+    "generate": "node ./bin/generate.js",
     "generate:dev": "npm run build && npm run generate"
   },
   "standardx": {
@@ -61,28 +61,7 @@
   "jest": {
     "setupFiles": [],
     "roots": [
-      "<rootDir>/src"
-    ],
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ],
-    "collectCoverageFrom": [
-      "**/*.{js,jsx,ts,tsx}",
-      "!**/node_modules/**",
-      "!./src/bin/**",
-      "!./src/index.ts",
-      "!./src/dataConnector/**",
-      "!./src/RequestHandlingError.ts",
-      "!**/vendor/**"
+      "<rootDir>/cjs"
     ],
     "moduleNameMapper": {
       "yaschva$": "yaschva/cjs",
@@ -111,8 +90,8 @@
     "@types/commander": "^2.12.2",
     "ajv": "^6.12.3",
     "commander": "^6.0.0",
-    "declarapi-runtime": "0.1.2",
-    "microtil": "^2.0.1",
+    "declarapi-runtime": "0.1.4",
+    "microtil": "^2.0.3",
     "yaschva": "^2.1.1"
   }
 }

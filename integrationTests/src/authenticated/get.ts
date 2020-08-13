@@ -1,5 +1,5 @@
-import { argumentForEmpty, argumentFor404 } from '../unauthenticated/get'
-import { HandleResponse, HandleType } from 'declarapi-runtime/registerRestMethods'
+import { argumentForEmpty, argumentFor404 } from '../unauthenticated/get.js'
+import { HandleResponse, HandleType } from 'declarapi-runtime/registerRestMethods.js'
 import { AuthInput } from 'declarapi-runtime'
 
 const expect401 = (response:HandleResponse) => {

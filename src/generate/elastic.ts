@@ -1,4 +1,4 @@
-import { Elastic } from '../DataDriverTypes'
+import { Elastic } from '../DataDriverTypes.js'
 import { SearchTypes, HttpMethods } from 'declarapi-runtime'
 export type ElasticInputGet = {
   method: 'GET',

@@ -1,5 +1,5 @@
 import { validationToType } from 'yaschva'
-import { OutputSuccess } from '../transform/types'
+import { OutputSuccess } from '../transform/types.js'
 
 export const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 export const name = (x: OutputSuccess): string => `${x.name}${capitalize(x.method)}`

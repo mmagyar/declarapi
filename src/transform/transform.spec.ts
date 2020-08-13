@@ -1,4 +1,4 @@
-import { transform } from './transform'
+import { transform } from './transform.js'
 
 describe('Generator', () => {
   it('generates basic example without error', async () => {

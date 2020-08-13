@@ -1,7 +1,7 @@
-import { generateRandomCall } from './generateRandomCall'
+import { generateRandomCall } from './generateRandomCall.js'
 import { } from 'declarapi-runtime'
 import { validate } from 'yaschva'
-import { Expressable } from 'declarapi-runtime/registerRestMethods'
+import { Expressable } from 'declarapi-runtime/registerRestMethods.js'
 describe('generateRandomCall', () => {
   const auth = { }
   const input = ():Expressable => ({

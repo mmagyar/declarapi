@@ -1,16 +1,14 @@
 import { ValueType, ObjectType, StringType } from 'yaschva'
 import { map } from 'microtil'
-import { validate, isValidationError } from './jsonSchema'
+import { validate, isValidationError } from './jsonSchema.js'
 import {
-  CrudContract,
-
-  CrudAuthAll,
-  CrudAuthSome, OutputSuccess, Output, baseSchemaLocation, ManageableFields
-} from './types'
+  CrudContract, CrudAuthAll, CrudAuthSome, OutputSuccess, Output, ManageableFields
+} from './types.js'
 import {
   HttpMethods,
   SearchTypes
 } from 'declarapi-runtime'
+import { loadJSON, baseSchemaLocation } from '../util.js'
 
 const contractOptions = (input: ValueType | ValueType[]): ValueType[] => {
   if (Array.isArray(input)) {
@@ -91,7 +89,8 @@ const isCrudAuth = (tbd: any): tbd is CrudAuthAll => tbd.post !== undefined
 const isCrudAuthSome = (tbd: any): tbd is CrudAuthSome => tbd.modify !== undefined
 const transformForPost = (tbd: any) => Array.isArray(tbd) && tbd.find(x => x.createdBy) ? true : tbd
 export const transform = async (data:CrudContract | any): Promise<Output> => {
-  const valid = await validate(require(`${baseSchemaLocation}crudContractSchema.json`), data)
+  const valid = await validate(await loadJSON(`${baseSchemaLocation}crudContractSchema.json`), data)
+
   if (isValidationError(valid)) return valid
 
   const contractData: CrudContract = data
