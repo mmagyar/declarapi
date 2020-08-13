@@ -1,6 +1,6 @@
 
 const path = require('path')
-const { elastic, registerRestMethods, addValidationToContract } = require('../../../src/index')
+const { elastic, registerRestMethods, addValidationToContract } = require('declarapi-runtime')
 const { generateContract, getMethods } = require('../../src/common')
 
 const schemaFilePath = path.join(__dirname, '../../../example/test_example.json')
@@ -18,6 +18,7 @@ const methodsFor = (fileName) => getMethods(
     addValidationToContract(
       require('../../temp/' + fileName).contracts)))
 global.beforeAll(async () => {
+
   await generateContract(schemaFilePath, 'test-elastic', (input) =>
     ({ ...input, preferredImplementation: allIdx.unauthenticated }))
   global.contract.unauthenticated = methodsFor('test-elastic-server')

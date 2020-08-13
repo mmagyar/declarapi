@@ -1,6 +1,6 @@
 import { argumentForEmpty, argumentFor404 } from '../unauthenticated/get'
-import { HandleResponse, HandleType } from '../../../src/runtime/registerRestMethods'
-import { AuthInput } from '../../../src'
+import { HandleResponse, HandleType } from 'declarapi-runtime/registerRestMethods'
+import { AuthInput } from 'declarapi-runtime'
 
 const expect401 = (response:HandleResponse) => {
   expect(response).toHaveProperty('code', 401)

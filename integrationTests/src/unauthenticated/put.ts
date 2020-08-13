@@ -1,6 +1,6 @@
-import { Expressable, HandleType } from '../../../src/runtime/registerRestMethods'
+import { Expressable, HandleType } from 'declarapi-runtime/registerRestMethods'
 import { postRecords } from './post'
-import { AuthInput } from '../../../src'
+import { AuthInput } from 'declarapi-runtime'
 import { generate } from 'yaschva'
 import { expectEmptyWhenNoRecordsPresent, expectGetToReturnRecords } from './get'
 import { generateForFirstTextField, removeManaged } from '../common'

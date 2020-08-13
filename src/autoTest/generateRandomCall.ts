@@ -1,6 +1,6 @@
 import { AuthInput, ContractType } from 'declarapi-runtime'
 import { generate } from 'yaschva'
-import { HandleType } from '../runtime/registerRestMethods'
+import { HandleType } from 'declarapi-runtime/registerRestMethods'
 
 export const generateRandomCall =
  async <Input, Output>(handle:HandleType, contract:ContractType<any, any>, auth: AuthInput):

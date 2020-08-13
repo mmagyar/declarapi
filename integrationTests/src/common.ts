@@ -1,6 +1,6 @@
 import { AuthInput } from 'declarapi-runtime'
-import { generateRandomCall } from '../../src/index'
-import { Expressable } from '../../src/runtime/registerRestMethods'
+import { generateRandomCall } from '../../src/autoTest/generateRandomCall'
+import { Expressable } from 'declarapi-runtime/registerRestMethods'
 import { CrudContract, ManageableFields } from '../../src/transform/types'
 import { promises as fs } from 'fs'
 import { generate, writeFile } from '../../src/bin/generate'
