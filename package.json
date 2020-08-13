@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -19,7 +19,7 @@
     "type": "git",
     "url": "https://github.com/mmagyar/declarapi.git"
   },
-  "bin": "./lib/bin/generate.js",
+  "bin": "./dist/bin/generate.js",
   "scripts": {
     "build": "tsc && chmod +x ./dist/bin/generate.js",
     "watch": "tsc --watch",
