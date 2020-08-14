@@ -3,7 +3,7 @@ import { Contract, Output } from './types.js'
 import { loadJSON, baseSchemaLocation } from '../util.js'
 
 export const transform = async (data:Contract | any): Promise<Output> => {
-  const valid = await validate(await loadJSON(`${baseSchemaLocation}singleContractSchema.json`), data)
+  const valid = await validate(await loadJSON(`${await baseSchemaLocation()}singleContractSchema.json`), data)
 
   if (isValidationError(valid)) return valid
   const contractData: Contract = data

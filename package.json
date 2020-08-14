@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -41,7 +41,9 @@
     "test:integration:memory": "jest --no-cache --verbose --config integrationTests/setup/kvMemory/jest.json --colors --coverage=true",
     "test:integration:worker": "jest --no-cache --verbose --config integrationTests/setup/kvWorker/jest.json --colors --coverage=true -i",
     "generate": "node ./bin/generate.js",
-    "generate:dev": "npm run build && npm run generate"
+    "generate:dev": "npm run build && npm run generate",
+    "generate:test:single": "node ./bin/generate.js \"./example/single_example.json\" \"./testOut\"",
+    "generate:test:crud": "node ./bin/generate.js \"./example/crud_example.json\" \"./testOut\""
   },
   "standardx": {
     "env": [

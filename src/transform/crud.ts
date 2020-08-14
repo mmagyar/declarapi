@@ -89,7 +89,7 @@ const isCrudAuth = (tbd: any): tbd is CrudAuthAll => tbd.post !== undefined
 const isCrudAuthSome = (tbd: any): tbd is CrudAuthSome => tbd.modify !== undefined
 const transformForPost = (tbd: any) => Array.isArray(tbd) && tbd.find(x => x.createdBy) ? true : tbd
 export const transform = async (data:CrudContract | any): Promise<Output> => {
-  const valid = await validate(await loadJSON(`${baseSchemaLocation}crudContractSchema.json`), data)
+  const valid = await validate(await loadJSON(`${await baseSchemaLocation()}crudContractSchema.json`), data)
 
   if (isValidationError(valid)) return valid
 

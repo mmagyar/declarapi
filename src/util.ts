@@ -1,10 +1,18 @@
 import { promises as fs } from 'fs'
-// import { dirname } from 'path'
-// import { fileURLToPath } from 'url'
+import path from 'path'
 
 export const loadJSON = async (path:string):Promise<object> => {
   return JSON.parse(await fs.readFile(path, { encoding: 'utf8' }))
 }
 
-// export const baseSchemaLocation = `${dirname(fileURLToPath(import.meta.url))}/../schema/`
-export const baseSchemaLocation = './schema/'
+// This is required for both es6 and commonjs support
+if (!global?.['__dirname']) {
+  (global as any).__dirname = undefined
+}
+
+export const baseSchemaLocation = async () => {
+  if (!__dirname) {
+    return (await import('./url.js')).es6SchemaLocation
+  }
+  return path.join(__dirname, '/../schema/')
+}

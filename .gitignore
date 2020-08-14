@@ -7,6 +7,9 @@ integrationTests/temp/*.ts
 *.js
 *.js.map
 *.d.ts
+cjs
+/testout
+/testOut
 /dist
 /lib
 /node_modules

@@ -67,7 +67,10 @@ program.action((inputFileArg, outputDirArg, getTokenPathArg) => {
   }
   cliProgram(inputFileArg, outputDirArg, program.parts, getTokenPathArg || undefined)
     .then(() => process.exit(0))
-    .catch((e) => console.error(e.message, e.stack, e))
+    .catch((e) => {
+      console.error(e.message, e.stack, e)
+      process.exit(1)
+    })
 })
 
 program.parse(process.argv)

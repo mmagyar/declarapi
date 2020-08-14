@@ -1,1 +1,0 @@
-{"version":3,"file":"DataDriverTypes.js","sourceRoot":"","sources":["../src/DataDriverTypes.ts"],"names":[],"mappings":"","sourcesContent":["export type Elastic = {\n  type: 'elasticsearch';\n  index: string;\n}\n\nexport type KeyValue = {\n  type: 'key-value';\n  backend: 'memory' | 'worker' // | 'redis'\n  index: string;\n}\n"]}
