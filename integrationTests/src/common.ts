@@ -3,7 +3,7 @@ import { generateRandomCall } from '../../cjs/autoTest/generateRandomCall'
 import { Expressable } from 'declarapi-runtime/registerRestMethods'
 import { CrudContract, ManageableFields } from '../../cjs/transform/types'
 import { promises as fs } from 'fs'
-import { generate, writeFile } from '../../cjs/bin/generate'
+import { generate, writeFile } from '../../cjs/index'
 import path from 'path'
 import { Validation, generate as validationGenerate } from 'yaschva'
 

@@ -6,7 +6,6 @@ some files are omitted from the unit test coverage reports.
 These files are covered by integration tests, these are:
 
 - `src/dataConnector/*` These files connect the database implementation, and may depend on the databases' behavior, thus unit testing these does not gain us much.
-- `src/index.ts` this file has no functioning code, just exports to be used, when this package is used.
 
 100% coverage is important, because that ensures that there is no dead code left in the system that has no real use.
 
