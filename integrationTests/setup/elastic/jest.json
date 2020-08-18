@@ -16,6 +16,7 @@
   "moduleNameMapper": {
     "yaschva$": "yaschva/cjs",
     "microtil$": "microtil/cjs",
+    "declarapi-runtime/elastic$": "declarapi-runtime/cjs/elastic.js",
     "declarapi-runtime$": "declarapi-runtime/cjs"
   }  ,
   "transform": {

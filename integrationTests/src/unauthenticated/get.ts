@@ -1,5 +1,5 @@
-import { HandleType, HandleResponse, Expressable } from 'declarapi-runtime/registerRestMethods.js'
-import { ArgumentVariations } from '../common.js'
+import { HandleType, HandleResponse, Expressable } from 'declarapi-runtime/registerRestMethods'
+import { ArgumentVariations } from '../common'
 import { AuthInput } from 'declarapi-runtime'
 
 const expectEmptyResponse = (response:HandleResponse) => {

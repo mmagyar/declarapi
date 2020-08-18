@@ -1,6 +1,7 @@
 
 const path = require('path')
-const { kv, registerRestMethods, addValidationToContract } = require('declarapi-runtime')
+const {  registerRestMethods, addValidationToContract } = require('declarapi-runtime')
+const kv = require('declarapi-runtime/kv')
 const { generateContract, getMethods } = require('../../src/common')
 require('util').inspect.defaultOptions = { depth: 15 }
 

@@ -1,7 +1,7 @@
-import { Expressable, HandleType } from 'declarapi-runtime/registerRestMethods.js'
+import { Expressable, HandleType } from 'declarapi-runtime/registerRestMethods'
 import { AuthInput } from 'declarapi-runtime'
-import { postRecords } from '../unauthenticated/post.js'
-import { expectGetToReturnRecords } from '../unauthenticated/get.js'
+import { postRecords } from '../unauthenticated/post'
+import { expectGetToReturnRecords } from '../unauthenticated/get'
 
 export const cantDeleteOneOfMany = async (post:Expressable, del:Expressable, get: HandleType, authInput:AuthInput, unAuthorized:AuthInput) => {
   const recordOriginal:any[] = await postRecords(post, authInput, 20)

@@ -1,9 +1,9 @@
-import { Expressable, HandleType } from 'declarapi-runtime/registerRestMethods.js'
+import { Expressable, HandleType } from 'declarapi-runtime/registerRestMethods'
 import { AuthInput } from 'declarapi-runtime'
-import { postRecords } from './post.js'
-import { getFirstStringFieldName, generateForFirstTextField, removeManaged } from '../common.js'
+import { postRecords } from './post'
+import { getFirstStringFieldName, generateForFirstTextField, removeManaged } from '../common'
 import { generate } from 'yaschva'
-import { expectGetToReturnRecords, expectEmptyWhenNoRecordsPresent } from './get.js'
+import { expectGetToReturnRecords, expectEmptyWhenNoRecordsPresent } from './get'
 
 export const canPatch = async (post:Expressable, patch:Expressable, get: HandleType, postAuth:AuthInput, patchAuth?:AuthInput) => {
   const posted = await postRecords(post, postAuth)

@@ -72,5 +72,4 @@ program.action((inputFileArg, outputDirArg, getTokenPathArg) => {
       process.exit(1)
     })
 })
-
-program.parse(process.argv)
+if (require.main === module) { program.parse(process.argv) }

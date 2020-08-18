@@ -11,6 +11,8 @@
     "moduleNameMapper": {
       "yaschva$": "yaschva/cjs",
       "microtil$": "microtil/cjs",
+      "declarapi-runtime/kv.js$": "declarapi-runtime/cjs/kv.js",
+      "declarapi-runtime/kv$": "declarapi-runtime/cjs/kv.js",
       "declarapi-runtime$": "declarapi-runtime/cjs"
     }  ,
   "transform": {
