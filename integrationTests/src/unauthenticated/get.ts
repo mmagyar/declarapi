@@ -1,16 +1,16 @@
-import { HandleType, HandleResponse, Expressable } from 'declarapi-runtime/registerRestMethods'
+import { HandleType, HandleResponse, HttpWrapped } from 'declarapi-runtime/registerRestMethods'
 import { ArgumentVariations } from '../common'
 import { AuthInput } from 'declarapi-runtime'
 
 const expectEmptyResponse = (response:HandleResponse) => {
-  expect(response).toHaveProperty('code', 200)
+  expect(response).toHaveProperty('status', 200)
   expect(response).toHaveProperty('response')
   expect(Array.isArray(response.response)).toBeTruthy()
   expect(response.response).toHaveLength(0)
 }
 
 const expect404 = (response:HandleResponse) => {
-  expect(response).toHaveProperty('code', 404)
+  expect(response).toHaveProperty('status', 404)
   expect(response).toHaveProperty('response')
 }
 
@@ -51,7 +51,7 @@ export const expectEmptyWithTextSearch = async (get: HandleType, authInput:AuthI
 
 export const expectGetToReturnRecords = async (records:any[], getArguments: any = {}, get:HandleType, authInput:AuthInput = {}) => {
   const getResult = await get(getArguments, undefined, authInput)
-  expect(getResult.code).toBe(200)
+  expect(getResult.status).toBe(200)
 
   // Order does not matter, use set, and check length to make sure they are the same
   expect(getResult.response).toHaveLength(records.length)
@@ -62,7 +62,7 @@ export const expectGetToReturnRecords = async (records:any[], getArguments: any 
 
 export const expectFirstRecordToEqual = async (record:any, getArguments: any = {}, get:HandleType, authInput:AuthInput = {}) => {
   const getResult = await get(getArguments, undefined, authInput)
-  expect(getResult.code).toBe(200)
+  expect(getResult.status).toBe(200)
 
   // Order does not matter, use set, and check length to make sure they are the same
   expect(getResult.response.length).toBeGreaterThan(0)
@@ -71,7 +71,7 @@ export const expectFirstRecordToEqual = async (record:any, getArguments: any = {
   return getResult.response
 }
 
-export const findFirstTextFieldContent = (record:any, get:Expressable) => {
+export const findFirstTextFieldContent = (record:any, get:HttpWrapped<any, any>) => {
   const managedField = Object.keys(get.contract.manageFields)
   return Object.entries(record).map(([key, value]) =>
     !([...managedField, 'id'].includes(key)) && typeof value === 'string'

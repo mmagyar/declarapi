@@ -1,6 +1,6 @@
 
 const path = require('path')
-const {  registerRestMethods, addValidationToContract } = require('declarapi-runtime')
+const { processContract } = require('declarapi-runtime')
 const kv = require('declarapi-runtime/kv')
 const { generateContract, getMethods } = require('../../src/common')
 require('util').inspect.defaultOptions = { depth: 15 }
@@ -15,10 +15,10 @@ const allIdx = ({
   userAuthenticated: preferredImplementation('test-userauth-' + Date.now())
 })
 
-const methodsFor = (fileName) => getMethods(
-  registerRestMethods(
-    addValidationToContract(
-      require('../../temp/' + fileName).contracts)))
+const methodsFor = (fileName) => {
+  const contracts =  require('../../temp/' + fileName).contracts
+  return getMethods(Object.values(contracts).map(x=> processContract(x)))
+}
 
 global.beforeAll(async () => {
   await generateContract(schemaFilePath, 'test-elastic', (input) =>
@@ -49,10 +49,10 @@ global.beforeTestCategory = {
 
 global.afterTestCategory = {
   unauthenticated: async () =>
-    kv.client('memory').destroy((await kv.client('memory').list(undefined, undefined, allIdx.unauthenticated.index)).result.map(x => x.name)),
+    Promise.all((await kv.client('memory').list({prefix: allIdx.unauthenticated.index })).keys.map(x=> kv.client('memory').delete(x.name))),
   authenticated: async () =>
-    kv.client('memory').destroy((await kv.client('memory').list(undefined, undefined, allIdx.authenticated.index)).result.map(x => x.name)),
+    Promise.all((await kv.client('memory').list({prefix: allIdx.authenticated.index })).keys.map(x=> kv.client('memory').delete(x.name))),
   userAuthenticated: async () =>
-    kv.client('memory').destroy((await kv.client('memory').list(undefined, undefined, allIdx.userAuthenticated.index)).result.map(x => x.name))
+    Promise.all((await kv.client('memory').list({prefix: allIdx.userAuthenticated.index })).keys.map(x=> kv.client('memory').delete(x.name)))
 
 }

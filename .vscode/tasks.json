@@ -11,6 +11,15 @@
 			"label": "npm: watch",
 			"detail": "tsc --watch",
 			"isBackground": true
-		}
+		},
+		{
+			"type": "npm",
+			"script": "test:coverage",
+			"group": "test",
+			"label": "npm test",
+			"detail": "jets test",
+			"isBackground": false
+		},
+
 	]
 }

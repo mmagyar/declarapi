@@ -1,14 +1,13 @@
 import { generateRandomCall } from './generateRandomCall.js'
 import { } from 'declarapi-runtime'
 import { validate } from 'yaschva'
-import { Expressable } from 'declarapi-runtime/registerRestMethods.js'
+import { HttpWrapped } from 'declarapi-runtime/registerRestMethods.js'
 describe('generateRandomCall', () => {
   const auth = { }
-  const input = ():Expressable => ({
+  const input = ():HttpWrapped<any, any> => ({
     method: 'POST',
     route: '/',
     handle: jest.fn(),
-    handler: jest.fn(),
     contract: {
       name: 'test',
       type: 'POST',
@@ -40,7 +39,7 @@ describe('generateRandomCall', () => {
       expect(typeof input.myString).toBe('string')
       expect(Object.keys(input)).toHaveLength(3)
       handlerData = input
-      return { response: 'done', code: 200 }
+      return { response: 'done', status: 200 }
     })
     const result = await generateRandomCall(data.handle, data.contract, auth)
     expect(result.output).toBe('done')
@@ -58,10 +57,10 @@ describe('generateRandomCall', () => {
     })
   })
 
-  it('handle can return error code', async () => {
+  it('handle can return error status', async () => {
     expect.assertions(1)
     const data:any = input()
-    data.handle = jest.fn(() => ({ code: 401 }))
+    data.handle = jest.fn(() => ({ status: 401 }))
     await generateRandomCall(data.handle, data.contract, auth).catch(x => {
       expect(x).toHaveProperty('message', 'Random data generation returned with error: 401, undefined')
     })

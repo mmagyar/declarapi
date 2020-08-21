@@ -123,7 +123,7 @@
           "properties": {
             "type": { "type": "string", "enum": ["key-value"] },
             "index": { "type": "string" },
-            "backend": { "type": "string", "enum": ["memory", "worker"] }
+            "backend": { "type": "string", "enum": ["memory", "worker", "custom"] }
           },
           "required": ["type", "index"],
           "additionalProperties": false

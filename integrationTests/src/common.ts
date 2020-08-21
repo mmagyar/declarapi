@@ -1,6 +1,6 @@
 import { AuthInput } from 'declarapi-runtime'
 import { generateRandomCall } from '../../cjs/autoTest/generateRandomCall'
-import { Expressable } from 'declarapi-runtime/registerRestMethods'
+import { HttpWrapped } from 'declarapi-runtime/registerRestMethods'
 import { CrudContract, ManageableFields } from '../../cjs/transform/types'
 import { promises as fs } from 'fs'
 import { generate, writeFile } from '../../cjs/index'
@@ -57,7 +57,7 @@ export const checkMatchingGenerated = (generatorOut:{output: any, generatedInput
   return generatorOut
 }
 
-export const checkedGenerate = async <Input, Output>(postContract: Expressable, authInput:AuthInput):
+export const checkedGenerate = async <Input, Output>(postContract: HttpWrapped<any, any>, authInput:AuthInput):
   Promise<{ output: Output; generatedInput: Input;}> => {
   return checkMatchingGenerated(await generateRandomCall(postContract.handle, postContract.contract, authInput))
 }
@@ -80,13 +80,13 @@ export const generateForFirstTextField = (record:any, validation:Validation) => 
   return { key: stringFieldName, value: generatedInput }
 }
 
-export type Contracts = {get:Expressable, post:Expressable, patch:Expressable, put:Expressable, del:Expressable}
+export type Contracts = {get:HttpWrapped<any, any>, post:HttpWrapped<any, any>, patch:HttpWrapped<any, any>, put:HttpWrapped<any, any>, del:HttpWrapped<any, any>}
 export const getMethods = (contract:any):Contracts => ({
-  get: contract.find((x:Expressable) => x.method === 'GET'),
-  post: contract.find((x:Expressable) => x.method === 'POST'),
-  patch: contract.find((x:Expressable) => x.method === 'PATCH'),
-  put: contract.find((x:Expressable) => x.method === 'PUT'),
-  del: contract.find((x:Expressable) => x.method === 'DELETE')
+  get: contract.find((x:HttpWrapped<any, any>) => x.method === 'GET'),
+  post: contract.find((x:HttpWrapped<any, any>) => x.method === 'POST'),
+  patch: contract.find((x:HttpWrapped<any, any>) => x.method === 'PATCH'),
+  put: contract.find((x:HttpWrapped<any, any>) => x.method === 'PUT'),
+  del: contract.find((x:HttpWrapped<any, any>) => x.method === 'DELETE')
 })
 
 export const removeManaged = <T extends object>(removeFrom:T, manageFields:ManageableFields):T => {

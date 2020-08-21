@@ -161,9 +161,9 @@ describe('authenticated schema test', () => {
         try { await post.postRecords(m.post, {}) } catch (e) {
           err = e
         }
-        expect(err).toHaveProperty('code', 401)
+        expect(err).toHaveProperty('status', 401)
         expect(err.response).toEqual({
-          code: 401,
+          status: 401,
           data: { id: undefined },
           errorType: 'unauthorized',
           errors: ['Only logged in users can do this']
@@ -176,11 +176,11 @@ describe('authenticated schema test', () => {
         try { await post.postRecords(m.post, unAuthorized) } catch (e) {
           err = e
         }
-        expect(err).toHaveProperty('code', 403)
+        expect(err).toHaveProperty('status', 403)
         expect(err.response).toEqual({
-          code: 403,
+          status: 403,
           data: { id: undefined },
-          errorType: 'unauthorized',
+          errorType: 'forbidden',
           errors: ['You don\'t have permission to do this']
         })
         await get.expectEmptyWhenNoRecordsPresent(m.get.handle, auth)

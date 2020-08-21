@@ -3,9 +3,9 @@ import { HandleResponse, HandleType } from 'declarapi-runtime/registerRestMethod
 import { AuthInput } from 'declarapi-runtime'
 
 const expect401 = (response:HandleResponse) => {
-  expect(response).toHaveProperty('code', 401)
+  expect(response).toHaveProperty('status', 401)
   expect(response).toHaveProperty('response')
-  expect(response.response).toHaveProperty('code', 401)
+  expect(response.response).toHaveProperty('status', 401)
   expect(response.response).toHaveProperty('data')
   expect(typeof response.response.data).toBe('object')
   expect(response.response).toHaveProperty('errorType', 'unauthorized')
@@ -13,13 +13,13 @@ const expect401 = (response:HandleResponse) => {
 }
 
 const expect403 = (response:HandleResponse) => {
-  expect(response).toHaveProperty('code', 403)
+  expect(response).toHaveProperty('status', 403)
   expect(response).toHaveProperty('response')
-  expect(response.response).toHaveProperty('code', 403)
+  expect(response.response).toHaveProperty('status', 403)
 
   expect(response.response).toHaveProperty('data')
   expect(typeof response.response.data).toBe('object')
-  expect(response.response).toHaveProperty('errorType', 'unauthorized')
+  expect(response.response).toHaveProperty('errorType', 'forbidden')
   expect(response.response).toHaveProperty('errors', ['You don\'t have permission to do this'])
 }
 

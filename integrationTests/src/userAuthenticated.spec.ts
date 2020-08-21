@@ -151,9 +151,9 @@ describe('user authentication schema test', () => {
         try { await post.postRecords(m.post, {}) } catch (e) {
           err = e
         }
-        expect(err).toHaveProperty('code', 401)
+        expect(err).toHaveProperty('status', 401)
         expect(err.response).toEqual({
-          code: 401,
+          status: 401,
           data: { id: undefined },
           errorType: 'unauthorized',
           errors: ['Only logged in users can do this']
@@ -161,13 +161,13 @@ describe('user authentication schema test', () => {
         await get.expectEmptyWhenNoRecordsPresent(m.get.handle, auth)
       })
 
-      it('posted records cannot be read by another non admin user and unauthorized user gets 401', async () => {
+      it('posted records cannot be read by another non admin user and unauthenticated/unauthorized user gets 401/403', async () => {
         const posted:any[] = await post.postRecords(m.post, auth)
         await authGet.expect401ForUnauthenticatedUser(m.get.handle)
         await get.expectEmptyWhenNoRecordsPresent(m.get.handle, unAuthorized)
         await get.expectGetToReturnRecords([], {}, m.get.handle, unAuthorized)
         await get.expectGetToReturnRecords([], { id: posted.map(x => x.id) }, m.get.handle, unAuthorized)
-        await get.expectGetToReturnRecords([], { id: posted[0].id }, m.get.handle, unAuthorized)
+        expect(await m.get.handle({ id: posted[0].id }, undefined, unAuthorized)).toHaveProperty('status', 403)
         await get.expectGetToReturnRecords([], {
           search: Object.entries(posted[0]).map(([key, value]) =>
             !(['createdBy', 'id'].includes(key)) && typeof value === 'string' ? value : undefined).find(x => x) || ''
