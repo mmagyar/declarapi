@@ -1,6 +1,6 @@
 {
   "name": "declarapi",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "description": "Declarative API generation",
   "keywords": [
     "api",
@@ -92,7 +92,7 @@
     "@types/commander": "^2.12.2",
     "ajv": "^6.12.4",
     "commander": "^6.0.0",
-    "declarapi-runtime": "0.3.2",
+    "declarapi-runtime": "0.3.5",
     "microtil": "^2.0.3",
     "yaschva": "^2.1.1"
   }
